@@ -78,6 +78,18 @@ is_arch_linux() {
     [ -f /etc/arch-release ]
 }
 
+# Sync package databases to ensure latest versions
+sync_package_database() {
+    print_info "Syncing package databases to ensure latest versions..."
+
+    if ! sudo pacman -Sy --noconfirm; then
+        print_error "Failed to sync package database"
+        return 1
+    fi
+
+    print_success "Package database synced - will install latest versions"
+}
+
 # Resolve package conflicts by removing conflicting packages
 resolve_conflicts() {
     print_info "Checking for package conflicts..."
@@ -265,6 +277,9 @@ install_packages_interactive() {
         return 0
     fi
 
+    # Sync package database to ensure latest versions
+    sync_package_database
+
     # Resolve conflicts before interactive menu
     resolve_conflicts
 
@@ -335,6 +350,7 @@ main() {
         if [ "$SKIP_INTERACTIVE" = true ]; then
             # Non-interactive: install all packages
             if is_arch_linux; then
+                sync_package_database
                 resolve_conflicts
                 install_packages "$PACKAGES_DIR/core.txt" "core packages"
                 install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
