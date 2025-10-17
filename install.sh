@@ -5,7 +5,7 @@
 
 set -e  # Exit on error
 
-# Colors for output
+# Colors for output (defined early for error trap)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -189,6 +189,9 @@ print_warning() {
 print_error() {
     echo -e "${FRAPPE_RED}✗${NC} $1"
 }
+
+# Set up error trap now that print_error is defined
+trap 'echo ""; print_error "Installation failed at line $LINENO"; echo "Command: $BASH_COMMAND"; exit 1' ERR
 
 # Create backup of existing config
 backup_if_exists() {
