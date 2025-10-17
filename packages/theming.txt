@@ -28,4 +28,6 @@ qt6ct
 kvantum
 
 # Wallpaper tools (optional but recommended)
-imagemagick  # For creating custom wallpapers or solid color backgrounds
+# imagemagick  # For creating custom wallpapers or solid color backgrounds
+# Note: If you get "target not found", ensure 'extra' repository is enabled in /etc/pacman.conf
+# Then run: sudo pacman -Sy && sudo pacman -S imagemagick
