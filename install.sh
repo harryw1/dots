@@ -864,6 +864,44 @@ main() {
         print_warning "Tailscale not installed - skipping Tailscale setup"
     fi
 
+    # Set up fingerprint authentication (fprintd)
+    if command -v fprintd-enroll &> /dev/null; then
+        print_info "Setting up fingerprint authentication (fprintd)..."
+
+        # Backup existing PAM files
+        for pam_file in sudo system-local-login polkit-1; do
+            if [ -f "/etc/pam.d/$pam_file" ]; then
+                if [ ! -f "/etc/pam.d/${pam_file}.backup-pre-fprintd" ]; then
+                    if sudo cp "/etc/pam.d/$pam_file" "/etc/pam.d/${pam_file}.backup-pre-fprintd" 2>/dev/null; then
+                        print_info "Backed up /etc/pam.d/$pam_file"
+                    fi
+                fi
+            fi
+        done
+
+        # Install PAM configurations for fingerprint auth
+        if [ -d "$DOTFILES_DIR/fprintd/pam-configs" ]; then
+            for pam_file in sudo system-local-login polkit-1; do
+                if [ -f "$DOTFILES_DIR/fprintd/pam-configs/$pam_file" ]; then
+                    if sudo cp "$DOTFILES_DIR/fprintd/pam-configs/$pam_file" "/etc/pam.d/$pam_file" 2>/dev/null; then
+                        print_success "Installed fingerprint auth for $pam_file"
+                    else
+                        print_warning "Could not install PAM config for $pam_file (needs sudo)"
+                    fi
+                fi
+            done
+
+            print_info ""
+            print_info "Fingerprint authentication configured!"
+            print_info "To enroll your fingerprints, run: ${FRAPPE_BLUE}fprintd-enroll${NC}"
+            print_info "See fprintd/README.md for detailed instructions"
+        else
+            print_warning "fprintd PAM configs not found in dotfiles"
+        fi
+    else
+        print_warning "fprintd not installed - skipping fingerprint setup"
+    fi
+
     # Final summary
     echo ""
     echo ""

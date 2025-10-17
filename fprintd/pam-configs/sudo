@@ -1,0 +1,5 @@
+#%PAM-1.0
+# Fingerprint authentication for sudo
+# This tries fingerprint first, then falls back to password
+auth sufficient pam_fprintd.so
+auth include system-auth
