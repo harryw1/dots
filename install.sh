@@ -795,6 +795,25 @@ main() {
         print_warning "Bash aliases file not found, skipping"
     fi
 
+    # Install SDDM configuration
+    if [ -f "$DOTFILES_DIR/sddm/theme.conf" ]; then
+        print_info "Setting up SDDM theme configuration..."
+
+        # Create SDDM config directory if it doesn't exist
+        if sudo mkdir -p /etc/sddm.conf.d 2>/dev/null; then
+            # Create symlink to SDDM theme config
+            if sudo ln -sf "$DOTFILES_DIR/sddm/theme.conf" /etc/sddm.conf.d/theme.conf 2>/dev/null; then
+                print_success "Linked SDDM theme configuration"
+            else
+                print_warning "Failed to create SDDM config symlink (may need sudo)"
+            fi
+        else
+            print_warning "Failed to create /etc/sddm.conf.d directory (may need sudo)"
+        fi
+    else
+        print_warning "SDDM configuration file not found, skipping"
+    fi
+
     current_step=$((current_step + 1))
     print_step $current_step $total_steps "Setting up Neovim with LazyVim"
     install_lazyvim

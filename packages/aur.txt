@@ -8,6 +8,7 @@
 # Themes
 catppuccin-gtk-theme-frappe
 catppuccin-cursors-frappe
+catppuccin-sddm-theme-frappe
 
 # Communication
 discord

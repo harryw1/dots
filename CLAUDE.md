@@ -164,6 +164,7 @@ When editing configurations, files are in this repository but active via symlink
 | Rofi | `./rofi/` | `~/.config/rofi/` |
 | Mako | `./mako/` | `~/.config/mako/` |
 | Zathura | `./zathura/` | `~/.config/zathura/` |
+| SDDM | `./sddm/theme.conf` | `/etc/sddm.conf.d/theme.conf` |
 | Starship | `./starship/starship.toml` | `~/.config/starship.toml` |
 | Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (merged with LazyVim) |
 
@@ -220,6 +221,7 @@ When configuration or system issues arise:
 Each major component has its own README.md with detailed configuration information:
 - `hyprland/README.md` - Hyprland settings, keybinds, window rules
 - `waybar/README.md` - Waybar modules, styling, icons
+- `sddm/README.md` - SDDM login manager theme configuration with Catppuccin Frappe
 - `starship/README.md` - Starship shell prompt configuration with Catppuccin Frappe theme
 - `packages/README.md` - Package organization and installation details
 - `hyprland/wallpapers/README.md` - Wallpaper setup with hyprpaper
