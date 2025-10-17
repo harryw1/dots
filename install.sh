@@ -65,6 +65,7 @@ draw_box() {
         # Strip ANSI codes to calculate visible length
         local visible_title=$(strip_ansi "$title")
         local title_len=${#visible_title}
+        # Account for: ║ (1) + title + ║ (1) = title_len + 2
         local padding=$(( (width - title_len - 2) / 2 ))
         local right_padding=$(( width - title_len - padding - 2 ))
 
@@ -72,7 +73,7 @@ draw_box() {
         printf ' %.0s' $(seq 1 $padding)
         echo -en "${BOLD}${FRAPPE_MAUVE}${title}${NC}"
         printf ' %.0s' $(seq 1 $right_padding)
-        echo -e " ${FRAPPE_LAVENDER}║${NC}"
+        echo -e "${FRAPPE_LAVENDER}║${NC}"
 
         # Separator
         echo -en "${FRAPPE_LAVENDER}"
