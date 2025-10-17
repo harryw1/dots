@@ -51,4 +51,3 @@ playerctl
 grim
 slurp
 cliphist
-pacseek

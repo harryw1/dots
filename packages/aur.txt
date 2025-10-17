@@ -17,5 +17,8 @@ zoom
 slack-desktop
 visual-studio-code-bin
 
+# System utilities
+pacseek
+
 # Hyprland plugins (if needed)
 # hyprland-plugin-example
