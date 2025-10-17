@@ -163,16 +163,27 @@ CORE_PACKAGES=(
         if pacman -Q "$pkg" &> /dev/null; then
             version=$(pacman -Q "$pkg" 2>/dev/null)
             echo "✓ $version"
-            print_success "$version"
         else
             echo "✗ $pkg: NOT INSTALLED"
-            print_error "$pkg: NOT INSTALLED"
         fi
     done
 } >> "$OUTPUT_FILE"
 
+# Also show in terminal
+for pkg in "${CORE_PACKAGES[@]}"; do
+    if pacman -Q "$pkg" &> /dev/null; then
+        version=$(pacman -Q "$pkg" 2>/dev/null)
+        print_success "$version"
+    else
+        print_error "$pkg: NOT INSTALLED"
+    fi
+done
+
 # Check AUR packages
 print_info "Checking AUR packages..."
+
+AUR_PACKAGES=("waypaper" "quickwall" "swayosd-git" "visual-studio-code-bin")
+
 {
     echo ""
     echo "═══════════════════════════════════════════════════════════════════════════════"
@@ -180,7 +191,6 @@ print_info "Checking AUR packages..."
     echo "═══════════════════════════════════════════════════════════════════════════════"
     echo ""
 
-    AUR_PACKAGES=("waypaper" "quickwall" "swayosd-git" "visual-studio-code-bin")
     for pkg in "${AUR_PACKAGES[@]}"; do
         if pacman -Q "$pkg" &> /dev/null; then
             version=$(pacman -Q "$pkg" 2>/dev/null)
@@ -190,6 +200,16 @@ print_info "Checking AUR packages..."
         fi
     done
 } >> "$OUTPUT_FILE"
+
+# Also show in terminal
+for pkg in "${AUR_PACKAGES[@]}"; do
+    if pacman -Q "$pkg" &> /dev/null; then
+        version=$(pacman -Q "$pkg" 2>/dev/null)
+        print_success "$version"
+    else
+        print_error "$pkg: NOT INSTALLED"
+    fi
+done
 
 ################################################################################
 # SERVICE AND PROCESS STATUS
