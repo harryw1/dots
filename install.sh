@@ -585,6 +585,9 @@ main() {
         echo -n "Press Enter to continue or Ctrl+C to cancel..."
         read -r
         echo ""
+        echo ""
+        print_info "Starting installation..."
+        echo ""
     fi
 
     # Install packages unless explicitly skipped
