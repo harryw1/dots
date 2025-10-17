@@ -18,10 +18,14 @@ Starship is a minimal, blazing-fast, and infinitely customizable prompt for any 
 ## Installation
 
 The `install.sh` script automatically:
-- Symlinks the starship configuration:
-  - Source: `./starship/starship.toml`
-  - Target: `~/.config/starship.toml`
+- Installs the official Starship Catppuccin Powerline preset using:
+  ```bash
+  starship preset catppuccin-powerline -o ~/.config/starship.toml
+  ```
+- Configures it to use the Frappe variant (matching the theme)
 - Adds Starship initialization to your shell configuration (bash/zsh)
+
+**Note:** The preset is installed directly from Starship's official presets, not from the `starship.toml` file in this repository. The repository file serves as a reference/fallback.
 
 ## Shell Setup
 
@@ -43,6 +47,26 @@ starship init fish | source
 ```
 
 For other shells (Ion, Elvish, Tcsh, Nushell, Xonsh, PowerShell), see the [official Starship documentation](https://starship.rs/guide/#%F0%9F%9A%80-installation).
+
+### Manual Installation
+
+If you want to manually install or reinstall the preset:
+
+```bash
+# Install the Catppuccin Powerline preset
+starship preset catppuccin-powerline -o ~/.config/starship.toml
+
+# Then change the palette to Frappe (line 32)
+# Edit ~/.config/starship.toml and change:
+# palette = 'catppuccin_mocha'
+# to:
+# palette = 'catppuccin_frappe'
+```
+
+Or use sed to make the change automatically:
+```bash
+sed -i "s/palette = 'catppuccin_mocha'/palette = 'catppuccin_frappe'/" ~/.config/starship.toml
+```
 
 ## Requirements
 
