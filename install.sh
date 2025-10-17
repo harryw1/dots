@@ -194,7 +194,8 @@ install_packages() {
     print_info "Found $package_count packages to install"
 
     # Install with pacman, using --ask=4 to auto-remove conflicting packages
-    if ! sudo pacman -S --needed --noconfirm --ask=4 - < <(grep -v '^#' "$package_file" | grep -v '^$'); then
+    # Strip inline comments and trailing whitespace from package names
+    if ! sudo pacman -S --needed --noconfirm --ask=4 - < <(grep -v '^#' "$package_file" | grep -v '^$' | sed 's/#.*//' | sed 's/[[:space:]]*$//'); then
         print_error "Failed to install some packages from $description"
         return 1
     fi
@@ -282,7 +283,8 @@ install_aur_packages() {
     local package_count=$(grep -v '^#' "$package_file" | grep -v '^$' | wc -l)
     print_info "Found $package_count AUR packages to install"
 
-    if ! $aur_helper -S --needed --noconfirm - < <(grep -v '^#' "$package_file" | grep -v '^$'); then
+    # Strip inline comments and trailing whitespace from package names
+    if ! $aur_helper -S --needed --noconfirm - < <(grep -v '^#' "$package_file" | grep -v '^$' | sed 's/#.*//' | sed 's/[[:space:]]*$//'); then
         print_warning "Failed to install some AUR packages"
         return 1
     fi
