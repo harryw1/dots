@@ -1,0 +1,70 @@
+# Zathura Configuration
+# Catppuccin Frappe Theme
+
+# Catppuccin Frappe Colors
+set default-bg                  "#303446"
+set default-fg                  "#c6d0f5"
+
+set statusbar-bg                "#303446"
+set statusbar-fg                "#c6d0f5"
+
+set inputbar-bg                 "#303446"
+set inputbar-fg                 "#c6d0f5"
+
+set notification-bg             "#303446"
+set notification-fg             "#c6d0f5"
+
+set notification-error-bg       "#303446"
+set notification-error-fg       "#e78284"
+
+set notification-warning-bg     "#303446"
+set notification-warning-fg     "#e5c890"
+
+set highlight-color             "#e5c890"
+set highlight-active-color      "#ca9ee6"
+
+set completion-bg               "#303446"
+set completion-fg               "#c6d0f5"
+
+set completion-highlight-bg     "#626880"
+set completion-highlight-fg     "#c6d0f5"
+
+set recolor-lightcolor          "#303446"
+set recolor-darkcolor           "#c6d0f5"
+
+# Index mode colors
+set index-bg                    "#303446"
+set index-fg                    "#c6d0f5"
+
+set index-active-bg             "#626880"
+set index-active-fg             "#c6d0f5"
+
+# Settings
+set selection-clipboard clipboard
+set recolor true
+set recolor-keephue true
+
+# Appearance
+set font "FiraCode Nerd Font Mono 11"
+set adjust-open "width"
+set pages-per-row 1
+set scroll-page-aware true
+set scroll-full-overlap 0.01
+set scroll-step 100
+
+# Zoom settings
+set zoom-min 10
+set zoom-max 1000
+set zoom-step 10
+
+# Window settings
+set window-title-basename true
+set window-title-page true
+
+# Appearance tweaks
+set statusbar-h-padding 10
+set statusbar-v-padding 10
+set page-padding 5
+
+# Smooth scrolling
+set smooth-scroll true

@@ -334,6 +334,16 @@ main() {
         echo ""
     fi
 
+    # Install Zathura configuration
+    if [ -d "$DOTFILES_DIR/zathura" ]; then
+        print_info "Installing Zathura configuration..."
+        create_symlink "$DOTFILES_DIR/zathura" "$CONFIG_DIR/zathura" "Zathura"
+        echo ""
+    else
+        print_warning "Zathura configuration directory not found, skipping"
+        echo ""
+    fi
+
     # Summary
     echo ""
     print_success "Installation complete!"

@@ -3,13 +3,48 @@
 
 # Office suite
 libreoffice-fresh
+libreoffice-fresh-en-gb
 
-# PDF viewer
+# Spell checking
+hunspell
+hunspell-en_us
+hunspell-en_gb
+aspell
+aspell-en
+
+# PDF tools
 zathura
 zathura-pdf-mupdf
+pdfarranger
+qpdfview
 
-# Image viewer
-imv
-
-# Document tools
+# Document conversion
 pandoc
+texlive-core
+texlive-latexextra
+
+# Office fonts
+ttf-liberation
+ttf-dejavu
+ttf-carlito
+ttf-caladea
+
+# Calculator
+gnome-calculator
+
+# Image viewer and tools
+imv
+gthumb
+
+# Note-taking
+obsidian
+
+# Email and calendar
+thunderbird
+
+# Archive manager
+xarchiver
+
+# Printing (optional - uncomment if needed)
+# cups
+# system-config-printer

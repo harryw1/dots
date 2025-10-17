@@ -1,18 +1,21 @@
 # AUR packages (requires an AUR helper like yay or paru)
 #
-# First, install an AUR helper if you don't have one:
-#   Install yay:
-#     git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
-#   Or install paru:
-#     git clone https://aur.archlinux.org/paru.git && cd paru && makepkg -si
-#
+# Note: The install script will automatically install yay if needed
 # Then install packages with:
 #   yay -S --needed - < packages/aur.txt
 #   or: paru -S --needed - < packages/aur.txt
 
-# Additional themes
+# Themes
 catppuccin-gtk-theme-frappe
 catppuccin-cursors-frappe
+
+# Communication
+discord
+zoom
+
+# Productivity
+slack-desktop
+visual-studio-code-bin
 
 # Hyprland plugins (if needed)
 # hyprland-plugin-example
