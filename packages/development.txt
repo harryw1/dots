@@ -18,6 +18,7 @@ lldb
 # Build tools
 base-devel
 git
+github-cli
 
 # Text editors and tools
 neovim
