@@ -389,10 +389,10 @@ setup_wallpapers() {
 
     # Create basic waypaper config if it doesn't exist
     if [ ! -f "$HOME/.config/waypaper/config.ini" ]; then
-        cat > "$HOME/.config/waypaper/config.ini" << 'EOF'
+        cat > "$HOME/.config/waypaper/config.ini" << EOF
 [Settings]
 language = en
-folder = ~/.local/share/catppuccin-wallpapers/frappe
+folder = $HOME/.local/share/catppuccin-wallpapers/frappe
 backend = hyprpaper
 monitors = all
 wallpaper =
