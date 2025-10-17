@@ -91,8 +91,8 @@ draw_box_line() {
     local visible_text=$(strip_ansi "$text")
     local text_length=${#visible_text}
 
-    # Calculate padding: width - text_length - 3 (for "║ " and " ║")
-    local padding=$((width - text_length - 3))
+    # Calculate padding: width - text_length - 4 (for "║ " and " ║" = 4 chars total)
+    local padding=$((width - text_length - 4))
 
     # Print the line
     echo -en "${FRAPPE_LAVENDER}║${NC} "
@@ -594,20 +594,11 @@ main() {
     fi
 
     # Install packages unless explicitly skipped
-    echo "[DEBUG] SKIP_PACKAGES=$SKIP_PACKAGES"
     if [ "$SKIP_PACKAGES" = false ]; then
-        echo "[DEBUG] Checking if Arch Linux..."
         if is_arch_linux; then
-            echo "[DEBUG] Arch Linux detected, proceeding with installation"
-            echo "[DEBUG] current_step before increment: '$current_step'"
-            echo "[DEBUG] total_steps: '$total_steps'"
             current_step=$((current_step + 1))
-            echo "[DEBUG] current_step after increment: '$current_step'"
-            echo "[DEBUG] About to call print_step"
             print_step $current_step $total_steps "Checking repository configuration"
-            echo "[DEBUG] About to call check_repositories"
             check_repositories || return 1
-            echo "[DEBUG] check_repositories completed"
 
             current_step=$((current_step + 1))
             print_step $current_step $total_steps "Optimizing mirrorlist"
