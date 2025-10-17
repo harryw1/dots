@@ -757,6 +757,44 @@ main() {
         print_warning "Starship not installed - will be configured when packages are installed"
     fi
 
+    # Install Bash aliases
+    if [ -f "$DOTFILES_DIR/bash/.bash_aliases" ]; then
+        print_info "Setting up bash aliases..."
+
+        # Create symlink for aliases file
+        create_symlink "$DOTFILES_DIR/bash/.bash_aliases" "$HOME/.bash_aliases" "Bash aliases"
+
+        # Add source command to .bashrc if it exists and doesn't already source aliases
+        if [ -f "$HOME/.bashrc" ]; then
+            if ! grep -q '\.bash_aliases' "$HOME/.bashrc"; then
+                echo '' >> "$HOME/.bashrc"
+                echo '# Load custom bash aliases' >> "$HOME/.bashrc"
+                echo 'if [ -f ~/.bash_aliases ]; then' >> "$HOME/.bashrc"
+                echo '    . ~/.bash_aliases' >> "$HOME/.bashrc"
+                echo 'fi' >> "$HOME/.bashrc"
+                print_success "Added bash aliases to .bashrc"
+            else
+                print_info "Bash aliases already configured in .bashrc"
+            fi
+        fi
+
+        # Do the same for .zshrc (some aliases work in zsh too)
+        if [ -f "$HOME/.zshrc" ]; then
+            if ! grep -q '\.bash_aliases' "$HOME/.zshrc"; then
+                echo '' >> "$HOME/.zshrc"
+                echo '# Load custom bash aliases (compatible with zsh)' >> "$HOME/.zshrc"
+                echo 'if [ -f ~/.bash_aliases ]; then' >> "$HOME/.zshrc"
+                echo '    . ~/.bash_aliases' >> "$HOME/.zshrc"
+                echo 'fi' >> "$HOME/.zshrc"
+                print_success "Added bash aliases to .zshrc"
+            else
+                print_info "Bash aliases already configured in .zshrc"
+            fi
+        fi
+    else
+        print_warning "Bash aliases file not found, skipping"
+    fi
+
     current_step=$((current_step + 1))
     print_step $current_step $total_steps "Setting up Neovim with LazyVim"
     install_lazyvim
