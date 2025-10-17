@@ -67,6 +67,23 @@ Backups are preserved in `~/.config-backup-TIMESTAMP/`
 - **Waybar**: Status bar with Catppuccin Frappe theme
   - See [waybar/README.md](waybar/README.md) for details
 
+## Testing
+
+After installation, verify everything works correctly:
+
+```bash
+# View the testing checklist
+cat TESTING.md
+```
+
+See [TESTING.md](TESTING.md) for a comprehensive checklist covering:
+- Display scaling and visual quality
+- Keyboard shortcuts and window management
+- Touchpad gestures
+- Application launching and theming
+- Waybar, Mako, and system utilities
+- Performance and troubleshooting
+
 ## Troubleshooting
 
 If you encounter configuration errors or issues, use the error collection script:
