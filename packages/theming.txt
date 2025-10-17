@@ -20,7 +20,8 @@ ttf-liberation
 
 # Icon fonts
 ttf-font-awesome
-ttf-nerd-fonts-symbols  # Additional Nerd Font symbols for Waybar and icons
+# ttf-nerd-fonts-symbols  # Additional Nerd Font symbols for Waybar and icons
+# Note: Commented out due to repository sync issues. Install manually: sudo pacman -S ttf-nerd-fonts-symbols
 
 # Qt theming
 qt5ct
