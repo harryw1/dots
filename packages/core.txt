@@ -31,6 +31,7 @@ firefox
 networkmanager
 nm-connection-editor
 network-manager-applet
+tailscale  # Mesh VPN for secure device connections
 
 # Bluetooth
 bluez

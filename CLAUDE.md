@@ -224,6 +224,7 @@ Each major component has its own README.md with detailed configuration informati
 - `waybar/README.md` - Waybar modules, styling, icons
 - `wlogout/README.md` - Wayland logout menu with Catppuccin Frappe theme
 - `sddm/README.md` - SDDM login manager theme configuration with Catppuccin Frappe
+- `tailscale/README.md` - Tailscale mesh VPN and tsui terminal interface setup
 - `starship/README.md` - Starship shell prompt configuration with Catppuccin Frappe theme
 - `packages/README.md` - Package organization and installation details
 - `hyprland/wallpapers/README.md` - Wallpaper setup with hyprpaper

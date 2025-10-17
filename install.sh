@@ -828,6 +828,42 @@ main() {
     # Create wallpapers directory
     mkdir -p "$HOME/.config/hypr/wallpapers"
 
+    # Set up Tailscale and tsui
+    if command -v tailscale &> /dev/null; then
+        print_info "Setting up Tailscale..."
+
+        # Enable Tailscale service
+        if sudo systemctl enable tailscaled 2>/dev/null; then
+            print_success "Tailscale service enabled"
+        else
+            print_warning "Could not enable Tailscale service (needs sudo)"
+        fi
+
+        # Install tsui if not already installed
+        if ! command -v tsui &> /dev/null; then
+            print_info "Installing tsui (Tailscale TUI)..."
+
+            TSUI_URL="https://github.com/neuralinkcorp/tsui/releases/latest/download/tsui-linux-amd64"
+            TSUI_TMP="/tmp/tsui-linux-amd64"
+
+            if curl -sL "$TSUI_URL" -o "$TSUI_TMP" 2>/dev/null; then
+                chmod +x "$TSUI_TMP"
+                if sudo mv "$TSUI_TMP" /usr/local/bin/tsui 2>/dev/null; then
+                    print_success "tsui installed to /usr/local/bin/tsui"
+                else
+                    print_warning "Could not install tsui (needs sudo)"
+                    rm -f "$TSUI_TMP"
+                fi
+            else
+                print_warning "Could not download tsui"
+            fi
+        else
+            print_info "tsui already installed"
+        fi
+    else
+        print_warning "Tailscale not installed - skipping Tailscale setup"
+    fi
+
     # Final summary
     echo ""
     echo ""
