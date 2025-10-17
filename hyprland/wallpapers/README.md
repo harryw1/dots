@@ -2,43 +2,110 @@
 
 This directory is for your wallpaper images used by hyprpaper.
 
-## Quick Setup
+## Quick Setup with Waypaper (Recommended)
 
-1. **Add your own wallpaper:**
+If you ran `./install.sh --packages-all`, you already have access to a curated collection of Catppuccin Frappe wallpapers!
+
+1. **Browse and select wallpapers with the GUI:**
    ```bash
-   # Copy your wallpaper here
-   cp ~/Downloads/my-wallpaper.jpg ~/.config/hypr/wallpapers/
+   # Launch waypaper to browse the collection
+   waypaper
+   ```
+   - The collection is located at: `~/.local/share/catppuccin-wallpapers/frappe/`
+   - Contains 50-200 curated Catppuccin Frappe wallpapers
+   - Click any wallpaper to set it instantly via hyprpaper
 
-   # Update hyprpaper.conf to use it
-   vim ~/.config/hypr/hyprpaper.conf
+2. **Set wallpaper to restore on startup (optional):**
+   ```bash
+   # Add to hyprland autostart to restore last wallpaper
+   echo "exec-once = waypaper --restore" >> ~/.config/hypr/conf/autostart.conf
    ```
 
-2. **Use a Catppuccin Frappe themed wallpaper:**
+## Download New Wallpapers from Unsplash
 
-   Download from these sources:
-   - **Official Catppuccin wallpapers**: https://github.com/catppuccin/wallpapers
-   - **Recommended**: Use any wallpaper from the Frappe folder
+Use QuickWall to download wallpapers directly from Unsplash:
 
-   ```bash
-   # Example: Download a Catppuccin wallpaper
-   cd ~/.config/hypr/wallpapers/
-   wget https://raw.githubusercontent.com/catppuccin/wallpapers/main/minimalistic/cat-sound.png
+```bash
+# Download a random wallpaper
+quickwall
 
-   # Update hyprpaper.conf
-   # Change the preload and wallpaper lines to:
-   # preload = ~/.config/hypr/wallpapers/cat-sound.png
-   # wallpaper = , ~/.config/hypr/wallpapers/cat-sound.png
-   ```
+# Download with specific search term
+quickwall --search "landscape"
 
-3. **Create a solid color background (temporary solution):**
+# Save to specific directory
+quickwall --dir ~/.config/hypr/wallpapers/
+```
 
-   If you don't have a wallpaper yet, create a simple solid color:
-   ```bash
-   # Create a 1920x1080 image with Catppuccin Frappe base color (#303446)
-   convert -size 1920x1080 xc:'#303446' ~/.config/hypr/wallpapers/catppuccin-frappe.png
-   ```
+## Manual Wallpaper Management
 
-   Note: Requires `imagemagick` package: `sudo pacman -S imagemagick`
+### Add Your Own Wallpaper
+
+```bash
+# Copy your wallpaper here
+cp ~/Downloads/my-wallpaper.jpg ~/.config/hypr/wallpapers/
+
+# Set it using hyprctl
+hyprctl hyprpaper preload ~/.config/hypr/wallpapers/my-wallpaper.jpg
+hyprctl hyprpaper wallpaper ",~/.config/hypr/wallpapers/my-wallpaper.jpg"
+```
+
+### Use hyprctl for Direct Control
+
+```bash
+# Preload a wallpaper
+hyprctl hyprpaper preload ~/path/to/wallpaper.png
+
+# Set wallpaper for all monitors
+hyprctl hyprpaper wallpaper ",~/path/to/wallpaper.png"
+
+# Set wallpaper for specific monitor
+hyprctl hyprpaper wallpaper "DP-1,~/path/to/wallpaper.png"
+
+# List loaded wallpapers
+hyprctl hyprpaper listloaded
+```
+
+### Create Random Wallpaper Script
+
+Create `~/.config/hypr/scripts/random-wallpaper.sh`:
+```bash
+#!/bin/bash
+WALLPAPER_DIR="$HOME/.local/share/catppuccin-wallpapers/frappe"
+WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -name "*.png" -o -name "*.jpg" \) | shuf -n 1)
+
+hyprctl hyprpaper preload "$WALLPAPER"
+hyprctl hyprpaper wallpaper ",$WALLPAPER"
+```
+
+Then make it executable:
+```bash
+chmod +x ~/.config/hypr/scripts/random-wallpaper.sh
+```
+
+## Alternative: Download from GitHub
+
+### Official Catppuccin Wallpapers
+
+```bash
+cd ~/.config/hypr/wallpapers/
+wget https://raw.githubusercontent.com/catppuccin/wallpapers/main/minimalistic/cat-sound.png
+```
+
+More options at: https://github.com/catppuccin/wallpapers
+
+## Fallback: Solid Color Background (Optional)
+
+If you want a simple solid color background for testing:
+
+```bash
+# Requires imagemagick (install manually if needed)
+sudo pacman -S imagemagick
+
+# Create solid color background
+convert -size 2560x1600 xc:'#303446' ~/.config/hypr/wallpapers/catppuccin-frappe.png
+```
+
+Note: This is only recommended for testing transparency effects.
 
 ## Apply Wallpaper Changes
 

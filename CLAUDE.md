@@ -4,62 +4,194 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This is a dotfiles repository for Arch Linux and Hyprland window manager configuration. It serves as a staging area for configuration files before deployment to the system.
+This is a dotfiles repository for Arch Linux and Hyprland window manager configuration. It serves as a staging area for configuration files before deployment via symlinks to the system.
 
-## Configuration Structure
+## Architecture Overview
 
-- `hyprland/` - Hyprland window manager configuration files (modular setup)
-  - `hyprland.conf` - Main entry point that sources all other configs
-  - `conf/` - Modular configuration directory
-    - `theme.conf` - Catppuccin Frappe color definitions
-    - `general.conf` - General settings (gaps, borders, layout)
-    - `decorations.conf` - Visual effects (blur, shadows, rounding)
-    - `animations.conf` - Animation settings with custom bezier curves
-    - `keybinds.conf` - Keyboard shortcuts
-    - `windowrules.conf` - Window-specific rules and layer rules
-    - `monitors.conf` - Monitor configuration
-    - `input.conf` - Input device settings (keyboard, mouse, touchpad, gestures)
-    - `autostart.conf` - Programs to launch on startup
-  - `README.md` - Detailed documentation for Hyprland configuration
+### Symlink-Based Deployment Model
 
-- `waybar/` - Waybar status bar configuration
-  - `config.jsonc` - Main Waybar configuration with module settings
-  - `style.css` - Catppuccin Frappe themed styling
-  - `README.md` - Waybar documentation and customization guide
+This repository uses a **symlink-based architecture** where configuration files live in the repository and are symlinked to `~/.config/`:
 
-## Design Goals
+- Repository files remain editable via git while being actively used by the system
+- Changes to files in this repo immediately affect the running system
+- `install.sh` creates symlinks: `~/.config/hypr` → `./hyprland/`, etc.
+- Backups are created before symlinking: `~/.config-backup-TIMESTAMP/`
+- `uninstall.sh` removes symlinks (backups are preserved)
 
-Per README.md, this configuration aims to:
-- Support Python and C++ development workflows
-- Support office productivity tools
-- Include WiFi and Bluetooth management (GUI or TUI)
-- Follow Catppuccin Frappe color scheme aesthetic
+### Modular Configuration System
 
-## Working with Configuration Files
+**Hyprland** uses a modular approach (hyprland/conf/):
+- `hyprland.conf` is the main entry point that sources all modular configs
+- Each `.conf` file handles a specific concern (theme, keybinds, animations, etc.)
+- Modifications should be made to individual modular files, not the main file
+- Location: `hyprland/conf/*.conf`
 
-When adding or modifying configuration files:
-1. Place configuration files in appropriately named subdirectories (e.g., `hyprland/`, `waybar/`, `kitty/`)
-2. Maintain compatibility with Arch Linux package paths and conventions
-3. Follow the Catppuccin Frappe color palette when adding theme-related settings
-4. Consider both GUI and terminal-based alternatives for system management tools
+**All configurations** follow the Catppuccin Frappe color scheme:
+- Theme colors defined in: `hyprland/conf/theme.conf`
+- Waybar styling: `waybar/style.css`
+- Terminal: `kitty/kitty.conf`
+- See component README.md files for color references
 
-## Installation/Deployment
+### Package Management Strategy
 
-Configuration files are deployed using the `install.sh` script, which:
-1. Optionally installs packages from `packages/` directory (interactive or all at once)
-2. Backs up existing configurations to `~/.config-backup-TIMESTAMP/`
-3. Creates symlinks from this repository to `~/.config/` or other XDG Base Directory paths
+Packages are organized by category in `packages/*.txt`:
+- `core.txt` - Essential Hyprland system packages
+- `hypr-ecosystem.txt` - Hypr-specific tools (hyprpaper, hypridle, etc.)
+- `theming.txt` - Fonts (Nerd Fonts required), icons, cursors, GTK themes
+- `development.txt` - Python, C++, Neovim, LazyVim, build tools
+- `productivity.txt` - LibreOffice, PDF viewer, file manager, Discord
+- `aur.txt` - AUR packages (waypaper, quickwall, SwayOSD, VS Code, Catppuccin GTK themes)
 
-### Package Management
+The `install.sh` script handles:
+- Repository configuration and mirrorlist optimization
+- Conflict resolution (e.g., PulseAudio → PipeWire migration)
+- Automatic yay installation for AUR packages
+- LazyVim setup with Catppuccin theme integration
+- Wallpaper collection setup (clones ~50-200 Catppuccin Frappe wallpapers)
 
-Packages are tracked in the `packages/` directory:
-- `core.txt` - Essential Hyprland packages
-- `hypr-ecosystem.txt` - Optional Hypr tools
-- `theming.txt` - Fonts, icons, cursors
-- `development.txt` - Python, C++, build tools
-- `productivity.txt` - Office and productivity tools
-- `aur.txt` - AUR packages (requires yay or paru)
+## Common Development Commands
 
-Install packages with: `./install.sh --packages` (interactive) or `./install.sh --packages-all` (non-interactive)
+### Installation and Deployment
 
-Manual installation: `sudo pacman -S --needed - < packages/core.txt`
+```bash
+# Fresh installation with all packages (recommended for new systems)
+./install.sh --packages-all
+
+# Interactive package selection
+./install.sh --packages
+
+# Config-only installation (no packages)
+./install.sh
+
+# Remove symlinks
+./uninstall.sh
+
+# Show installation options
+./install.sh --help
+```
+
+### Configuration Management
+
+```bash
+# Reload Hyprland configuration (test changes)
+hyprctl reload
+
+# Check for configuration errors
+hyprctl configerrors
+
+# Validate Hyprland config and collect diagnostics
+./collect-errors.sh
+
+# View current monitor settings
+hyprctl monitors
+
+# View active windows
+hyprctl clients
+```
+
+### Wallpaper Management
+
+```bash
+# Launch waypaper GUI to browse wallpapers
+waypaper
+
+# Download new wallpaper from Unsplash
+quickwall
+quickwall --search "landscape"
+
+# Manual hyprctl commands
+hyprctl hyprpaper preload ~/path/to/wallpaper.png
+hyprctl hyprpaper wallpaper ",~/path/to/wallpaper.png"
+hyprctl hyprpaper listloaded
+
+# Wallpaper collection location
+ls ~/.local/share/catppuccin-wallpapers/frappe/
+```
+
+### Testing and Debugging
+
+```bash
+# Run through testing checklist
+cat TESTING.md
+
+# Collect debug information for troubleshooting
+./collect-errors.sh
+
+# Check service status
+pgrep waybar
+pgrep mako
+systemctl --user status pipewire
+
+# View Hyprland logs
+tail -f ~/.local/share/hyprland/hyprland.log
+
+# Test notifications
+notify-send "Test" "This is a test notification"
+```
+
+### Manual Package Management
+
+```bash
+# Install specific package category
+sudo pacman -S --needed - < packages/core.txt
+sudo pacman -S --needed - < packages/development.txt
+
+# Install AUR packages (requires yay or paru)
+yay -S --needed - < packages/aur.txt
+
+# Check installed package versions
+hyprctl version
+waybar --version
+```
+
+## Configuration File Locations
+
+When editing configurations, files are in this repository but active via symlinks:
+
+| Component | Repository Path | System Symlink Target |
+|-----------|----------------|----------------------|
+| Hyprland | `./hyprland/` | `~/.config/hypr/` |
+| Waybar | `./waybar/` | `~/.config/waybar/` |
+| Kitty | `./kitty/` | `~/.config/kitty/` |
+| Rofi | `./rofi/` | `~/.config/rofi/` |
+| Mako | `./mako/` | `~/.config/mako/` |
+| Zathura | `./zathura/` | `~/.config/zathura/` |
+| Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (merged with LazyVim) |
+
+## Key Design Decisions
+
+1. **Catppuccin Frappe Everywhere**: All theming must use the Catppuccin Frappe palette. Color definitions are in `hyprland/conf/theme.conf`.
+
+2. **LazyVim Integration**: The install script clones LazyVim starter and then overlays custom configurations from `./nvim/lua/`. This allows upstream LazyVim updates while preserving customizations.
+
+3. **Conflict Resolution**: The install script automatically resolves package conflicts (e.g., PulseAudio → PipeWire) using `pacman --ask=4`.
+
+4. **Repository Management**: The install script checks and fixes repository configuration, optimizes mirrorlist with reflector, and syncs databases before installation.
+
+5. **XDG Base Directory Compliance**: All configurations follow XDG standards and are placed in `~/.config/`.
+
+6. **Wallpaper Management**: Uses waypaper (GUI) + hyprpaper (backend) + Catppuccin wallpaper collection. The install script automatically clones a curated collection of ~50-200 Frappe wallpapers to `~/.local/share/catppuccin-wallpapers/`. ImageMagick is excluded to avoid package conflicts; waypaper provides a better user experience for wallpaper selection.
+
+## Troubleshooting Workflow
+
+When configuration issues arise:
+
+1. Run `./collect-errors.sh` to generate `debug-output.txt`
+2. Review the output for errors: `cat debug-output.txt`
+3. If on a remote machine, commit and push the debug output:
+   ```bash
+   git add debug-output.txt
+   git commit -m "Add debug output from target machine"
+   git push origin main
+   ```
+4. Pull on development machine and analyze: `git pull && cat debug-output.txt`
+
+## Component Documentation
+
+Each major component has its own README.md with detailed configuration information:
+- `hyprland/README.md` - Hyprland settings, keybinds, window rules
+- `waybar/README.md` - Waybar modules, styling, icons
+- `packages/README.md` - Package organization and installation details
+- `hyprland/wallpapers/README.md` - Wallpaper setup with hyprpaper
+
+Refer to component READMEs for specific customization guidance.

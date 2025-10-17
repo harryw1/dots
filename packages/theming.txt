@@ -27,5 +27,7 @@ qt5ct
 qt6ct
 kvantum
 
-# Wallpaper tools (optional but recommended)
-imagemagick  # For creating custom wallpapers or solid color backgrounds
+# Wallpaper tools (optional)
+# imagemagick  # For creating solid color backgrounds (manual install if needed)
+# Note: We use waypaper + Catppuccin wallpapers instead. To install manually:
+#   sudo pacman -S imagemagick

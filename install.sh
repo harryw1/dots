@@ -342,6 +342,81 @@ install_lazyvim() {
     echo ""
 }
 
+# Setup Catppuccin wallpaper collection
+setup_wallpapers() {
+    print_info "Setting up Catppuccin wallpaper collection..."
+
+    local wallpaper_collection_dir="$HOME/.local/share/catppuccin-wallpapers"
+    local hypr_wallpapers_dir="$HOME/.config/hypr/wallpapers"
+
+    # Clone Catppuccin wallpaper collection (organized by variant)
+    if [ ! -d "$wallpaper_collection_dir" ]; then
+        print_info "Cloning Catppuccin wallpaper collection (this may take a minute)..."
+        if git clone --depth 1 https://github.com/42Willow/wallpapers "$wallpaper_collection_dir" 2>/dev/null; then
+            print_success "Wallpaper collection cloned to $wallpaper_collection_dir"
+        else
+            print_warning "Failed to clone wallpaper collection"
+            print_info "You can clone manually: git clone https://github.com/42Willow/wallpapers ~/.local/share/catppuccin-wallpapers"
+            return 1
+        fi
+    else
+        print_info "Wallpaper collection already exists at $wallpaper_collection_dir"
+    fi
+
+    # Create hyprpaper wallpapers directory
+    mkdir -p "$hypr_wallpapers_dir"
+
+    # Copy 2-3 default Frappe wallpapers for immediate use
+    if [ -d "$wallpaper_collection_dir/frappe" ]; then
+        print_info "Copying default Frappe wallpapers..."
+        local copied=0
+        find "$wallpaper_collection_dir/frappe" -type f \( -name "*.png" -o -name "*.jpg" \) 2>/dev/null | head -3 | \
+        while read wallpaper; do
+            cp "$wallpaper" "$hypr_wallpapers_dir/" && copied=$((copied + 1))
+        done
+
+        # Count wallpapers in collection
+        local total_wallpapers=$(find "$wallpaper_collection_dir/frappe" -type f \( -name "*.png" -o -name "*.jpg" \) 2>/dev/null | wc -l)
+        print_success "Copied 3 default wallpapers ($total_wallpapers available in collection)"
+    else
+        print_warning "Frappe wallpapers not found in collection"
+    fi
+
+    # Create waypaper config directory
+    mkdir -p "$HOME/.config/waypaper"
+
+    # Create basic waypaper config if it doesn't exist
+    if [ ! -f "$HOME/.config/waypaper/config.ini" ]; then
+        cat > "$HOME/.config/waypaper/config.ini" << 'EOF'
+[Settings]
+language = en
+folder = ~/.local/share/catppuccin-wallpapers/frappe
+backend = hyprpaper
+monitors = all
+wallpaper =
+fill = fill
+sort = name
+color = #303446
+subfolders = False
+show_hidden = False
+show_gifs_only = False
+post_command =
+number_of_columns = 3
+swww_transition_type =
+swww_transition_step = 90
+swww_transition_angle = 0
+swww_transition_duration = 2
+EOF
+        print_success "Created waypaper configuration"
+    fi
+
+    print_success "Wallpaper setup complete!"
+    echo ""
+    print_info "Wallpaper collection: $wallpaper_collection_dir"
+    print_info "Browse wallpapers with: waypaper"
+    echo ""
+}
+
 # Interactive package installation
 install_packages_interactive() {
     if ! is_arch_linux; then
@@ -442,6 +517,9 @@ main() {
                 install_packages "$PACKAGES_DIR/development.txt" "development packages"
                 install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
                 install_aur_packages
+
+                # Setup wallpapers after all packages are installed
+                setup_wallpapers
             else
                 print_warning "Not running Arch Linux - skipping package installation"
             fi
@@ -542,9 +620,10 @@ main() {
         echo "  === Post-Installation Setup ==="
         echo ""
         echo "  Essential setup (do these now):"
-        echo "  1. Set up a wallpaper:"
-        echo "     See: ~/.config/hypr/wallpapers/README.md"
-        echo "     Quick: convert -size 2560x1600 xc:'#303446' ~/.config/hypr/wallpapers/catppuccin-frappe.png"
+        echo "  1. Browse and select a wallpaper:"
+        echo "     GUI: Run 'waypaper' to browse the Catppuccin collection"
+        echo "     Collection: ~/.local/share/catppuccin-wallpapers/frappe/"
+        echo "     See also: ~/.config/hypr/wallpapers/README.md"
         echo ""
         echo "  2. Configure Firefox dark mode manually:"
         echo "     Open Firefox → about:preferences → General → Website appearance → Choose 'Dark'"

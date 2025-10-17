@@ -21,5 +21,9 @@ visual-studio-code-bin
 pacseek
 swayosd-git  # On-screen display for volume and brightness
 
+# Wallpaper management
+waypaper  # GUI wallpaper manager for Wayland (works with hyprpaper)
+quickwall  # CLI tool for downloading wallpapers from Unsplash
+
 # Hyprland plugins (if needed)
 # hyprland-plugin-example

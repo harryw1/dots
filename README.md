@@ -27,11 +27,12 @@ This will automatically:
    - Theming (Catppuccin themes, Nerd Fonts, icons)
    - Development tools (Python, C++, Neovim, LazyVim)
    - Productivity (LibreOffice, PDF tools, Discord, etc.)
-   - **AUR packages** (SwayOSD, Visual Studio Code, etc.)
+   - **AUR packages** (waypaper, quickwall, SwayOSD, VS Code, etc.)
 4. Install yay AUR helper if not present
-5. Backup existing configs to `~/.config-backup-TIMESTAMP/`
-6. Create symlinks from this repository to `~/.config/`
-7. Set up LazyVim with Catppuccin Frappe theme
+5. Clone Catppuccin Frappe wallpaper collection (~50-200 wallpapers)
+6. Backup existing configs to `~/.config-backup-TIMESTAMP/`
+7. Create symlinks from this repository to `~/.config/`
+8. Set up LazyVim with Catppuccin Frappe theme
 
 **Interactive installation (choose which package groups to install):**
 ```bash
@@ -54,14 +55,15 @@ Only creates symlinks, doesn't install any packages.
 
 After running `./install.sh --packages-all`, complete these essential steps:
 
-1. **Set up a wallpaper** (required for transparency effects):
+1. **Browse and select a wallpaper** (required for transparency effects):
    ```bash
-   # Quick option: Create solid color background
-   convert -size 2560x1600 xc:'#303446' ~/.config/hypr/wallpapers/catppuccin-frappe.png
-
-   # Or download a Catppuccin wallpaper
-   # See: ~/.config/hypr/wallpapers/README.md
+   # Launch waypaper GUI to browse the Catppuccin Frappe collection
+   waypaper
    ```
+   - The install script automatically cloned 50-200 curated Catppuccin Frappe wallpapers
+   - Collection location: `~/.local/share/catppuccin-wallpapers/frappe/`
+   - Click any wallpaper to set it via hyprpaper
+   - See `~/.config/hypr/wallpapers/README.md` for more options
 
 2. **Apply theme changes**: Log out and log back in to Hyprland for GTK themes to apply (enables dark mode for Thunar, LibreOffice, etc.)
 
@@ -83,7 +85,8 @@ Packages are organized in the `packages/` directory:
 - Automatic yay installation for AUR packages
 - SwayOSD for volume/brightness OSD
 - All Nerd Fonts for Waybar icons
-- ImageMagick for wallpaper tools
+- Waypaper GUI wallpaper manager + Catppuccin wallpaper collection
+- QuickWall for downloading wallpapers from Unsplash
 - Complete Catppuccin Frappe theming
 
 See [packages/README.md](packages/README.md) for details.
