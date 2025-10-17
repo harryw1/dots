@@ -15,6 +15,7 @@ window {
 
 button {
     background-color: #414559; /* surface0 */
+    color: #babbf1; /* lavender - more visible text */
     outline-style: none;
     border: none;
     border-width: 0px;
@@ -28,11 +29,22 @@ button {
 
 button:hover {
     background-color: #51576d; /* surface1 */
+    color: #c6d0f5; /* brighter text on hover */
     box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
 }
 
 button:focus {
-    background-color: #626880; /* surface2 */
+    outline: none;
+}
+
+button:focus:hover {
+    background-color: #51576d; /* surface1 - ensure hover works on focused buttons */
+    color: #c6d0f5;
+    box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
+}
+
+button:active {
+    background-color: #626880; /* surface2 - only when actively clicking */
     box-shadow: 0 0 15px rgba(186, 187, 241, 0.5); /* lavender glow */
 }
 
