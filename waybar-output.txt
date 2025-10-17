@@ -1,0 +1,4 @@
+[2025-10-17 14:46:26.929] [info] Using configuration file /home/harry/.config/waybar/config
+[2025-10-17 14:46:26.931] [info] Unable to receive desktop appearance: GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: No such interface “org.freedesktop.portal.Settings” on object at path /org/freedesktop/portal/desktop
+[2025-10-17 14:46:26.931] [info] Using CSS file /home/harry/.config/waybar/style.css
+[2025-10-17 14:46:26.932] [error] style.css:231:6Expected closing bracket after keyframes block
