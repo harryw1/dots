@@ -78,11 +78,83 @@ is_arch_linux() {
     [ -f /etc/arch-release ]
 }
 
+# Check if extra repository is enabled
+check_repositories() {
+    print_info "Checking repository configuration..."
+
+    # Check if extra repository is enabled
+    if ! grep -q "^\[extra\]" /etc/pacman.conf; then
+        print_warning "'extra' repository not found in /etc/pacman.conf"
+        print_info "Attempting to enable 'extra' repository..."
+
+        # Backup pacman.conf
+        sudo cp /etc/pacman.conf /etc/pacman.conf.backup
+
+        # Check if it exists but is commented
+        if grep -q "^#\[extra\]" /etc/pacman.conf; then
+            print_info "Uncommenting 'extra' repository..."
+            sudo sed -i '/^#\[extra\]/,/^#Include = \/etc\/pacman.d\/mirrorlist/ s/^#//' /etc/pacman.conf
+        else
+            print_warning "'extra' repository section not found in config"
+            print_info "Please ensure your /etc/pacman.conf includes the 'extra' repository"
+            return 1
+        fi
+    fi
+
+    # Check if core repository is enabled
+    if ! grep -q "^\[core\]" /etc/pacman.conf; then
+        print_warning "'core' repository not properly configured"
+        return 1
+    fi
+
+    print_success "Repository configuration verified"
+    return 0
+}
+
+# Check and setup mirrorlist
+check_mirrorlist() {
+    print_info "Checking mirrorlist configuration..."
+
+    # Count active mirrors
+    local mirror_count=$(grep -c "^Server" /etc/pacman.d/mirrorlist 2>/dev/null || echo "0")
+
+    if [ "$mirror_count" -lt 3 ]; then
+        print_warning "Only $mirror_count mirrors found in mirrorlist"
+        print_info "Attempting to generate a fresh mirrorlist..."
+
+        # Check if reflector is installed
+        if ! command -v reflector &> /dev/null; then
+            print_info "Installing reflector to generate mirrorlist..."
+            if ! sudo pacman -Sy --noconfirm reflector; then
+                print_warning "Could not install reflector, using existing mirrorlist"
+                return 0
+            fi
+        fi
+
+        # Backup existing mirrorlist
+        sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+
+        # Generate new mirrorlist
+        print_info "Generating optimized mirrorlist (this may take a minute)..."
+        if sudo reflector --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist; then
+            print_success "Generated fresh mirrorlist with fast mirrors"
+        else
+            print_warning "Failed to generate mirrorlist, restoring backup"
+            sudo mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+        fi
+    else
+        print_success "Mirrorlist has $mirror_count active mirrors"
+    fi
+
+    return 0
+}
+
 # Sync package databases to ensure latest versions
 sync_package_database() {
     print_info "Syncing package databases to ensure latest versions..."
 
-    if ! sudo pacman -Sy --noconfirm; then
+    # Force refresh all package databases
+    if ! sudo pacman -Syy --noconfirm; then
         print_error "Failed to sync package database"
         return 1
     fi
@@ -277,6 +349,12 @@ install_packages_interactive() {
         return 0
     fi
 
+    # Check and fix repository configuration
+    check_repositories || return 1
+
+    # Check and optimize mirrorlist
+    check_mirrorlist
+
     # Sync package database to ensure latest versions
     sync_package_database
 
@@ -350,6 +428,12 @@ main() {
         if [ "$SKIP_INTERACTIVE" = true ]; then
             # Non-interactive: install all packages
             if is_arch_linux; then
+                # Check and fix repository configuration
+                check_repositories || return 1
+
+                # Check and optimize mirrorlist
+                check_mirrorlist
+
                 sync_package_database
                 resolve_conflicts
                 install_packages "$PACKAGES_DIR/core.txt" "core packages"
