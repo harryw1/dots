@@ -702,6 +702,37 @@ main() {
     # Install Starship configuration
     if [ -f "$DOTFILES_DIR/starship/starship.toml" ]; then
         create_symlink "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml" "Starship"
+
+        # Configure Starship in shell RC files
+        if command -v starship &> /dev/null; then
+            print_info "Setting up Starship shell integration..."
+
+            # Setup for bash
+            if [ -f "$HOME/.bashrc" ]; then
+                if ! grep -q 'starship init bash' "$HOME/.bashrc"; then
+                    echo '' >> "$HOME/.bashrc"
+                    echo '# Starship prompt' >> "$HOME/.bashrc"
+                    echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
+                    print_success "Added Starship initialization to .bashrc"
+                else
+                    print_info "Starship already configured in .bashrc"
+                fi
+            fi
+
+            # Setup for zsh
+            if [ -f "$HOME/.zshrc" ]; then
+                if ! grep -q 'starship init zsh' "$HOME/.zshrc"; then
+                    echo '' >> "$HOME/.zshrc"
+                    echo '# Starship prompt' >> "$HOME/.zshrc"
+                    echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+                    print_success "Added Starship initialization to .zshrc"
+                else
+                    print_info "Starship already configured in .zshrc"
+                fi
+            fi
+        else
+            print_warning "Starship not installed - run with packages to enable shell integration"
+        fi
     else
         print_warning "Starship configuration file not found, skipping"
     fi
@@ -737,8 +768,8 @@ main() {
         draw_box_line "  ${FRAPPE_TEXT}1. Browse and select a wallpaper:${NC}" $box_width
         draw_box_line "     ${FRAPPE_BLUE}waypaper${NC}" $box_width
         draw_box_line "" $box_width
-        draw_box_line "  ${FRAPPE_TEXT}2. Enable Starship prompt in your shell:${NC}" $box_width
-        draw_box_line "     ${FRAPPE_SUBTEXT1}See: starship/README.md${NC}" $box_width
+        draw_box_line "  ${FRAPPE_TEXT}2. Reload your shell to enable Starship prompt:${NC}" $box_width
+        draw_box_line "     ${FRAPPE_BLUE}source ~/.bashrc${NC} ${FRAPPE_SUBTEXT1}(or ~/.zshrc)${NC}" $box_width
         draw_box_line "" $box_width
         draw_box_line "  ${FRAPPE_TEXT}3. Configure Firefox dark mode:${NC}" $box_width
         draw_box_line "     ${FRAPPE_SUBTEXT1}about:preferences → Website appearance → Dark${NC}" $box_width

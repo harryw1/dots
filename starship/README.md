@@ -17,47 +17,32 @@ Starship is a minimal, blazing-fast, and infinitely customizable prompt for any 
 
 ## Installation
 
-The `install.sh` script automatically symlinks the starship configuration:
-- Source: `./starship/starship.toml`
-- Target: `~/.config/starship.toml`
+The `install.sh` script automatically:
+- Symlinks the starship configuration:
+  - Source: `./starship/starship.toml`
+  - Target: `~/.config/starship.toml`
+- Adds Starship initialization to your shell configuration (bash/zsh)
 
 ## Shell Setup
 
-After running the install script, you need to enable Starship in your shell. Add the appropriate initialization command to your shell's configuration file:
+### Automatic Setup (Bash/Zsh)
 
-### Bash
+The install script automatically adds the Starship initialization to `~/.bashrc` and/or `~/.zshrc` if those files exist. After installation, simply reload your shell:
 
-Add to `~/.bashrc`:
-```bash
-eval "$(starship init bash)"
-```
-
-### Zsh
-
-Add to `~/.zshrc`:
-```bash
-eval "$(starship init zsh)"
-```
-
-### Fish
-
-Add to `~/.config/fish/config.fish`:
-```fish
-starship init fish | source
-```
-
-### Other Shells
-
-For other shells (Ion, Elvish, Tcsh, Nushell, Xonsh, PowerShell), see the [official Starship documentation](https://starship.rs/guide/#%F0%9F%9A%80-installation).
-
-## Reload Shell
-
-After adding the initialization command, reload your shell:
 ```bash
 source ~/.bashrc  # or ~/.zshrc, depending on your shell
 ```
 
-Or simply open a new terminal window.
+Or open a new terminal window.
+
+### Manual Setup (Other Shells)
+
+For Fish, add to `~/.config/fish/config.fish`:
+```fish
+starship init fish | source
+```
+
+For other shells (Ion, Elvish, Tcsh, Nushell, Xonsh, PowerShell), see the [official Starship documentation](https://starship.rs/guide/#%F0%9F%9A%80-installation).
 
 ## Requirements
 
