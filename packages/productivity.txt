@@ -16,7 +16,6 @@ aspell-en
 zathura
 zathura-pdf-mupdf
 pdfarranger
-qpdfview
 
 # Document conversion
 pandoc
