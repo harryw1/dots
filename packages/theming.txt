@@ -1,9 +1,6 @@
 # Theming and appearance packages
 # Install with: pacman -S --needed - < packages/theming.txt
 
-# GTK themes
-adwaita-dark
-
 # Icon themes
 papirus-icon-theme
 adwaita-icon-theme
