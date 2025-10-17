@@ -2,6 +2,27 @@
 
 Run through these tests to verify your Hyprland setup is working correctly.
 
+## Recent Fixes Applied
+
+The following issues have been addressed in the latest update:
+
+✅ **Animation Speed** - Window closing and workspace switching animations have been optimized for smoother, faster transitions
+✅ **Scrolling Direction** - Natural scrolling disabled (traditional scrolling enabled)
+✅ **Wallpaper Support** - hyprpaper configuration added (see hyprland/wallpapers/README.md)
+✅ **Dark Theme** - GTK theme settings corrected for better dark mode support
+✅ **OSD Feedback** - SwayOSD added for visual volume/brightness feedback
+✅ **Keybind Documentation** - Corrected keybinds in testing checklist
+
+### First Time Setup
+
+After pulling the latest changes:
+1. Install SwayOSD: `yay -S swayosd-git`
+2. Reload Hyprland: `hyprctl reload` or log out and back in
+3. Set up a wallpaper (see hyprland/wallpapers/README.md)
+4. Configure Firefox dark mode: `about:preferences` → General → Website appearance → Dark
+
+---
+
 ## 1. Display & Scaling Tests
 
 ### Monitor Configuration
@@ -43,14 +64,16 @@ Run through these tests to verify your Hyprland setup is working correctly.
 
 Open Kitty terminal (`SUPER + Q` or find it in Rofi) and test these keybinds:
 
-### Essential Keybinds
-- [ ] `SUPER + Q` - Launch Kitty terminal
-- [ ] `SUPER + C` - Close active window
-- [ ] `SUPER + M` - Exit Hyprland
+### Essential Keybinds (Corrected)
+- [ ] `SUPER + ENTER` - Launch Kitty terminal
+- [ ] `SUPER + SPACE` - Launch Rofi (application launcher)
+- [ ] `SUPER + Q` - Close active window
+- [ ] `SUPER + SHIFT + Q` - Exit Hyprland
 - [ ] `SUPER + V` - Toggle floating mode
 - [ ] `SUPER + P` - Toggle pseudo-tiling
 - [ ] `SUPER + F` - Toggle fullscreen
-- [ ] `SUPER + D` - Launch Rofi (application launcher)
+- [ ] `SUPER + E` - Open Thunar (file manager)
+- [ ] `SUPER + B` - Open Firefox (web browser)
 
 ### Window Navigation
 - [ ] `SUPER + Left/Right/Up/Down` - Move focus between windows
@@ -402,6 +425,35 @@ These should start automatically when you log in:
 ---
 
 ## Common Issues & Troubleshooting
+
+### Waybar Not Showing
+
+If Waybar doesn't appear on your screen:
+
+1. **Check if Waybar is running:**
+   ```bash
+   pgrep waybar
+   ```
+
+2. **Try starting Waybar manually to see errors:**
+   ```bash
+   pkill waybar  # Kill any existing instance
+   waybar        # Start in foreground to see errors
+   ```
+
+3. **Common causes:**
+   - Missing Nerd Font: Install `ttf-jetbrains-mono-nerd`
+   - Config syntax error: Check the output from manual start
+   - Wrong monitor configuration: Waybar may be on wrong screen
+
+4. **Fix:**
+   ```bash
+   # Ensure fonts are installed
+   sudo pacman -S ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols
+
+   # Restart Waybar
+   pkill waybar && waybar &
+   ```
 
 ### If something doesn't work:
 

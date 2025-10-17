@@ -19,6 +19,7 @@ visual-studio-code-bin
 
 # System utilities
 pacseek
+swayosd-git  # On-screen display for volume and brightness
 
 # Hyprland plugins (if needed)
 # hyprland-plugin-example
