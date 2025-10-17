@@ -81,12 +81,18 @@ draw_box_line() {
     local width=${2:-60}
     local color=${3:-$FRAPPE_TEXT}
 
-    echo -en "${FRAPPE_LAVENDER}║${NC} ${color}${text}${NC}"
-    # Strip ANSI codes and calculate actual visible length (subtract 1 for newline from wc -c)
-    local text_length=$(($(echo -n "$text" | sed 's/\x1b\[[0-9;]*m//g' | wc -c)))
+    # Strip ANSI codes to get actual visible text length
+    local visible_text=$(echo -e "$text" | sed 's/\x1b\[[0-9;]*m//g')
+    local text_length=${#visible_text}
+
+    # Calculate padding: width - text_length - 3 (for "║ " and " ║")
     local padding=$((width - text_length - 3))
+
+    # Print the line
+    echo -en "${FRAPPE_LAVENDER}║${NC} "
+    echo -en "${text}"
     printf ' %.0s' $(seq 1 $padding)
-    echo -e "${FRAPPE_LAVENDER}║${NC}"
+    echo -e " ${FRAPPE_LAVENDER}║${NC}"
 }
 
 draw_box_bottom() {
@@ -128,28 +134,28 @@ print_step() {
 
 show_welcome() {
     clear
-    local box_width=70
+    local box_width=68
 
     echo ""
     draw_box "Hyprland Dotfiles Installer" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗ ${NC}" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗${NC}" $box_width
-    draw_box_line "  ${FRAPPE_BLUE}███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║${NC}" $box_width
-    draw_box_line "  ${FRAPPE_BLUE}██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║${NC}" $box_width
-    draw_box_line "  ${FRAPPE_SAPPHIRE}██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝${NC}" $box_width
-    draw_box_line "  ${FRAPPE_SAPPHIRE}╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ${NC}" $box_width
+    draw_box_line "${FRAPPE_MAUVE}  ██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗${NC}" $box_width
+    draw_box_line "${FRAPPE_MAUVE}  ██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗${NC}" $box_width
+    draw_box_line "${FRAPPE_BLUE}  ███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║${NC}" $box_width
+    draw_box_line "${FRAPPE_BLUE}  ██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║${NC}" $box_width
+    draw_box_line "${FRAPPE_SAPPHIRE}  ██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝${NC}" $box_width
+    draw_box_line "${FRAPPE_SAPPHIRE}  ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝${NC}" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_TEXT}Catppuccin Frappe Theme • Modular Configuration${NC}" $box_width
+    draw_box_line "${FRAPPE_TEXT}  Catppuccin Frappe Theme • Modular Configuration${NC}" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_PEACH}This installer will:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Install all required packages" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Set up Hyprland, Waybar, Kitty, and more" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Configure Neovim with LazyVim" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Install Catppuccin wallpaper collection" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Create backups of existing configs" $box_width
+    draw_box_line "${FRAPPE_PEACH}  This installer will:${NC}" $box_width
+    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Install all required packages" $box_width
+    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Set up Hyprland, Waybar, Kitty, and more" $box_width
+    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Configure Neovim with LazyVim" $box_width
+    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Install Catppuccin wallpaper collection" $box_width
+    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Create backups of existing configs" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
+    draw_box_line "${FRAPPE_YELLOW}  ⚠  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
     draw_box_line "" $box_width
     draw_box_bottom $box_width
     echo ""
