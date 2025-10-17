@@ -30,6 +30,7 @@ This repository uses a **symlink-based architecture** where configuration files 
 - Theme colors defined in: `hyprland/conf/theme.conf`
 - Waybar styling: `waybar/style.css`
 - Terminal: `kitty/kitty.conf`
+- Shell prompt: `starship/starship.toml`
 - See component README.md files for color references
 
 ### Package Management Strategy
@@ -38,7 +39,7 @@ Packages are organized by category in `packages/*.txt`:
 - `core.txt` - Essential Hyprland system packages
 - `hypr-ecosystem.txt` - Hypr-specific tools (hyprpaper, hypridle, etc.)
 - `theming.txt` - Fonts (Nerd Fonts required), icons, cursors, GTK themes
-- `development.txt` - Python, C++, Neovim, LazyVim, build tools
+- `development.txt` - Python, C++, Neovim, LazyVim, Node.js, Starship, build tools
 - `productivity.txt` - LibreOffice, PDF viewer, file manager, Discord
 - `aur.txt` - AUR packages (waypaper, quickwall, SwayOSD, VS Code, Catppuccin GTK themes)
 
@@ -163,6 +164,7 @@ When editing configurations, files are in this repository but active via symlink
 | Rofi | `./rofi/` | `~/.config/rofi/` |
 | Mako | `./mako/` | `~/.config/mako/` |
 | Zathura | `./zathura/` | `~/.config/zathura/` |
+| Starship | `./starship/starship.toml` | `~/.config/starship.toml` |
 | Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (merged with LazyVim) |
 
 ## Key Design Decisions
@@ -218,6 +220,7 @@ When configuration or system issues arise:
 Each major component has its own README.md with detailed configuration information:
 - `hyprland/README.md` - Hyprland settings, keybinds, window rules
 - `waybar/README.md` - Waybar modules, styling, icons
+- `starship/README.md` - Starship shell prompt configuration with Catppuccin Frappe theme
 - `packages/README.md` - Package organization and installation details
 - `hyprland/wallpapers/README.md` - Wallpaper setup with hyprpaper
 

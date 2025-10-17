@@ -10,7 +10,30 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+BOLD='\033[1m'
+DIM='\033[2m'
 NC='\033[0m' # No Color
+
+# Catppuccin Frappe colors for TUI
+FRAPPE_ROSEWATER='\033[38;2;242;213;207m'
+FRAPPE_FLAMINGO='\033[38;2;238;190;190m'
+FRAPPE_PINK='\033[38;2;244;184;228m'
+FRAPPE_MAUVE='\033[38;2;202;158;230m'
+FRAPPE_RED='\033[38;2;231;130;132m'
+FRAPPE_MAROON='\033[38;2;234;153;156m'
+FRAPPE_PEACH='\033[38;2;239;159;118m'
+FRAPPE_YELLOW='\033[38;2;229;200;144m'
+FRAPPE_GREEN='\033[38;2;166;209;137m'
+FRAPPE_TEAL='\033[38;2;129;200;190m'
+FRAPPE_SKY='\033[38;2;153;209;219m'
+FRAPPE_SAPPHIRE='\033[38;2;133;193;220m'
+FRAPPE_BLUE='\033[38;2;140;170;238m'
+FRAPPE_LAVENDER='\033[38;2;186;187;241m'
+FRAPPE_TEXT='\033[38;2;198;208;245m'
+FRAPPE_SUBTEXT1='\033[38;2;181;191;226m'
+FRAPPE_BASE='\033[38;2;48;52;70m'
 
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,21 +41,130 @@ CONFIG_DIR="$HOME/.config"
 BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
 PACKAGES_DIR="$DOTFILES_DIR/packages"
 
-# Print functions
+# Terminal width for formatting
+TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
+
+# TUI Helper Functions
+draw_box() {
+    local title="$1"
+    local width=${2:-60}
+
+    # Top border
+    echo -en "${FRAPPE_LAVENDER}"
+    echo -n "╔"
+    printf '═%.0s' $(seq 1 $((width - 2)))
+    echo "╗"
+
+    # Title (if provided)
+    if [ -n "$title" ]; then
+        local padding=$(( (width - ${#title} - 4) / 2 ))
+        echo -n "║"
+        printf ' %.0s' $(seq 1 $padding)
+        echo -n "${BOLD}${FRAPPE_MAUVE}$title${NC}${FRAPPE_LAVENDER}"
+        printf ' %.0s' $(seq 1 $((width - padding - ${#title} - 4)))
+        echo "║"
+
+        # Separator
+        echo -n "╠"
+        printf '═%.0s' $(seq 1 $((width - 2)))
+        echo "╣"
+    fi
+    echo -en "${NC}"
+}
+
+draw_box_line() {
+    local text="$1"
+    local width=${2:-60}
+    local color=${3:-$FRAPPE_TEXT}
+
+    echo -en "${FRAPPE_LAVENDER}║${NC} ${color}${text}${NC}"
+    local text_length=$(echo "$text" | sed 's/\x1b\[[0-9;]*m//g' | wc -c)
+    local padding=$((width - text_length - 2))
+    printf ' %.0s' $(seq 1 $padding)
+    echo -e "${FRAPPE_LAVENDER}║${NC}"
+}
+
+draw_box_bottom() {
+    local width=${1:-60}
+    echo -en "${FRAPPE_LAVENDER}"
+    echo -n "╚"
+    printf '═%.0s' $(seq 1 $((width - 2)))
+    echo "╝"
+    echo -en "${NC}"
+}
+
+draw_progress_bar() {
+    local current=$1
+    local total=$2
+    local width=40
+    local percent=$((current * 100 / total))
+    local filled=$((current * width / total))
+    local empty=$((width - filled))
+
+    echo -en "${FRAPPE_LAVENDER}["
+    echo -en "${FRAPPE_GREEN}"
+    printf '█%.0s' $(seq 1 $filled)
+    echo -en "${FRAPPE_BASE}"
+    printf '░%.0s' $(seq 1 $empty)
+    echo -en "${FRAPPE_LAVENDER}]${NC} ${FRAPPE_YELLOW}${percent}%%${NC}"
+}
+
+print_step() {
+    local step_num=$1
+    local total_steps=$2
+    local description="$3"
+
+    echo ""
+    echo -e "${FRAPPE_SAPPHIRE}╭─${NC} ${BOLD}${FRAPPE_MAUVE}Step ${step_num}/${total_steps}${NC} ${FRAPPE_LAVENDER}─${NC}"
+    echo -e "${FRAPPE_SAPPHIRE}│${NC}  ${FRAPPE_TEXT}${description}${NC}"
+    echo -e "${FRAPPE_SAPPHIRE}╰─${NC}"
+    echo ""
+}
+
+show_welcome() {
+    clear
+    local box_width=70
+
+    echo ""
+    draw_box "Hyprland Dotfiles Installer" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗ ${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗${NC}" $box_width
+    draw_box_line "  ${FRAPPE_BLUE}███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║${NC}" $box_width
+    draw_box_line "  ${FRAPPE_BLUE}██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║${NC}" $box_width
+    draw_box_line "  ${FRAPPE_SAPPHIRE}██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝${NC}" $box_width
+    draw_box_line "  ${FRAPPE_SAPPHIRE}╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝ ${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_TEXT}Catppuccin Frappe Theme • Modular Configuration${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_PEACH}This installer will:${NC}" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Install all required packages" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Set up Hyprland, Waybar, Kitty, and more" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Configure Neovim with LazyVim" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Install Catppuccin wallpaper collection" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}✓${NC} Create backups of existing configs" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_bottom $box_width
+    echo ""
+}
+
+# Print functions (updated with TUI colors)
 print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    echo -e "${FRAPPE_BLUE}●${NC} $1"
 }
 
 print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    echo -e "${FRAPPE_GREEN}✓${NC} $1"
 }
 
 print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    echo -e "${FRAPPE_YELLOW}⚠${NC} $1"
 }
 
 print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${FRAPPE_RED}✗${NC} $1"
 }
 
 # Create backup of existing config
@@ -419,227 +551,177 @@ EOF
     echo ""
 }
 
-# Interactive package installation
-install_packages_interactive() {
-    if ! is_arch_linux; then
-        print_warning "Not running Arch Linux - skipping package installation"
-        return 0
-    fi
-
-    # Check and fix repository configuration
-    check_repositories || return 1
-
-    # Check and optimize mirrorlist
-    check_mirrorlist
-
-    # Sync package database to ensure latest versions
-    sync_package_database
-
-    # Resolve conflicts before interactive menu
-    resolve_conflicts
-
-    echo ""
-    print_info "Package Installation"
-    echo ""
-    echo "Available package groups:"
-    echo "  1. Core packages (required for Hyprland)"
-    echo "  2. Hypr ecosystem (hyprpaper, hypridle, hyprlock, etc.)"
-    echo "  3. Theming (fonts, icons, cursors)"
-    echo "  4. Development tools (Python, C++, build tools)"
-    echo "  5. Productivity (LibreOffice, PDF viewer, etc.)"
-    echo "  6. AUR packages (requires yay or paru)"
-    echo "  A. All of the above"
-    echo "  S. Skip package installation"
-    echo ""
-
-    read -p "Select option (1-6, A, S): " -n 1 -r
-    echo
-    echo ""
-
-    case $REPLY in
-        1)
-            install_packages "$PACKAGES_DIR/core.txt" "core packages"
-            ;;
-        2)
-            install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
-            ;;
-        3)
-            install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
-            ;;
-        4)
-            install_packages "$PACKAGES_DIR/development.txt" "development packages"
-            ;;
-        5)
-            install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
-            ;;
-        6)
-            install_aur_packages
-            ;;
-        A|a)
-            install_packages "$PACKAGES_DIR/core.txt" "core packages"
-            install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
-            install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
-            install_packages "$PACKAGES_DIR/development.txt" "development packages"
-            install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
-            install_aur_packages
-            ;;
-        S|s)
-            print_info "Skipping package installation"
-            ;;
-        *)
-            print_error "Invalid option"
-            return 1
-            ;;
-    esac
-
-    echo ""
-}
-
 # Main installation
 main() {
-    print_info "Starting dotfiles installation from: $DOTFILES_DIR"
-    echo ""
+    local total_steps=10
+    local current_step=0
 
-    # Install packages if requested
-    if [ "$INSTALL_PACKAGES" = true ]; then
-        if [ "$SKIP_INTERACTIVE" = true ]; then
-            # Non-interactive: install all packages
-            if is_arch_linux; then
-                # Check and fix repository configuration
-                check_repositories || return 1
+    # Show welcome screen
+    if [ "$SHOW_TUI" = true ]; then
+        show_welcome
+        read -p "Press Enter to continue or Ctrl+C to cancel..."
+        echo ""
+    fi
 
-                # Check and optimize mirrorlist
-                check_mirrorlist
+    # Install packages unless explicitly skipped
+    if [ "$SKIP_PACKAGES" = false ]; then
+        if is_arch_linux; then
+            ((current_step++))
+            print_step $current_step $total_steps "Checking repository configuration"
+            check_repositories || return 1
 
-                sync_package_database
-                resolve_conflicts
-                install_packages "$PACKAGES_DIR/core.txt" "core packages"
-                install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
-                install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
-                install_packages "$PACKAGES_DIR/development.txt" "development packages"
-                install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
-                install_aur_packages
+            ((current_step++))
+            print_step $current_step $total_steps "Optimizing mirrorlist"
+            check_mirrorlist
 
-                # Setup wallpapers after all packages are installed
-                setup_wallpapers
-            else
-                print_warning "Not running Arch Linux - skipping package installation"
-            fi
+            ((current_step++))
+            print_step $current_step $total_steps "Syncing package databases"
+            sync_package_database
+
+            ((current_step++))
+            print_step $current_step $total_steps "Resolving package conflicts"
+            resolve_conflicts
+
+            ((current_step++))
+            print_step $current_step $total_steps "Installing core packages"
+            install_packages "$PACKAGES_DIR/core.txt" "core packages"
+
+            ((current_step++))
+            print_step $current_step $total_steps "Installing Hypr ecosystem packages"
+            install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
+
+            ((current_step++))
+            print_step $current_step $total_steps "Installing theming packages"
+            install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
+
+            ((current_step++))
+            print_step $current_step $total_steps "Installing development packages"
+            install_packages "$PACKAGES_DIR/development.txt" "development packages"
+
+            print_step $current_step $total_steps "Installing productivity packages"
+            install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
+
+            print_step $current_step $total_steps "Installing AUR packages"
+            install_aur_packages
+
+            # Setup wallpapers after all packages are installed
+            print_step $current_step $total_steps "Setting up Catppuccin wallpaper collection"
+            setup_wallpapers
         else
-            # Interactive package selection
-            install_packages_interactive
+            print_warning "Not running Arch Linux - skipping package installation"
         fi
+    else
+        print_info "Skipping package installation (--skip-packages flag used)"
+    fi
+
+    # Adjust step counter if packages were skipped
+    if [ "$SKIP_PACKAGES" = true ]; then
+        current_step=0
+        total_steps=7
     fi
 
     # Ensure .config directory exists
     mkdir -p "$CONFIG_DIR"
 
+    ((current_step++))
+    print_step $current_step $total_steps "Creating configuration symlinks"
+
     # Install Hyprland configuration
     if [ -d "$DOTFILES_DIR/hyprland" ]; then
-        print_info "Installing Hyprland configuration..."
         create_symlink "$DOTFILES_DIR/hyprland" "$CONFIG_DIR/hypr" "Hyprland"
-        echo ""
     else
         print_warning "Hyprland configuration directory not found, skipping"
-        echo ""
     fi
 
     # Install Waybar configuration
     if [ -d "$DOTFILES_DIR/waybar" ]; then
-        print_info "Installing Waybar configuration..."
         create_symlink "$DOTFILES_DIR/waybar" "$CONFIG_DIR/waybar" "Waybar"
-        echo ""
     else
         print_warning "Waybar configuration directory not found, skipping"
-        echo ""
     fi
 
     # Install Kitty configuration
     if [ -d "$DOTFILES_DIR/kitty" ]; then
-        print_info "Installing Kitty configuration..."
         create_symlink "$DOTFILES_DIR/kitty" "$CONFIG_DIR/kitty" "Kitty"
-        echo ""
     else
         print_warning "Kitty configuration directory not found, skipping"
-        echo ""
     fi
 
     # Install Rofi configuration
     if [ -d "$DOTFILES_DIR/rofi" ]; then
-        print_info "Installing Rofi configuration..."
         create_symlink "$DOTFILES_DIR/rofi" "$CONFIG_DIR/rofi" "Rofi"
-        echo ""
     else
         print_warning "Rofi configuration directory not found, skipping"
-        echo ""
     fi
 
     # Install Mako configuration
     if [ -d "$DOTFILES_DIR/mako" ]; then
-        print_info "Installing Mako configuration..."
         create_symlink "$DOTFILES_DIR/mako" "$CONFIG_DIR/mako" "Mako"
-        echo ""
     else
         print_warning "Mako configuration directory not found, skipping"
-        echo ""
     fi
 
     # Install Zathura configuration
     if [ -d "$DOTFILES_DIR/zathura" ]; then
-        print_info "Installing Zathura configuration..."
         create_symlink "$DOTFILES_DIR/zathura" "$CONFIG_DIR/zathura" "Zathura"
-        echo ""
     else
         print_warning "Zathura configuration directory not found, skipping"
-        echo ""
     fi
 
-    # Install LazyVim with custom theme
+    # Install Starship configuration
+    if [ -f "$DOTFILES_DIR/starship/starship.toml" ]; then
+        create_symlink "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml" "Starship"
+    else
+        print_warning "Starship configuration file not found, skipping"
+    fi
+
+    ((current_step++))
+    print_step $current_step $total_steps "Setting up Neovim with LazyVim"
     install_lazyvim
 
     # Create wallpapers directory
     mkdir -p "$HOME/.config/hypr/wallpapers"
 
-    # Summary
+    # Final summary
     echo ""
-    print_success "Installation complete!"
+    echo ""
+    local box_width=70
+    draw_box "Installation Complete!" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} All packages installed" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Configurations symlinked to ~/.config/" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} LazyVim configured with Catppuccin Frappe" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Wallpaper collection downloaded" $box_width
 
     if [ -d "$BACKUP_DIR" ]; then
-        echo ""
-        print_info "Backups saved to: $BACKUP_DIR"
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_YELLOW}📦${NC} Backups: $BACKUP_DIR" $box_width
     fi
 
-    echo ""
-    print_info "Next steps:"
-    if [ "$INSTALL_PACKAGES" != true ]; then
-        echo "  1. Install required dependencies: ./install.sh --packages-all"
-        echo "     Or manually: see packages/ directory"
-        echo "  2. Set up a wallpaper (see ~/.config/hypr/wallpapers/README.md)"
-        echo "  3. Configure Firefox dark mode: about:preferences → General → Website appearance → Dark"
-        echo "  4. Adjust monitor configuration in ~/.config/hypr/conf/monitors.conf"
-        echo "  5. Reload Hyprland: hyprctl reload (or log out and back in)"
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_PEACH}Next Steps:${NC}" $box_width
+    draw_box_line "" $box_width
+
+    if [ "$SKIP_PACKAGES" = false ]; then
+        draw_box_line "  ${FRAPPE_TEXT}1. Browse and select a wallpaper:${NC}" $box_width
+        draw_box_line "     ${FRAPPE_BLUE}waypaper${NC}" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_TEXT}2. Enable Starship prompt in your shell:${NC}" $box_width
+        draw_box_line "     ${FRAPPE_SUBTEXT1}See: starship/README.md${NC}" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_TEXT}3. Configure Firefox dark mode:${NC}" $box_width
+        draw_box_line "     ${FRAPPE_SUBTEXT1}about:preferences → Website appearance → Dark${NC}" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_TEXT}4. Log out and log back in to apply GTK theme${NC}" $box_width
     else
-        echo "  === Post-Installation Setup ==="
-        echo ""
-        echo "  Essential setup (do these now):"
-        echo "  1. Browse and select a wallpaper:"
-        echo "     GUI: Run 'waypaper' to browse the Catppuccin collection"
-        echo "     Collection: ~/.local/share/catppuccin-wallpapers/frappe/"
-        echo "     See also: ~/.config/hypr/wallpapers/README.md"
-        echo ""
-        echo "  2. Configure Firefox dark mode manually:"
-        echo "     Open Firefox → about:preferences → General → Website appearance → Choose 'Dark'"
-        echo ""
-        echo "  3. Apply GTK theme (for Thunar, LibreOffice dark mode):"
-        echo "     Log out and log back in to Hyprland for GTK theme to apply"
-        echo ""
-        echo "  Optional customization:"
-        echo "  - Adjust monitor scaling: ~/.config/hypr/conf/monitors.conf"
-        echo "  - Customize keybindings: ~/.config/hypr/conf/keybinds.conf"
-        echo "  - Adjust animations: ~/.config/hypr/conf/animations.conf"
-        echo ""
-        echo "  To apply changes: hyprctl reload (or log out/in for theme changes)"
+        draw_box_line "  ${FRAPPE_TEXT}1. Install packages: ${FRAPPE_BLUE}./install.sh${NC}" $box_width
+        draw_box_line "  ${FRAPPE_TEXT}2. Set up wallpaper and theme${NC}" $box_width
     fi
+
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_SAPPHIRE}Reload Hyprland:${NC} ${FRAPPE_BLUE}hyprctl reload${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_bottom $box_width
     echo ""
 }
 
@@ -658,45 +740,44 @@ check_system() {
 
 # Show help
 show_help() {
-    cat << EOF
-Dotfiles Installation Script
-
-Usage: ./install.sh [OPTIONS]
-
-Options:
-    -h, --help          Show this help message
-    -f, --force         Skip confirmation prompts
-    -p, --packages      Install packages from packages/ directory (interactive)
-    --packages-all      Install all packages non-interactively (Arch Linux only)
-    --skip-packages     Skip package installation
-
-This script will:
-    1. Optionally install required packages (Arch Linux only)
-    2. Backup any existing configurations
-    3. Create symlinks from this repository to ~/.config/
-    4. Preserve your ability to update configs via git
-
-Package Installation:
-    Packages are organized in packages/ directory:
-    - core.txt           : Required Hyprland packages
-    - hypr-ecosystem.txt : Optional Hypr tools
-    - theming.txt        : Fonts, icons, cursors
-    - development.txt    : Python, C++, build tools
-    - productivity.txt   : Office and productivity tools
-    - aur.txt            : AUR packages (requires yay or paru)
-
-    Install manually:
-        pacman -S --needed - < packages/core.txt
-        yay -S --needed - < packages/aur.txt
-
-Backups are stored in ~/.config-backup-TIMESTAMP/
-EOF
+    local box_width=70
+    echo ""
+    draw_box "Hyprland Dotfiles Installer - Help" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Usage:${NC}" $box_width
+    draw_box_line "    ${FRAPPE_BLUE}./install.sh${NC} ${FRAPPE_TEXT}[OPTIONS]${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Options:${NC}" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}           Show this help message" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}-f, --force${NC}          Skip confirmation prompts" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--skip-packages${NC}      Skip package installation" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}             Disable TUI welcome screen" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Default Behavior:${NC}" $box_width
+    draw_box_line "    The installer will ${BOLD}automatically${NC} install:" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}•${NC} All required packages (Arch Linux only)" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}•${NC} Configuration symlinks to ~/.config/" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}•${NC} LazyVim with Catppuccin Frappe theme" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}•${NC} Catppuccin wallpaper collection" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Package Categories:${NC}" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}             Required Hyprland packages" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}hypr-ecosystem.txt${NC}   Hypr tools (hyprpaper, hypridle)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}theming.txt${NC}          Fonts, icons, cursors" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}      Python, C++, Node.js, Neovim" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}productivity.txt${NC}     LibreOffice, PDF viewer, etc." $box_width
+    draw_box_line "    ${FRAPPE_PEACH}aur.txt${NC}              AUR packages (VS Code, themes)" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  Backups: ~/.config-backup-TIMESTAMP/" $box_width
+    draw_box_line "" $box_width
+    draw_box_bottom $box_width
+    echo ""
 }
 
 # Parse arguments
 FORCE=false
-INSTALL_PACKAGES=false
-SKIP_INTERACTIVE=false
+SKIP_PACKAGES=false
+SHOW_TUI=true
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -708,21 +789,17 @@ while [[ $# -gt 0 ]]; do
             FORCE=true
             shift
             ;;
-        -p|--packages)
-            INSTALL_PACKAGES=true
-            shift
-            ;;
-        --packages-all)
-            INSTALL_PACKAGES=true
-            SKIP_INTERACTIVE=true
-            shift
-            ;;
         --skip-packages)
-            INSTALL_PACKAGES=false
+            SKIP_PACKAGES=true
+            shift
+            ;;
+        --no-tui)
+            SHOW_TUI=false
             shift
             ;;
         *)
             print_error "Unknown option: $1"
+            echo ""
             show_help
             exit 1
             ;;

@@ -27,3 +27,10 @@ fd
 lazygit
 tree-sitter
 tree-sitter-cli
+
+# Node.js (required for nvim-treesitter)
+nodejs
+npm
+
+# Shell prompt
+starship
