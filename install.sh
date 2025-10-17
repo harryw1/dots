@@ -699,6 +699,13 @@ main() {
         print_warning "Zathura configuration directory not found, skipping"
     fi
 
+    # Install wlogout configuration
+    if [ -d "$DOTFILES_DIR/wlogout" ]; then
+        create_symlink "$DOTFILES_DIR/wlogout" "$CONFIG_DIR/wlogout" "wlogout"
+    else
+        print_warning "wlogout configuration directory not found, skipping"
+    fi
+
     # Install Starship configuration
     if command -v starship &> /dev/null; then
         print_info "Installing Starship Catppuccin Frappe preset..."
