@@ -78,6 +78,21 @@ is_arch_linux() {
     [ -f /etc/arch-release ]
 }
 
+# Resolve package conflicts by removing conflicting packages
+resolve_conflicts() {
+    print_info "Checking for package conflicts..."
+
+    # PulseAudio vs PipeWire conflict
+    if pacman -Qq pulseaudio &> /dev/null || pacman -Qq pulseaudio-alsa &> /dev/null; then
+        print_warning "PulseAudio detected - replacing with PipeWire"
+        print_info "Removing PulseAudio packages..."
+        sudo pacman -Rdd --noconfirm pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-jack pulseaudio-equalizer 2>/dev/null || true
+        print_success "PulseAudio removed"
+    fi
+
+    print_success "Conflict resolution complete"
+}
+
 # Install packages from a package list file
 install_packages() {
     local package_file="$1"
@@ -199,6 +214,9 @@ install_packages_interactive() {
         return 0
     fi
 
+    # Resolve conflicts before interactive menu
+    resolve_conflicts
+
     echo ""
     print_info "Package Installation"
     echo ""
@@ -266,6 +284,7 @@ main() {
         if [ "$SKIP_INTERACTIVE" = true ]; then
             # Non-interactive: install all packages
             if is_arch_linux; then
+                resolve_conflicts
                 install_packages "$PACKAGES_DIR/core.txt" "core packages"
                 install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
                 install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
