@@ -1,0 +1,827 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                     COMPREHENSIVE SYSTEM DIAGNOSTIC                        ║
+║                          Generated: 2025-10-17 14:36:55                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hostname
+═══════════════════════════════════════════════════════════════════════════════
+
+./system-check.sh: line 67: hostname: command not found
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Kernel and OS
+═══════════════════════════════════════════════════════════════════════════════
+
+Linux framework 6.17.2-arch1-1 #1 SMP PREEMPT_DYNAMIC Sun, 12 Oct 2025 12:45:18 +0000 x86_64 GNU/Linux
+
+
+═══════════════════════════════════════════════════════════════════════════════
+OS Release
+═══════════════════════════════════════════════════════════════════════════════
+
+NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Current User
+═══════════════════════════════════════════════════════════════════════════════
+
+harry
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Display Server
+═══════════════════════════════════════════════════════════════════════════════
+
+wayland
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Current Desktop
+═══════════════════════════════════════════════════════════════════════════════
+
+Hyprland
+
+
+═══════════════════════════════════════════════════════════════════════════════
+INSTALLED PACKAGE VERSIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ hyprland 0.51.1-6
+[0;32m[✓][0m hyprland 0.51.1-6
+✓ waybar 0.14.0-2
+[0;32m[✓][0m waybar 0.14.0-2
+✓ kitty 0.43.1-1
+[0;32m[✓][0m kitty 0.43.1-1
+✓ rofi 2.0.0-1
+[0;32m[✓][0m rofi 2.0.0-1
+✓ mako 1.10.0-1
+[0;32m[✓][0m mako 1.10.0-1
+✓ hyprpaper 0.7.6-1
+[0;32m[✓][0m hyprpaper 0.7.6-1
+✓ hypridle 0.1.7-4
+[0;32m[✓][0m hypridle 0.1.7-4
+✓ hyprlock 0.9.2-3
+[0;32m[✓][0m hyprlock 0.9.2-3
+✓ pipewire 1:1.4.9-1
+[0;32m[✓][0m pipewire 1:1.4.9-1
+✓ wireplumber 0.5.12-1
+[0;32m[✓][0m wireplumber 0.5.12-1
+✓ polkit-gnome 0.105-11
+[0;32m[✓][0m polkit-gnome 0.105-11
+✓ thunar 4.20.5-1
+[0;32m[✓][0m thunar 4.20.5-1
+✓ firefox 144.0-1
+[0;32m[✓][0m firefox 144.0-1
+✓ neovim 0.11.4-1
+[0;32m[✓][0m neovim 0.11.4-1
+
+═══════════════════════════════════════════════════════════════════════════════
+AUR PACKAGES
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ waypaper 2.7-1
+✓ quickwall 0.0.5-0
+✓ swayosd-git 0.2.1.r1.g73aed75-1
+✓ visual-studio-code-bin 1.105.1-1
+
+═══════════════════════════════════════════════════════════════════════════════
+PROCESS STATUS
+═══════════════════════════════════════════════════════════════════════════════
+
+Hyprland: RUNNING (PID: 963)
+waybar: NOT RUNNING
+mako: RUNNING (PID: 1008)
+hyprpaper: RUNNING (PID: 1003)
+hypridle: NOT RUNNING
+pipewire: RUNNING (PID: 1197)
+wireplumber: RUNNING (PID: 1198)
+polkit-gnome-authentication-agent-1: NOT RUNNING
+
+═══════════════════════════════════════════════════════════════════════════════
+PipeWire Service Status
+═══════════════════════════════════════════════════════════════════════════════
+
+● pipewire.service - PipeWire Multimedia Service
+     Loaded: loaded (/usr/lib/systemd/user/pipewire.service; disabled; preset: enabled)
+     Active: active (running) since Fri 2025-10-17 14:28:56 EDT; 7min ago
+ Invocation: 1b7f0b7275fd42699a635c2504a0f4e4
+TriggeredBy: ● pipewire.socket
+   Main PID: 1197 (pipewire)
+      Tasks: 3 (limit: 38021)
+     Memory: 6.3M (peak: 7.2M)
+        CPU: 38ms
+     CGroup: /user.slice/user-1000.slice/user@1000.service/session.slice/pipewire.service
+             └─1197 /usr/bin/pipewire
+
+Oct 17 14:28:56 framework systemd[884]: Started PipeWire Multimedia Service.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PipeWire Pulse Service Status
+═══════════════════════════════════════════════════════════════════════════════
+
+● pipewire-pulse.service - PipeWire PulseAudio
+     Loaded: loaded (/usr/lib/systemd/user/pipewire-pulse.service; disabled; preset: enabled)
+     Active: active (running) since Fri 2025-10-17 14:28:56 EDT; 7min ago
+ Invocation: 2bbce195fa144a72b93dd7de4d0b8e9f
+TriggeredBy: ● pipewire-pulse.socket
+   Main PID: 1225 (pipewire-pulse)
+      Tasks: 3 (limit: 38021)
+     Memory: 2.1M (peak: 3.2M)
+        CPU: 18ms
+     CGroup: /user.slice/user-1000.slice/user@1000.service/session.slice/pipewire-pulse.service
+             └─1225 /usr/bin/pipewire-pulse
+
+Oct 17 14:28:56 framework systemd[884]: Started PipeWire PulseAudio.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+WirePlumber Service Status
+═══════════════════════════════════════════════════════════════════════════════
+
+● wireplumber.service - Multimedia Service Session Manager
+     Loaded: loaded (/usr/lib/systemd/user/wireplumber.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2025-10-17 14:28:56 EDT; 7min ago
+ Invocation: c2039559b67644e8a0c5a7d7500afed5
+   Main PID: 1198 (wireplumber)
+      Tasks: 6 (limit: 38021)
+     Memory: 11.7M (peak: 13.6M)
+        CPU: 139ms
+     CGroup: /user.slice/user-1000.slice/user@1000.service/session.slice/wireplumber.service
+             └─1198 /usr/bin/wireplumber
+
+Oct 17 14:28:56 framework systemd[884]: Started Multimedia Service Session Manager.
+Oct 17 14:28:56 framework wireplumber[1198]: wp-event-dispatcher: wp_event_dispatcher_unregister_hook: assertion 'already_registered_dispatcher == self' failed
+Oct 17 14:28:56 framework wireplumber[1198]: wp-event-dispatcher: wp_event_dispatcher_unregister_hook: assertion 'already_registered_dispatcher == self' failed
+Oct 17 14:28:56 framework wireplumber[1198]: wp-event-dispatcher: wp_event_dispatcher_unregister_hook: assertion 'already_registered_dispatcher == self' failed
+Oct 17 14:28:56 framework wireplumber[1198]: wp-event-dispatcher: wp_event_dispatcher_unregister_hook: assertion 'already_registered_dispatcher == self' failed
+Oct 17 14:28:57 framework wireplumber[1198]: default: Failed to get percentage from UPower: org.freedesktop.DBus.Error.NameHasNoOwner
+Oct 17 14:28:57 framework wireplumber[1198]: wp-device: SPA handle 'api.libcamera.enum.manager' could not be loaded; is it installed?
+Oct 17 14:28:57 framework wireplumber[1198]: s-monitors-libcamera: PipeWire's libcamera SPA plugin is missing or broken. Some camera types may not be supported.
+Oct 17 14:28:57 framework wireplumber[1198]: wp-event-dispatcher: <WpAsyncEventHook:0x55ab5651dc40> failed: failed to activate item: Object activation aborted: proxy destroyed
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprland Config Validation
+═══════════════════════════════════════════════════════════════════════════════
+
+ok
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprland Monitors
+═══════════════════════════════════════════════════════════════════════════════
+
+Monitor eDP-1 (ID 0):
+	2256x1504@59.99900 at 0x0
+	description: BOE 0x095F
+	make: BOE
+	model: 0x095F
+	physical size (mm): 280x190
+	serial: 
+	active workspace: 1 (1)
+	special workspace: 0 ()
+	reserved: 0 0 0 0
+	scale: 1.57
+	transform: 0
+	focused: yes
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 2256x1504@60.00Hz 2256x1504@48.00Hz 
+
+
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprland Active Windows
+═══════════════════════════════════════════════════════════════════════════════
+
+Window 5587a85b3e90 -> ./system-check.sh :
+	mapped: 1
+	hidden: 0
+	at: 12,12
+	size: 1416,936
+	workspace: 1 (1)
+	floating: 0
+	pseudo: 0
+	monitor: 0
+	class: kitty
+	title: ./system-check.sh 
+	initialClass: kitty
+	initialTitle: kitty
+	pid: 1307
+	xwayland: 0
+	pinned: 0
+	fullscreen: 0
+	fullscreenClient: 0
+	grouped: 0
+	tags: 
+	swallowing: 0
+	focusHistoryID: 0
+	inhibitingIdle: 0
+	xdgTag: 
+	xdgDescription: 
+
+
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Waybar Style Content
+═══════════════════════════════════════════════════════════════════════════════
+
+/* Catppuccin Frappe Theme for Waybar */
+
+/* Color definitions */
+@define-color base     #303446;
+@define-color mantle   #292c3c;
+@define-color crust    #232634;
+
+@define-color text     #c6d0f5;
+@define-color subtext0 #a5adce;
+@define-color subtext1 #b5bfe2;
+
+@define-color surface0 #414559;
+@define-color surface1 #51576d;
+@define-color surface2 #626880;
+
+@define-color overlay0 #737994;
+@define-color overlay1 #838ba7;
+@define-color overlay2 #949cbb;
+
+@define-color blue     #8caaee;
+@define-color lavender #babbf1;
+@define-color sapphire #85c1dc;
+@define-color sky      #99d1db;
+@define-color teal     #81c8be;
+@define-color green    #a6d189;
+@define-color yellow   #e5c890;
+@define-color peach    #ef9f76;
+@define-color maroon   #ea999c;
+@define-color red      #e78284;
+@define-color mauve    #ca9ee6;
+@define-color pink     #f4b8e4;
+@define-color flamingo #eebebe;
+@define-color rosewater #f2d5cf;
+
+/* Global styles */
+* {
+    font-family: "FiraCode Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+}
+
+/* Main window */
+window#waybar {
+    background-color: alpha(@base, 0.95);
+    color: @text;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+}
+
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Mako Config Content
+═══════════════════════════════════════════════════════════════════════════════
+
+# Mako Notification Daemon Configuration
+# Catppuccin Frappe Theme
+
+# Behavior
+sort=-time
+layer=overlay
+max-history=100
+max-visible=5
+
+# Interaction
+on-button-left=invoke-default-action
+on-button-middle=none
+on-button-right=dismiss
+on-touch=invoke-default-action
+
+# Style
+font=JetBrainsMono Nerd Font Mono 10
+width=350
+height=150
+margin=10
+padding=15
+border-size=2
+border-radius=8
+
+# Colors - Catppuccin Frappe
+background-color=#303446
+text-color=#c6d0f5
+border-color=#ca9ee6
+
+# Progress bar
+progress-color=over #8caaee
+
+# Icons
+icons=1
+max-icon-size=48
+icon-path=/usr/share/icons/Papirus-Dark
+
+# Timing
+default-timeout=5000
+ignore-timeout=0
+
+# Position
+anchor=top-right
+
+# Format
+format=<b>%s</b>\n%b
+markup=1
+actions=1
+
+# Grouping
+group-by=app-name
+
+# Urgency levels
+[urgency=low]
+border-color=#a6d189
+default-timeout=3000
+
+[urgency=normal]
+border-color=#ca9ee6
+default-timeout=5000
+
+[urgency=critical]
+border-color=#e78284
+default-timeout=0
+ignore-timeout=1
+
+# App-specific settings
+[app-name="Spotify"]
+border-color=#a6d189
+
+[app-name="volume"]
+border-color=#8caaee
+default-timeout=2000
+
+[app-name="brightness"]
+border-color=#e5c890
+default-timeout=2000
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprpaper Config Content
+═══════════════════════════════════════════════════════════════════════════════
+
+# Hyprpaper Configuration - Wallpaper Daemon
+# See: https://wiki.hypr.land/Hypr-Ecosystem/hyprpaper/
+
+# Preload wallpapers (paths must be absolute or start with ~)
+# Option 1: Use a solid color (Catppuccin Frappe base color)
+preload = ~/.config/hypr/wallpapers/catppuccin-frappe.png
+
+# Option 2: If you have your own wallpaper, uncomment and modify:
+# preload = ~/Pictures/Wallpapers/your-wallpaper.png
+
+# Set wallpaper for all monitors
+wallpaper = , ~/.config/hypr/wallpapers/catppuccin-frappe.png
+
+# Set wallpaper for specific monitor (if you have multiple monitors):
+# wallpaper = eDP-1, ~/path/to/wallpaper1.png
+# wallpaper = HDMI-A-1, ~/path/to/wallpaper2.png
+
+# Enable IPC (allows changing wallpaper with hyprctl)
+ipc = on
+
+# Splash text rendering (disable for better performance)
+splash = false
+
+# Wallpaper rendering mode
+# Options: contain, cover, tile, center
+# splash_offset = 2.0
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprpaper Loaded Wallpapers
+═══════════════════════════════════════════════════════════════════════════════
+
+no wallpapers loaded
+
+
+═══════════════════════════════════════════════════════════════════════════════
+CONFIGURATION SYMLINKS
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ hypr -> /home/harry/dots/hyprland
+✓ waybar -> /home/harry/dots/waybar
+✓ kitty -> /home/harry/dots/kitty
+✓ rofi -> /home/harry/dots/rofi
+✓ mako -> /home/harry/dots/mako
+✓ zathura -> /home/harry/dots/zathura
+
+═══════════════════════════════════════════════════════════════════════════════
+User Journal Errors (last 100)
+═══════════════════════════════════════════════════════════════════════════════
+
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:17:38 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:38 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:32:49 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:32:49 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:38:21 framework pulseaudio[991]: Lost I/O connection in module "module-gsettings"
+Oct 17 10:38:21 framework (sd-pam)[861]: pam_systemd(systemd-user:session): Failed to issue ReleaseSession() varlink call: io.systemd.Login.NoSuchSession
+-- Boot b81e4ca7161b4ad28dcaf189e6b5d1f3 --
+Oct 17 10:38:48 framework dbus-broker-launch[886]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:38:48 framework dbus-broker-launch[886]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:38:51 framework systemd-coredump[1005]: Process 977 (hypridle) of user 1000 dumped core.
+                                                  
+                                                  Stack trace of thread 977:
+                                                  #0  0x00007facea69894c n/a (libc.so.6 + 0x9894c)
+                                                  #1  0x00007facea63e410 raise (libc.so.6 + 0x3e410)
+                                                  #2  0x00007facea62557a abort (libc.so.6 + 0x2557a)
+                                                  #3  0x00007faceaa97bf6 _ZN9__gnu_cxx27__verbose_terminate_handlerEv (libstdc++.so.6 + 0x97bf6)
+                                                  #4  0x00007faceaab1eba _ZN10__cxxabiv111__terminateEPFvvE (libstdc++.so.6 + 0xb1eba)
+                                                  #5  0x00007faceaa975d9 _ZSt9terminatev (libstdc++.so.6 + 0x975d9)
+                                                  #6  0x00007faceaab2176 __cxa_throw (libstdc++.so.6 + 0xb2176)
+                                                  #7  0x0000564c9999f41d n/a (/usr/bin/hypridle + 0x641d)
+                                                  #8  0x0000564c999a4e37 n/a (/usr/bin/hypridle + 0xbe37)
+                                                  #9  0x00007facea627675 n/a (libc.so.6 + 0x27675)
+                                                  #10 0x00007facea627729 __libc_start_main (libc.so.6 + 0x27729)
+                                                  #11 0x0000564c999a5d15 n/a (/usr/bin/hypridle + 0xcd15)
+                                                  ELF object binary architecture: AMD x86-64
+-- Boot ed6373a3135f4972b72146e335827841 --
+Oct 17 14:28:53 framework dbus-broker-launch[929]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 14:28:53 framework dbus-broker-launch[929]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 14:28:56 framework systemd-coredump[1039]: Process 1020 (hypridle) of user 1000 dumped core.
+                                                  
+                                                  Stack trace of thread 1020:
+                                                  #0  0x00007f47c4a9894c n/a (libc.so.6 + 0x9894c)
+                                                  #1  0x00007f47c4a3e410 raise (libc.so.6 + 0x3e410)
+                                                  #2  0x00007f47c4a2557a abort (libc.so.6 + 0x2557a)
+                                                  #3  0x00007f47c4e97bf6 _ZN9__gnu_cxx27__verbose_terminate_handlerEv (libstdc++.so.6 + 0x97bf6)
+                                                  #4  0x00007f47c4eb1eba _ZN10__cxxabiv111__terminateEPFvvE (libstdc++.so.6 + 0xb1eba)
+                                                  #5  0x00007f47c4e975d9 _ZSt9terminatev (libstdc++.so.6 + 0x975d9)
+                                                  #6  0x00007f47c4eb2176 __cxa_throw (libstdc++.so.6 + 0xb2176)
+                                                  #7  0x0000561de397041d n/a (/usr/bin/hypridle + 0x641d)
+                                                  #8  0x0000561de3975e37 n/a (/usr/bin/hypridle + 0xbe37)
+                                                  #9  0x00007f47c4a27675 n/a (libc.so.6 + 0x27675)
+                                                  #10 0x00007f47c4a27729 __libc_start_main (libc.so.6 + 0x27729)
+                                                  #11 0x0000561de3976d15 n/a (/usr/bin/hypridle + 0xcd15)
+                                                  ELF object binary architecture: AMD x86-64
+
+
+═══════════════════════════════════════════════════════════════════════════════
+System Journal Errors (last 100)
+═══════════════════════════════════════════════════════════════════════════════
+
+Oct 16 22:16:20 framework systemd[1]: Failed unmounting /var/log.
+-- Boot d7108447a3864816a1cd6d7ad8fe1dcd --
+Oct 16 22:20:22 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: Unexpected number of charge port count
+Oct 16 22:20:22 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: probe with driver cros-usbpd-charger failed with error -71
+Oct 16 22:26:41 framework (sd-pam)[1654]: pam_systemd(systemd-user:session): Failed to issue ReleaseSession() varlink call: io.systemd.Login.NoSuchSession
+-- Boot 8afbb9eae90d46d2be03e0294f9e938e --
+Oct 17 10:02:36 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: Unexpected number of charge port count
+Oct 17 10:02:36 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: probe with driver cros-usbpd-charger failed with error -71
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:37 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:17:38 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:17:38 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:32:49 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:32:49 framework dbus-broker-launch[900]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:38:21 framework pulseaudio[991]: Lost I/O connection in module "module-gsettings"
+Oct 17 10:38:21 framework (sd-pam)[861]: pam_systemd(systemd-user:session): Failed to issue ReleaseSession() varlink call: io.systemd.Login.NoSuchSession
+-- Boot b81e4ca7161b4ad28dcaf189e6b5d1f3 --
+Oct 17 10:38:41 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: Unexpected number of charge port count
+Oct 17 10:38:41 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: probe with driver cros-usbpd-charger failed with error -71
+Oct 17 10:38:43 framework dbus-broker-launch[824]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:38:43 framework dbus-broker-launch[824]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:38:48 framework dbus-broker-launch[886]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 10:38:48 framework dbus-broker-launch[886]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 10:38:51 framework systemd-coredump[1005]: Process 977 (hypridle) of user 1000 dumped core.
+                                                  
+                                                  Stack trace of thread 977:
+                                                  #0  0x00007facea69894c n/a (libc.so.6 + 0x9894c)
+                                                  #1  0x00007facea63e410 raise (libc.so.6 + 0x3e410)
+                                                  #2  0x00007facea62557a abort (libc.so.6 + 0x2557a)
+                                                  #3  0x00007faceaa97bf6 _ZN9__gnu_cxx27__verbose_terminate_handlerEv (libstdc++.so.6 + 0x97bf6)
+                                                  #4  0x00007faceaab1eba _ZN10__cxxabiv111__terminateEPFvvE (libstdc++.so.6 + 0xb1eba)
+                                                  #5  0x00007faceaa975d9 _ZSt9terminatev (libstdc++.so.6 + 0x975d9)
+                                                  #6  0x00007faceaab2176 __cxa_throw (libstdc++.so.6 + 0xb2176)
+                                                  #7  0x0000564c9999f41d n/a (/usr/bin/hypridle + 0x641d)
+                                                  #8  0x0000564c999a4e37 n/a (/usr/bin/hypridle + 0xbe37)
+                                                  #9  0x00007facea627675 n/a (libc.so.6 + 0x27675)
+                                                  #10 0x00007facea627729 __libc_start_main (libc.so.6 + 0x27729)
+                                                  #11 0x0000564c999a5d15 n/a (/usr/bin/hypridle + 0xcd15)
+                                                  ELF object binary architecture: AMD x86-64
+Oct 17 14:28:04 framework systemd-coredump[74983]: Failed to send coredump datagram: Connection reset by peer
+-- Boot ed6373a3135f4972b72146e335827841 --
+Oct 17 14:28:27 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: Unexpected number of charge port count
+Oct 17 14:28:27 framework kernel: cros-usbpd-charger cros-usbpd-charger.6.auto: probe with driver cros-usbpd-charger failed with error -71
+Oct 17 14:28:27 framework kernel: pcieport 0000:02:00.0: Unable to change power state from D0 to D3hot, device inaccessible
+Oct 17 14:28:27 framework kernel: pcieport 0000:02:00.0: Unable to change power state from D3cold to D0, device inaccessible
+Oct 17 14:28:27 framework kernel: pcieport 0000:03:02.0: Unable to change power state from D3hot to D0, device inaccessible
+Oct 17 14:28:27 framework kernel: pcieport 0000:03:00.0: Unable to change power state from D3hot to D0, device inaccessible
+Oct 17 14:28:27 framework kernel: pcieport 0000:03:01.0: Unable to change power state from D3hot to D0, device inaccessible
+Oct 17 14:28:29 framework dbus-broker-launch[858]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 14:28:29 framework dbus-broker-launch[858]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 14:28:53 framework dbus-broker-launch[929]: Ignoring duplicate name 'org.freedesktop.Notifications' in service file '/usr/share/dbus-1/services/org.knopwob.dunst.service'
+Oct 17 14:28:53 framework dbus-broker-launch[929]: Ignoring duplicate name 'org.freedesktop.FileManager1' in service file '/usr/share/dbus-1/services/org.xfce.Thunar.FileManager1.service'
+Oct 17 14:28:56 framework systemd-coredump[1039]: Process 1020 (hypridle) of user 1000 dumped core.
+                                                  
+                                                  Stack trace of thread 1020:
+                                                  #0  0x00007f47c4a9894c n/a (libc.so.6 + 0x9894c)
+                                                  #1  0x00007f47c4a3e410 raise (libc.so.6 + 0x3e410)
+                                                  #2  0x00007f47c4a2557a abort (libc.so.6 + 0x2557a)
+                                                  #3  0x00007f47c4e97bf6 _ZN9__gnu_cxx27__verbose_terminate_handlerEv (libstdc++.so.6 + 0x97bf6)
+                                                  #4  0x00007f47c4eb1eba _ZN10__cxxabiv111__terminateEPFvvE (libstdc++.so.6 + 0xb1eba)
+                                                  #5  0x00007f47c4e975d9 _ZSt9terminatev (libstdc++.so.6 + 0x975d9)
+                                                  #6  0x00007f47c4eb2176 __cxa_throw (libstdc++.so.6 + 0xb2176)
+                                                  #7  0x0000561de397041d n/a (/usr/bin/hypridle + 0x641d)
+                                                  #8  0x0000561de3975e37 n/a (/usr/bin/hypridle + 0xbe37)
+                                                  #9  0x00007f47c4a27675 n/a (libc.so.6 + 0x27675)
+                                                  #10 0x00007f47c4a27729 __libc_start_main (libc.so.6 + 0x27729)
+                                                  #11 0x0000561de3976d15 n/a (/usr/bin/hypridle + 0xcd15)
+                                                  ELF object binary architecture: AMD x86-64
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Waybar Output (if running)
+═══════════════════════════════════════════════════════════════════════════════
+
+No waybar journal logs available
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Wayland Environment
+═══════════════════════════════════════════════════════════════════════════════
+
+DISPLAY=:1
+GDK_BACKEND=wayland,x11
+GDK_SCALE=2
+MOZ_ENABLE_WAYLAND=1
+QT_QPA_PLATFORMTHEME=qt6ct
+QT_QPA_PLATFORM=wayland;xcb
+UWSM_FINALIZE_VARNAMES=HYPRLAND_INSTANCE_SIGNATURE HYPRLAND_CMD HYPRCURSOR_THEME HYPRCURSOR_SIZE XCURSOR_SIZE XCURSOR_THEME
+WAYLAND_DISPLAY=wayland-1
+XCURSOR_SIZE=36
+XCURSOR_THEME=Bibata-Modern-Classic
+XDG_BACKEND=wayland
+XDG_CACHE_HOME=/home/harry/.cache
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_CONFIG_HOME=/home/harry/.config
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_DATA_HOME=/home/harry/.local/share
+XDG_MENU_PREFIX=hyprland-
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+XDG_SEAT=seat0
+XDG_SESSION_CLASS=user
+XDG_SESSION_DESKTOP=Hyprland
+XDG_SESSION_ID=2
+XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session1
+XDG_SESSION_TYPE=wayland
+XDG_STATE_HOME=/home/harry/.local/state
+XDG_VTNR=1
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Path
+═══════════════════════════════════════════════════════════════════════════════
+
+/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Config Directory Permissions
+═══════════════════════════════════════════════════════════════════════════════
+
+total 32
+drwxr-xr-x 1 harry harry 374 Oct 17 14:26 .
+drwx------ 1 harry harry 310 Oct 17 14:24 ..
+drwx------ 1 harry harry   8 Oct 17 14:28 dconf
+drwxr-xr-x 1 harry harry 914 Oct 17 14:22 discord
+drwx------ 1 harry harry   0 Oct 17 11:34 Electron
+drwxr-x--x 1 harry harry  38 Oct 17 10:48 gh
+drwxr-xr-x 1 harry harry  18 Oct 17 10:33 go
+drwx------ 1 harry harry   0 Oct 17 14:26 gtk-3.0
+lrwxrwxrwx 1 harry harry  25 Oct 17 10:11 hypr -> /home/harry/dots/hyprland
+lrwxrwxrwx 1 harry harry  22 Oct 17 10:11 kitty -> /home/harry/dots/kitty
+drwxr-xr-x 1 harry harry   2 Oct 17 11:34 libreoffice
+lrwxrwxrwx 1 harry harry  21 Oct 17 10:11 mako -> /home/harry/dots/mako
+drwxr-xr-x 1 harry harry  14 Oct 17 10:46 mozilla
+drwxr-xr-x 1 harry harry 122 Oct 17 14:26 nvim
+drwxr-xr-x 1 harry harry 174 Oct 17 11:25 nvim-backup-20251017-115611
+drwxr-xr-x 1 harry harry 122 Oct 17 11:56 nvim-backup-20251017-142618
+drwx------ 1 harry harry 550 Oct 17 11:35 obsidian
+-rw-r--r-- 1 harry harry 138 Oct 17 11:33 pavucontrol.ini
+drwx------ 1 harry harry 500 Oct 16 22:21 pulse
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Hyprland Config Permissions
+═══════════════════════════════════════════════════════════════════════════════
+
+/home/harry/.config/hypr/:
+total 16
+drwxr-xr-x 1 harry harry  100 Oct 17 14:36 .
+drwxr-xr-x 1 harry harry  432 Oct 17 14:36 ..
+drwxr-xr-x 1 harry harry  238 Oct 17 14:36 conf
+-rw-r--r-- 1 harry harry 1278 Oct 17 14:36 hyprland.conf
+-rw-r--r-- 1 harry harry  892 Oct 17 11:56 hyprpaper.conf
+-rw-r--r-- 1 harry harry 4307 Oct 17 10:08 README.md
+drwxr-xr-x 1 harry harry   18 Oct 17 14:11 wallpapers
+
+/home/harry/.config/hypr/conf:
+total 36
+drwxr-xr-x 1 harry harry  238 Oct 17 14:36 .
+drwxr-xr-x 1 harry harry  100 Oct 17 14:36 ..
+-rw-r--r-- 1 harry harry 1195 Oct 17 11:56 animations.conf
+-rw-r--r-- 1 harry harry 2146 Oct 17 14:36 autostart.conf
+-rw-r--r-- 1 harry harry  904 Oct 17 11:02 decorations.conf
+-rw-r--r-- 1 harry harry  860 Oct 17 10:08 general.conf
+-rw-r--r-- 1 harry harry 1136 Oct 17 11:56 input.conf
+-rw-r--r-- 1 harry harry 3806 Oct 17 11:56 keybinds.conf
+-rw-r--r-- 1 harry harry 1128 Oct 17 11:20 monitors.conf
+-rw-r--r-- 1 harry harry  924 Oct 17 10:08 theme.conf
+-rw-r--r-- 1 harry harry 1374 Oct 17 11:11 windowrules.conf
+
+/home/harry/.config/hypr/wallpapers:
+total 4
+drwxr-xr-x 1 harry harry   18 Oct 17 14:11 .
+drwxr-xr-x 1 harry harry  100 Oct 17 14:36 ..
+-rw-r--r-- 1 harry harry 3545 Oct 17 14:11 README.md
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Monitors (Hyprctl)
+═══════════════════════════════════════════════════════════════════════════════
+
+Monitor eDP-1 (ID 0):
+	2256x1504@59.99900 at 0x0
+	description: BOE 0x095F
+	make: BOE
+	model: 0x095F
+	physical size (mm): 280x190
+	serial: 
+	active workspace: 1 (1)
+	special workspace: 0 ()
+	reserved: 0 0 0 0
+	scale: 1.57
+	transform: 0
+	focused: yes
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 2256x1504@60.00Hz 2256x1504@48.00Hz 
+
+
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Graphics Info (lspci)
+═══════════════════════════════════════════════════════════════════════════════
+
+00:02.0 VGA compatible controller: Intel Corporation Alder Lake-P GT2 [Iris Xe Graphics] (rev 0c)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Loaded DRI Modules
+═══════════════════════════════════════════════════════════════════════════════
+
+by-path
+card1
+renderD128
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Network Interfaces
+═══════════════════════════════════════════════════════════════════════════════
+
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+4: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 88:d8:2e:41:da:ca brd ff:ff:ff:ff:ff:ff
+    inet 192.168.6.121/22 metric 600 brd 192.168.7.255 scope global dynamic wlan0
+       valid_lft 13891sec preferred_lft 13891sec
+    inet6 2600:4040:a508:1900:8ad8:2eff:fe41:daca/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 4952sec preferred_lft 4952sec
+    inet6 fdad:ace5:4396:1:8ad8:2eff:fe41:daca/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 2591811sec preferred_lft 604611sec
+    inet6 fd4a:c3de:e4f0:be48:8ad8:2eff:fe41:daca/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1737sec preferred_lft 1737sec
+    inet6 fe80::8ad8:2eff:fe41:daca/64 scope link proto kernel_ll 
+       valid_lft forever preferred_lft forever
+5: enp0s13f0u1u1c2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 00:24:27:15:69:b1 brd ff:ff:ff:ff:ff:ff
+    altname enx0024271569b1
+    inet 192.168.6.109/22 metric 100 brd 192.168.7.255 scope global dynamic enp0s13f0u1u1c2
+       valid_lft 13890sec preferred_lft 13890sec
+    inet6 2600:4040:a508:1900:224:27ff:fe15:69b1/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 4952sec preferred_lft 4952sec
+    inet6 fdad:ace5:4396:1:224:27ff:fe15:69b1/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 2591811sec preferred_lft 604611sec
+    inet6 fd4a:c3de:e4f0:be48:224:27ff:fe15:69b1/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 1737sec preferred_lft 1737sec
+    inet6 fe80::224:27ff:fe15:69b1/64 scope link proto kernel_ll 
+       valid_lft forever preferred_lft forever
+
+
+═══════════════════════════════════════════════════════════════════════════════
+DNS Configuration
+═══════════════════════════════════════════════════════════════════════════════
+
+# This is /run/systemd/resolve/stub-resolv.conf managed by man:systemd-resolved(8).
+# Do not edit.
+#
+# This file might be symlinked as /etc/resolv.conf. If you're looking at
+# /etc/resolv.conf and seeing this text, you have followed the symlink.
+#
+# This is a dynamic resolv.conf file for connecting local clients to the
+# internal DNS stub resolver of systemd-resolved. This file lists all
+# configured search domains.
+#
+# Run "resolvectl status" to see details about the uplink DNS servers
+# currently in use.
+#
+# Third party programs should typically not access this file directly, but only
+# through the symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a
+# different way, replace this symlink by a static file or a different symlink.
+#
+# See man:systemd-resolved.service(8) for details about the supported modes of
+# operation for /etc/resolv.conf.
+
+nameserver 127.0.0.53
+options edns0 trust-ad
+search .
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Connectivity Test
+═══════════════════════════════════════════════════════════════════════════════
+
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=119 time=8.70 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=119 time=6.75 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 6.746/7.723/8.700/0.977 ms
+
+
+═══════════════════════════════════════════════════════════════════════════════
+COMMON ISSUES CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Running on Wayland
+✓ Hyprland is current desktop
+✓ Hyprland config directory exists
+✓ hyprctl found in PATH
+✓ waybar found in PATH
+✓ mako found in PATH
+✓ rofi found in PATH
+⚠ xdg-desktop-portal is not running (may affect some apps)
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                            END OF DIAGNOSTIC                               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
