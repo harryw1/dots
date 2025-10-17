@@ -8,9 +8,6 @@ adwaita-dark
 papirus-icon-theme
 adwaita-icon-theme
 
-# Cursor themes
-bibata-cursor-theme
-
 # Fonts
 ttf-firacode-nerd
 ttf-font-awesome
