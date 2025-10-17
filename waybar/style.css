@@ -86,15 +86,18 @@ tooltip label {
 /* Workspaces */
 #workspaces {
     padding: 0px 6px;
+    margin-left: 4px;  /* Add left margin for edge spacing */
 }
 
 #workspaces button {
-    padding: 0px 8px;
+    min-width: 24px;
+    padding: 4px 10px;
     color: @text;
     background-color: transparent;
     border: none;
     border-radius: 6px;
     transition: all 0.3s ease;
+    font-size: 13px;
 }
 
 #workspaces button:hover {
@@ -106,6 +109,7 @@ tooltip label {
     background-color: @lavender;
     color: @base;
     font-weight: bold;
+    min-width: 24px;
 }
 
 #workspaces button.urgent {
@@ -158,6 +162,11 @@ window#waybar.empty #window {
 #idle_inhibitor.activated {
     background-color: @sky;
     color: @base;
+}
+
+#idle_inhibitor.deactivated {
+    background-color: @surface0;  /* Ensure consistent background when deactivated */
+    color: @overlay0;
 }
 
 /* Pulseaudio */
@@ -243,6 +252,8 @@ window#waybar.empty #window {
 #custom-power {
     color: @red;
     font-size: 16px;
+    margin-right: 4px;  /* Add right margin for edge spacing */
+    padding: 0px 14px;  /* Slightly more padding for better balance */
 }
 
 #custom-power:hover {
