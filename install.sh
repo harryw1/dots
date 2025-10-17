@@ -58,7 +58,7 @@ draw_box() {
     echo -en "${FRAPPE_LAVENDER}"
     echo -n "╔"
     printf '═%.0s' $(seq 1 $((width - 2)))
-    echo "╗"
+    echo -e "╗${NC}"
 
     # Title (if provided)
     if [ -n "$title" ]; then
@@ -78,9 +78,8 @@ draw_box() {
         echo -en "${FRAPPE_LAVENDER}"
         echo -n "╠"
         printf '═%.0s' $(seq 1 $((width - 2)))
-        echo "╣"
+        echo -e "╣${NC}"
     fi
-    echo -en "${NC}"
 }
 
 draw_box_line() {
@@ -109,8 +108,7 @@ draw_box_bottom() {
     echo -en "${FRAPPE_LAVENDER}"
     echo -n "╚"
     printf '═%.0s' $(seq 1 $((width - 2)))
-    echo "╝"
-    echo -en "${NC}"
+    echo -e "╝${NC}"
 }
 
 draw_progress_bar() {
