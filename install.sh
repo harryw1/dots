@@ -45,6 +45,11 @@ PACKAGES_DIR="$DOTFILES_DIR/packages"
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 
 # TUI Helper Functions
+# Function to strip ANSI codes for length calculation
+strip_ansi() {
+    echo -e "$1" | sed 's/\x1b\[[0-9;]*m//g'
+}
+
 draw_box() {
     local title="$1"
     local width=${2:-60}
@@ -57,18 +62,20 @@ draw_box() {
 
     # Title (if provided)
     if [ -n "$title" ]; then
-        # Calculate visible title length (no ANSI codes)
-        local title_len=${#title}
+        # Strip ANSI codes to calculate visible length
+        local visible_title=$(strip_ansi "$title")
+        local title_len=${#visible_title}
         local padding=$(( (width - title_len - 2) / 2 ))
         local right_padding=$(( width - title_len - padding - 2 ))
 
-        echo -n "║"
+        echo -en "${FRAPPE_LAVENDER}║${NC}"
         printf ' %.0s' $(seq 1 $padding)
-        echo -n "${BOLD}${FRAPPE_MAUVE}${title}${NC}${FRAPPE_LAVENDER}"
+        echo -en "${BOLD}${FRAPPE_MAUVE}${title}${NC}"
         printf ' %.0s' $(seq 1 $right_padding)
-        echo "║"
+        echo -e " ${FRAPPE_LAVENDER}║${NC}"
 
         # Separator
+        echo -en "${FRAPPE_LAVENDER}"
         echo -n "╠"
         printf '═%.0s' $(seq 1 $((width - 2)))
         echo "╣"
@@ -82,7 +89,7 @@ draw_box_line() {
     local color=${3:-$FRAPPE_TEXT}
 
     # Strip ANSI codes to get actual visible text length
-    local visible_text=$(echo -e "$text" | sed 's/\x1b\[[0-9;]*m//g')
+    local visible_text=$(strip_ansi "$text")
     local text_length=${#visible_text}
 
     # Calculate padding: width - text_length - 3 (for "║ " and " ║")
@@ -91,7 +98,9 @@ draw_box_line() {
     # Print the line
     echo -en "${FRAPPE_LAVENDER}║${NC} "
     echo -en "${text}"
-    printf ' %.0s' $(seq 1 $padding)
+    if [ $padding -gt 0 ]; then
+        printf ' %.0s' $(seq 1 $padding)
+    fi
     echo -e " ${FRAPPE_LAVENDER}║${NC}"
 }
 
@@ -134,11 +143,16 @@ print_step() {
 
 show_welcome() {
     clear
-    local box_width=68
+
+    # Calculate box width based on ASCII art (longest line is ~69 chars)
+    local ascii_width=69
+    local box_width=$((ascii_width + 17))  # Add padding for margins
 
     echo ""
     draw_box "Hyprland Dotfiles Installer" $box_width
     draw_box_line "" $box_width
+
+    # HYPRLAND ASCII art - colors handled by draw_box_line
     draw_box_line "${FRAPPE_MAUVE}  ██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗${NC}" $box_width
     draw_box_line "${FRAPPE_MAUVE}  ██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗${NC}" $box_width
     draw_box_line "${FRAPPE_BLUE}  ███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║${NC}" $box_width
@@ -146,16 +160,16 @@ show_welcome() {
     draw_box_line "${FRAPPE_SAPPHIRE}  ██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝${NC}" $box_width
     draw_box_line "${FRAPPE_SAPPHIRE}  ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝${NC}" $box_width
     draw_box_line "" $box_width
-    draw_box_line "${FRAPPE_TEXT}  Catppuccin Frappe Theme • Modular Configuration${NC}" $box_width
+    draw_box_line "Catppuccin Frappe Theme • Modular Configuration" $box_width
     draw_box_line "" $box_width
-    draw_box_line "${FRAPPE_PEACH}  This installer will:${NC}" $box_width
-    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Install all required packages" $box_width
-    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Set up Hyprland, Waybar, Kitty, and more" $box_width
-    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Configure Neovim with LazyVim" $box_width
-    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Install Catppuccin wallpaper collection" $box_width
-    draw_box_line "${FRAPPE_GREEN}    ✓${NC} Create backups of existing configs" $box_width
+    draw_box_line "${FRAPPE_PEACH}This installer will:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Install all required packages" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Set up Hyprland, Waybar, Kitty, and more" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Configure Neovim with LazyVim" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Install Catppuccin wallpaper collection" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Create backups of existing configs" $box_width
     draw_box_line "" $box_width
-    draw_box_line "${FRAPPE_YELLOW}  ⚠  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
+    draw_box_line "${FRAPPE_YELLOW}⚠  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
     draw_box_line "" $box_width
     draw_box_bottom $box_width
     echo ""
