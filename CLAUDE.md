@@ -114,8 +114,12 @@ ls ~/.local/share/catppuccin-wallpapers/frappe/
 # Run through testing checklist
 cat TESTING.md
 
-# Collect debug information for troubleshooting
-./collect-errors.sh
+# Comprehensive system diagnostic (RECOMMENDED - checks everything)
+./system-check.sh
+
+# Specific diagnostics:
+./collect-errors.sh    # Hyprland config validation and logs only
+./debug-packages.sh    # Package installation issues only
 
 # Check service status
 pgrep waybar
@@ -127,6 +131,9 @@ tail -f ~/.local/share/hyprland/hyprland.log
 
 # Test notifications
 notify-send "Test" "This is a test notification"
+
+# Reload Waybar
+pkill -USR2 waybar
 ```
 
 ### Manual Package Management
@@ -174,17 +181,37 @@ When editing configurations, files are in this repository but active via symlink
 
 ## Troubleshooting Workflow
 
-When configuration issues arise:
+When configuration or system issues arise:
 
-1. Run `./collect-errors.sh` to generate `debug-output.txt`
-2. Review the output for errors: `cat debug-output.txt`
-3. If on a remote machine, commit and push the debug output:
+1. **Run comprehensive diagnostic** (recommended):
    ```bash
-   git add debug-output.txt
-   git commit -m "Add debug output from target machine"
+   ./system-check.sh
+   ```
+   This checks ALL components: packages, services, configs, logs, permissions, etc.
+   Output saved to `system-check-output.txt`
+
+2. **Or use specific diagnostics**:
+   - `./collect-errors.sh` - Hyprland config validation and logs only
+   - `./debug-packages.sh` - Package installation issues only
+
+3. **Review the output**:
+   ```bash
+   less system-check-output.txt
+   # or
+   cat debug-output.txt
+   ```
+
+4. **If on a remote machine**, commit and push the diagnostic output:
+   ```bash
+   git add system-check-output.txt
+   git commit -m "Add system diagnostic from target machine"
    git push origin main
    ```
-4. Pull on development machine and analyze: `git pull && cat debug-output.txt`
+
+5. **Pull on development machine and analyze**:
+   ```bash
+   git pull && less system-check-output.txt
+   ```
 
 ## Component Documentation
 

@@ -126,34 +126,73 @@ See [TESTING.md](TESTING.md) for a comprehensive checklist covering:
 
 ## Troubleshooting
 
-If you encounter configuration errors or issues, use the error collection script:
+### Comprehensive System Check (Recommended)
+
+For a complete diagnostic of all components, services, and configurations:
 
 ```bash
-./collect-errors.sh
+./system-check.sh
 ```
 
-This will:
-1. Validate Hyprland configuration
-2. Collect system logs and version information
-3. Check for common configuration issues
-4. Save everything to `debug-output.txt`
+This comprehensive script checks:
+- System information and environment
+- All package installation status (core + AUR)
+- Service and process status (Waybar, Mako, Hyprpaper, PipeWire, etc.)
+- Configuration validation (Hyprland, Waybar, Mako, etc.)
+- Log files and recent errors
+- File permissions and symlinks
+- Display and graphics info
+- Network connectivity
+- Common issues checklist
 
-**To share errors for troubleshooting:**
+Output saved to `system-check-output.txt` with detailed diagnostics.
+
+### Specific Diagnostic Scripts
+
+**Configuration errors only:**
 ```bash
-# On your target machine
-./collect-errors.sh
-git add debug-output.txt
-git commit -m "Add debug output from target machine"
+./collect-errors.sh  # Hyprland config validation and logs
+```
+
+**Package installation issues:**
+```bash
+./debug-packages.sh  # Repository and package availability checks
+```
+
+### Sharing Diagnostics
+
+To share diagnostic output for troubleshooting:
+
+```bash
+# Run the comprehensive check
+./system-check.sh
+
+# Commit and push
+git add system-check-output.txt
+git commit -m "Add system diagnostic from target machine"
 git push origin main
 
-# Then on your development machine
+# On your development machine
 git pull origin main
-cat debug-output.txt
+cat system-check-output.txt
 ```
 
-**Quick check for Hyprland errors only:**
+### Quick Checks
+
+**Check Hyprland configuration:**
 ```bash
 hyprctl reload  # Shows config errors if any
+```
+
+**Check Waybar status:**
+```bash
+pgrep waybar && echo "Running" || echo "Not running"
+pkill -USR2 waybar  # Reload waybar
+```
+
+**View recent Hyprland errors:**
+```bash
+grep -i error ~/.local/share/hyprland/hyprland.log | tail -20
 ```
 
 ## Goals
