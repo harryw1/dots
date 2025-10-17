@@ -67,6 +67,38 @@ Backups are preserved in `~/.config-backup-TIMESTAMP/`
 - **Waybar**: Status bar with Catppuccin Frappe theme
   - See [waybar/README.md](waybar/README.md) for details
 
+## Troubleshooting
+
+If you encounter configuration errors or issues, use the error collection script:
+
+```bash
+./collect-errors.sh
+```
+
+This will:
+1. Validate Hyprland configuration
+2. Collect system logs and version information
+3. Check for common configuration issues
+4. Save everything to `debug-output.txt`
+
+**To share errors for troubleshooting:**
+```bash
+# On your target machine
+./collect-errors.sh
+git add debug-output.txt
+git commit -m "Add debug output from target machine"
+git push origin main
+
+# Then on your development machine
+git pull origin main
+cat debug-output.txt
+```
+
+**Quick check for Hyprland errors only:**
+```bash
+hyprctl reload  # Shows config errors if any
+```
+
 ## Goals
 
 - Python development tools
