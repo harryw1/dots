@@ -609,31 +609,31 @@ main() {
             check_repositories || return 1
             echo "[DEBUG] check_repositories completed"
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Optimizing mirrorlist"
             check_mirrorlist
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Syncing package databases"
             sync_package_database
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Resolving package conflicts"
             resolve_conflicts
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Installing core packages"
             install_packages "$PACKAGES_DIR/core.txt" "core packages"
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Installing Hypr ecosystem packages"
             install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Installing theming packages"
             install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
 
-            ((current_step++))
+            current_step=$((current_step + 1))
             print_step $current_step $total_steps "Installing development packages"
             install_packages "$PACKAGES_DIR/development.txt" "development packages"
 
@@ -662,7 +662,7 @@ main() {
     # Ensure .config directory exists
     mkdir -p "$CONFIG_DIR"
 
-    ((current_step++))
+    current_step=$((current_step + 1))
     print_step $current_step $total_steps "Creating configuration symlinks"
 
     # Install Hyprland configuration
@@ -714,7 +714,7 @@ main() {
         print_warning "Starship configuration file not found, skipping"
     fi
 
-    ((current_step++))
+    current_step=$((current_step + 1))
     print_step $current_step $total_steps "Setting up Neovim with LazyVim"
     install_lazyvim
 
