@@ -20,8 +20,12 @@ ttf-liberation
 
 # Icon fonts
 ttf-font-awesome
+ttf-nerd-fonts-symbols  # Additional Nerd Font symbols for Waybar and icons
 
 # Qt theming
 qt5ct
 qt6ct
 kvantum
+
+# Wallpaper tools (optional but recommended)
+imagemagick  # For creating custom wallpapers or solid color backgrounds

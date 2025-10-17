@@ -433,6 +433,9 @@ main() {
     # Install LazyVim with custom theme
     install_lazyvim
 
+    # Create wallpapers directory
+    mkdir -p "$HOME/.config/hypr/wallpapers"
+
     # Summary
     echo ""
     print_success "Installation complete!"
@@ -445,15 +448,32 @@ main() {
     echo ""
     print_info "Next steps:"
     if [ "$INSTALL_PACKAGES" != true ]; then
-        echo "  1. Install required dependencies: ./install.sh --packages"
+        echo "  1. Install required dependencies: ./install.sh --packages-all"
         echo "     Or manually: see packages/ directory"
-        echo "  2. Adjust monitor configuration in ~/.config/hypr/conf/monitors.conf"
-        echo "  3. Customize keybindings in ~/.config/hypr/conf/keybinds.conf"
-        echo "  4. Reload Hyprland: hyprctl reload"
+        echo "  2. Set up a wallpaper (see ~/.config/hypr/wallpapers/README.md)"
+        echo "  3. Configure Firefox dark mode: about:preferences → General → Website appearance → Dark"
+        echo "  4. Adjust monitor configuration in ~/.config/hypr/conf/monitors.conf"
+        echo "  5. Reload Hyprland: hyprctl reload (or log out and back in)"
     else
-        echo "  1. Adjust monitor configuration in ~/.config/hypr/conf/monitors.conf"
-        echo "  2. Customize keybindings in ~/.config/hypr/conf/keybinds.conf"
-        echo "  3. Reload Hyprland: hyprctl reload"
+        echo "  === Post-Installation Setup ==="
+        echo ""
+        echo "  Essential setup (do these now):"
+        echo "  1. Set up a wallpaper:"
+        echo "     See: ~/.config/hypr/wallpapers/README.md"
+        echo "     Quick: convert -size 2560x1600 xc:'#303446' ~/.config/hypr/wallpapers/catppuccin-frappe.png"
+        echo ""
+        echo "  2. Configure Firefox dark mode manually:"
+        echo "     Open Firefox → about:preferences → General → Website appearance → Choose 'Dark'"
+        echo ""
+        echo "  3. Apply GTK theme (for Thunar, LibreOffice dark mode):"
+        echo "     Log out and log back in to Hyprland for GTK theme to apply"
+        echo ""
+        echo "  Optional customization:"
+        echo "  - Adjust monitor scaling: ~/.config/hypr/conf/monitors.conf"
+        echo "  - Customize keybindings: ~/.config/hypr/conf/keybinds.conf"
+        echo "  - Adjust animations: ~/.config/hypr/conf/animations.conf"
+        echo ""
+        echo "  To apply changes: hyprctl reload (or log out/in for theme changes)"
     fi
     echo ""
 }

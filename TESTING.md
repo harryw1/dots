@@ -15,11 +15,14 @@ The following issues have been addressed in the latest update:
 
 ### First Time Setup
 
-After pulling the latest changes:
-1. Install SwayOSD: `yay -S swayosd-git`
-2. Reload Hyprland: `hyprctl reload` or log out and back in
-3. Set up a wallpaper (see hyprland/wallpapers/README.md)
-4. Configure Firefox dark mode: `about:preferences` → General → Website appearance → Dark
+If you already have the dotfiles installed and are updating:
+1. Pull latest changes: `git pull origin main`
+2. Install new packages: `./install.sh --packages-all` (includes SwayOSD)
+3. Reload Hyprland: `hyprctl reload` or log out and back in
+4. Set up a wallpaper (see hyprland/wallpapers/README.md)
+5. Configure Firefox dark mode: `about:preferences` → General → Website appearance → Dark
+
+**Note**: The install script automatically installs all dependencies including SwayOSD, Nerd Fonts, and ImageMagick.
 
 ---
 
