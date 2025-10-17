@@ -57,11 +57,15 @@ draw_box() {
 
     # Title (if provided)
     if [ -n "$title" ]; then
-        local padding=$(( (width - ${#title} - 4) / 2 ))
+        # Calculate visible title length (no ANSI codes)
+        local title_len=${#title}
+        local padding=$(( (width - title_len - 2) / 2 ))
+        local right_padding=$(( width - title_len - padding - 2 ))
+
         echo -n "║"
         printf ' %.0s' $(seq 1 $padding)
-        echo -n "${BOLD}${FRAPPE_MAUVE}$title${NC}${FRAPPE_LAVENDER}"
-        printf ' %.0s' $(seq 1 $((width - padding - ${#title} - 4)))
+        echo -n "${BOLD}${FRAPPE_MAUVE}${title}${NC}${FRAPPE_LAVENDER}"
+        printf ' %.0s' $(seq 1 $right_padding)
         echo "║"
 
         # Separator
@@ -78,8 +82,9 @@ draw_box_line() {
     local color=${3:-$FRAPPE_TEXT}
 
     echo -en "${FRAPPE_LAVENDER}║${NC} ${color}${text}${NC}"
-    local text_length=$(echo "$text" | sed 's/\x1b\[[0-9;]*m//g' | wc -c)
-    local padding=$((width - text_length - 2))
+    # Strip ANSI codes and calculate actual visible length (subtract 1 for newline from wc -c)
+    local text_length=$(($(echo -n "$text" | sed 's/\x1b\[[0-9;]*m//g' | wc -c)))
+    local padding=$((width - text_length - 3))
     printf ' %.0s' $(seq 1 $padding)
     echo -e "${FRAPPE_LAVENDER}║${NC}"
 }
@@ -559,7 +564,8 @@ main() {
     # Show welcome screen
     if [ "$SHOW_TUI" = true ]; then
         show_welcome
-        read -p "Press Enter to continue or Ctrl+C to cancel..."
+        echo -n "Press Enter to continue or Ctrl+C to cancel..."
+        read -r
         echo ""
     fi
 
