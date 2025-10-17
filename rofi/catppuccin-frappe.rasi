@@ -1,0 +1,131 @@
+/**
+ * Catppuccin Frappe Theme for Rofi
+ * Based on https://github.com/catppuccin/rofi
+ */
+
+* {
+    // Catppuccin Frappe Colors
+    bg-col:  #303446;
+    bg-col-light: #303446;
+    border-col: #303446;
+    selected-col: #303446;
+    blue: #8caaee;
+    fg-col: #c6d0f5;
+    fg-col2: #e78284;
+    grey: #626880;
+    mauve: #ca9ee6;
+    pink: #f4b8e4;
+    green: #a6d189;
+
+    width: 600;
+    font: "FiraCode Nerd Font Mono 10";
+}
+
+element-text, element-icon , mode-switcher {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+window {
+    height: 450px;
+    border: 2px;
+    border-color: @mauve;
+    background-color: @bg-col;
+    border-radius: 8px;
+}
+
+mainbox {
+    background-color: @bg-col;
+}
+
+inputbar {
+    children: [prompt,entry];
+    background-color: @bg-col;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 8px;
+}
+
+prompt {
+    background-color: @mauve;
+    padding: 6px 8px;
+    text-color: @bg-col;
+    border-radius: 3px;
+    margin: 0 8px 0 0;
+}
+
+textbox-prompt-colon {
+    expand: false;
+    str: ":";
+}
+
+entry {
+    padding: 6px;
+    text-color: @fg-col;
+    background-color: @bg-col;
+    placeholder: "Search...";
+    placeholder-color: @grey;
+}
+
+listview {
+    border: 0px 0px 0px;
+    padding: 6px 0px 0px;
+    margin: 0 8px 8px 8px;
+    columns: 1;
+    lines: 8;
+    background-color: @bg-col;
+}
+
+element {
+    padding: 8px;
+    background-color: @bg-col;
+    text-color: @fg-col;
+    border-radius: 5px;
+}
+
+element-icon {
+    size: 24px;
+    margin: 0 8px 0 0;
+}
+
+element selected {
+    background-color: @mauve;
+    text-color: @bg-col;
+}
+
+element-text selected {
+    text-color: @bg-col;
+}
+
+mode-switcher {
+    spacing: 0;
+    margin: 0 8px 8px 8px;
+}
+
+button {
+    padding: 10px;
+    background-color: @bg-col-light;
+    text-color: @grey;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+    border-radius: 5px;
+}
+
+button selected {
+  background-color: @mauve;
+  text-color: @bg-col;
+}
+
+message {
+    background-color: @bg-col;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+textbox {
+    padding: 6px;
+    margin: 0;
+    text-color: @fg-col;
+    background-color: @bg-col;
+}

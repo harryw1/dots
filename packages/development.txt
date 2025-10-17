@@ -1,0 +1,23 @@
+# Development tools
+# Install with: pacman -S --needed - < packages/development.txt
+
+# Python development
+python
+python-pip
+python-virtualenv
+ipython
+
+# C++ development
+gcc
+gdb
+cmake
+make
+clang
+lldb
+
+# Build tools
+base-devel
+git
+
+# Text editors
+neovim

@@ -1,0 +1,15 @@
+# Office and productivity tools
+# Install with: pacman -S --needed - < packages/productivity.txt
+
+# Office suite
+libreoffice-fresh
+
+# PDF viewer
+zathura
+zathura-pdf-mupdf
+
+# Image viewer
+imv
+
+# Document tools
+pandoc

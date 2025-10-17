@@ -1,0 +1,24 @@
+# Theming and appearance packages
+# Install with: pacman -S --needed - < packages/theming.txt
+
+# GTK themes
+adwaita-dark
+
+# Icon themes
+papirus-icon-theme
+adwaita-icon-theme
+
+# Cursor themes
+bibata-cursor-theme
+
+# Fonts
+ttf-firacode-nerd
+ttf-font-awesome
+noto-fonts
+noto-fonts-emoji
+noto-fonts-cjk
+
+# Qt theming
+qt5ct
+qt6ct
+kvantum

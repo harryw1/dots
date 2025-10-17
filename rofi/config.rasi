@@ -1,0 +1,34 @@
+// Rofi Configuration
+// Main config file
+
+configuration {
+    // Display settings
+    modi: "drun,run,window";
+    show-icons: true;
+    icon-theme: "Papirus-Dark";
+    display-drun: " Apps";
+    display-run: " Run";
+    display-window: " Windows";
+    drun-display-format: "{name}";
+    window-format: "{w} · {c} · {t}";
+
+    // Behavior
+    sort: true;
+    sorting-method: "fzf";
+    matching: "fuzzy";
+    scroll-method: 0;
+    disable-history: false;
+
+    // Terminal for running commands
+    terminal: "kitty";
+
+    // SSH settings
+    ssh-client: "ssh";
+    ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";
+
+    // File browser
+    run-shell-command: "{terminal} -e {cmd}";
+}
+
+// Load Catppuccin Frappe theme
+@theme "catppuccin-frappe"
