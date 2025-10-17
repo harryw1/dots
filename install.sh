@@ -363,6 +363,13 @@ main() {
         echo ""
     fi
 
+    # Note about LazyVim (user must install manually)
+    echo ""
+    print_info "Neovim Setup:"
+    echo "  LazyVim must be installed manually. See nvim/README.md for instructions."
+    echo "  Quick start: git clone https://github.com/LazyVim/starter ~/.config/nvim"
+    echo ""
+
     # Summary
     echo ""
     print_success "Installation complete!"

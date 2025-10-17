@@ -45,7 +45,7 @@ set recolor true
 set recolor-keephue true
 
 # Appearance
-set font "FiraCode Nerd Font Mono 11"
+set font "JetBrainsMono Nerd Font Mono 11"
 set adjust-open "width"
 set pages-per-row 1
 set scroll-page-aware true

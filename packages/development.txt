@@ -19,5 +19,10 @@ lldb
 base-devel
 git
 
-# Text editors
+# Text editors and tools
 neovim
+ripgrep
+fd
+lazygit
+tree-sitter
+tree-sitter-cli
