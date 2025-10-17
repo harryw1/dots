@@ -109,8 +109,8 @@ install_packages() {
     local package_count=$(grep -v '^#' "$package_file" | grep -v '^$' | wc -l)
     print_info "Found $package_count packages to install"
 
-    # Install with pacman
-    if ! sudo pacman -S --needed --noconfirm - < <(grep -v '^#' "$package_file" | grep -v '^$'); then
+    # Install with pacman, using --ask=4 to auto-remove conflicting packages
+    if ! sudo pacman -S --needed --noconfirm --ask=4 - < <(grep -v '^#' "$package_file" | grep -v '^$'); then
         print_error "Failed to install some packages from $description"
         return 1
     fi
