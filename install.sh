@@ -207,6 +207,57 @@ install_aur_packages() {
     return 0
 }
 
+# Install LazyVim with custom theme configuration
+install_lazyvim() {
+    if ! command -v nvim &> /dev/null; then
+        print_warning "Neovim not installed - skipping LazyVim setup"
+        return 0
+    fi
+
+    local nvim_config="$HOME/.config/nvim"
+    local nvim_data="$HOME/.local/share/nvim"
+    local nvim_state="$HOME/.local/state/nvim"
+    local nvim_cache="$HOME/.cache/nvim"
+
+    print_info "Setting up LazyVim with Catppuccin Frappe theme..."
+
+    # Backup existing Neovim configuration if it exists
+    if [ -d "$nvim_config" ] || [ -d "$nvim_data" ]; then
+        local backup_suffix="nvim-backup-$(date +%Y%m%d-%H%M%S)"
+        print_warning "Existing Neovim configuration found"
+
+        [ -d "$nvim_config" ] && mv "$nvim_config" "$HOME/.config/$backup_suffix"
+        [ -d "$nvim_data" ] && mv "$nvim_data" "$HOME/.local/share/$backup_suffix"
+        [ -d "$nvim_state" ] && mv "$nvim_state" "$HOME/.local/state/$backup_suffix"
+        [ -d "$nvim_cache" ] && mv "$nvim_cache" "$HOME/.cache/$backup_suffix"
+
+        print_info "Backed up existing Neovim config to $backup_suffix"
+    fi
+
+    # Clone LazyVim starter template
+    print_info "Cloning LazyVim starter template..."
+    if ! git clone https://github.com/LazyVim/starter "$nvim_config"; then
+        print_error "Failed to clone LazyVim starter"
+        return 1
+    fi
+
+    # Remove .git directory so it becomes the user's own repo
+    rm -rf "$nvim_config/.git"
+
+    # Apply our custom configurations (Catppuccin theme + font settings)
+    if [ -d "$DOTFILES_DIR/nvim/lua" ]; then
+        print_info "Applying Catppuccin Frappe theme and custom settings..."
+        cp -r "$DOTFILES_DIR/nvim/lua/"* "$nvim_config/lua/"
+        print_success "Custom configurations applied"
+    fi
+
+    print_success "LazyVim installed with Catppuccin Frappe theme!"
+    echo ""
+    print_info "Next: Launch Neovim to complete setup (plugins will auto-install)"
+    echo "  $ nvim"
+    echo ""
+}
+
 # Interactive package installation
 install_packages_interactive() {
     if ! is_arch_linux; then
@@ -363,12 +414,8 @@ main() {
         echo ""
     fi
 
-    # Note about LazyVim (user must install manually)
-    echo ""
-    print_info "Neovim Setup:"
-    echo "  LazyVim must be installed manually. See nvim/README.md for instructions."
-    echo "  Quick start: git clone https://github.com/LazyVim/starter ~/.config/nvim"
-    echo ""
+    # Install LazyVim with custom theme
+    install_lazyvim
 
     # Summary
     echo ""
