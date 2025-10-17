@@ -599,7 +599,10 @@ main() {
         echo "[DEBUG] Checking if Arch Linux..."
         if is_arch_linux; then
             echo "[DEBUG] Arch Linux detected, proceeding with installation"
-            ((current_step++))
+            echo "[DEBUG] current_step before increment: '$current_step'"
+            echo "[DEBUG] total_steps: '$total_steps'"
+            current_step=$((current_step + 1))
+            echo "[DEBUG] current_step after increment: '$current_step'"
             echo "[DEBUG] About to call print_step"
             print_step $current_step $total_steps "Checking repository configuration"
             echo "[DEBUG] About to call check_repositories"
