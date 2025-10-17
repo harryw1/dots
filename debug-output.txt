@@ -1,0 +1,218 @@
+================================================================================
+DOTFILES DEBUG OUTPUT
+Generated: 2025-10-17 10:43:07
+================================================================================
+
+
+--------------------------------------------------------------------------------
+SYSTEM INFORMATION
+--------------------------------------------------------------------------------
+Linux framework 6.17.2-arch1-1 #1 SMP PREEMPT_DYNAMIC Sun, 12 Oct 2025 12:45:18 +0000 x86_64 GNU/Linux
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+KERNEL VERSION
+--------------------------------------------------------------------------------
+6.17.2-arch1-1
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+OS RELEASE
+--------------------------------------------------------------------------------
+NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+HYPRLAND VERSION
+--------------------------------------------------------------------------------
+Hyprland 0.51.1 built from branch  at commit 71a1216abcc7031776630a6d88f105605c4dc1c9  ([gha] Nix: update inputs).
+Date: Mon Sep 22 20:54:03 2025
+Tag: v0.51.1, commits: 6436
+built against:
+ aquamarine 0.9.5
+ hyprlang 0.6.3
+ hyprutils 0.10.0
+ hyprcursor 0.1.13
+ hyprgraphics 0.2.0
+
+
+no flags were set
+
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+WAYBAR VERSION
+--------------------------------------------------------------------------------
+Waybar v0.14.0
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+KITTY VERSION
+--------------------------------------------------------------------------------
+kitty 0.43.1 created by Kovid Goyal
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+ROFI VERSION
+--------------------------------------------------------------------------------
+Version: 2.0.0-dirty
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+HYPRLAND CONFIG VALIDATION
+--------------------------------------------------------------------------------
+ok
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+HYPRLAND CONFIG FILES
+--------------------------------------------------------------------------------
+total 12
+drwxr-xr-x 1 harry harry   52 Oct 17 10:08 .
+drwxr-xr-x 1 harry harry  268 Oct 17 10:43 ..
+drwxr-xr-x 1 harry harry  238 Oct 17 10:08 conf
+-rw-r--r-- 1 harry harry 1163 Oct 17 10:08 hyprland.conf
+-rw-r--r-- 1 harry harry 4307 Oct 17 10:08 README.md
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+HYPRLAND MODULAR CONFIGS
+--------------------------------------------------------------------------------
+total 36
+drwxr-xr-x 1 harry harry  238 Oct 17 10:08 .
+drwxr-xr-x 1 harry harry   52 Oct 17 10:08 ..
+-rw-r--r-- 1 harry harry 1121 Oct 17 10:08 animations.conf
+-rw-r--r-- 1 harry harry 1391 Oct 17 10:08 autostart.conf
+-rw-r--r-- 1 harry harry  950 Oct 17 10:08 decorations.conf
+-rw-r--r-- 1 harry harry  860 Oct 17 10:08 general.conf
+-rw-r--r-- 1 harry harry 1116 Oct 17 10:08 input.conf
+-rw-r--r-- 1 harry harry 3782 Oct 17 10:08 keybinds.conf
+-rw-r--r-- 1 harry harry  522 Oct 17 10:08 monitors.conf
+-rw-r--r-- 1 harry harry  924 Oct 17 10:08 theme.conf
+-rw-r--r-- 1 harry harry 1379 Oct 17 10:08 windowrules.conf
+[Command completed successfully]
+
+Hyprland log file not found at ~/.local/share/hyprland/hyprland.log
+
+--------------------------------------------------------------------------------
+HYPRLAND JOURNAL ERRORS (last 50)
+--------------------------------------------------------------------------------
+-- No entries --
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+WAYBAR JOURNAL ERRORS (last 20)
+--------------------------------------------------------------------------------
+-- No entries --
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+MONITOR CONFIGURATION
+--------------------------------------------------------------------------------
+Monitor eDP-1 (ID 0):
+	2256x1504@59.99900 at 0x0
+	description: BOE 0x095F
+	make: BOE
+	model: 0x095F
+	physical size (mm): 280x190
+	serial: 
+	active workspace: 1 (1)
+	special workspace: 0 ()
+	reserved: 0 71 0 0
+	scale: 1.00
+	transform: 0
+	focused: yes
+	dpmsStatus: 1
+	vrr: false
+	solitary: 0
+	solitaryBlockedBy: windowed mode,missing candidate,config error
+	activelyTearing: false
+	tearingBlockedBy: next frame is not torn,user settings,missing candidate
+	directScanoutTo: 0
+	directScanoutBlockedBy: user settings,missing candidate
+	disabled: false
+	currentFormat: XRGB8888
+	mirrorOf: none
+	availableModes: 2256x1504@60.00Hz 2256x1504@48.00Hz 
+
+
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+ACTIVE WINDOWS
+--------------------------------------------------------------------------------
+Window 564169e13a80 -> ./collect-errors.sh :
+	mapped: 1
+	hidden: 0
+	at: 12,84
+	size: 2232,1408
+	workspace: 1 (1)
+	floating: 0
+	pseudo: 0
+	monitor: 0
+	class: kitty
+	title: ./collect-errors.sh 
+	initialClass: kitty
+	initialTitle: kitty
+	pid: 1199
+	xwayland: 0
+	pinned: 0
+	fullscreen: 0
+	fullscreenClient: 0
+	grouped: 0
+	tags: 
+	swallowing: 0
+	focusHistoryID: 0
+	inhibitingIdle: 0
+	xdgTag: 
+	xdgDescription: 
+
+
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+HYPRLAND ERRORS
+--------------------------------------------------------------------------------
+no such option
+[Command completed successfully]
+
+--------------------------------------------------------------------------------
+WAYLAND ENVIRONMENT
+--------------------------------------------------------------------------------
+XDG_CONFIG_DIRS=/etc/xdg
+XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session1
+XDG_MENU_PREFIX=hyprland-
+XDG_BACKEND=wayland
+XDG_DATA_HOME=/home/harry/.local/share
+XDG_CONFIG_HOME=/home/harry/.config
+XDG_SEAT=seat0
+XDG_SESSION_DESKTOP=Hyprland
+QT_QPA_PLATFORMTHEME=qt6ct
+XDG_SESSION_TYPE=wayland
+XDG_CURRENT_DESKTOP=Hyprland
+WAYLAND_DISPLAY=wayland-1
+XDG_SEAT_PATH=/org/freedesktop/DisplayManager/Seat0
+QT_QPA_PLATFORM=wayland;xcb
+XDG_CACHE_HOME=/home/harry/.cache
+XDG_SESSION_CLASS=user
+MOZ_ENABLE_WAYLAND=1
+XDG_VTNR=1
+XDG_SESSION_ID=2
+XDG_STATE_HOME=/home/harry/.local/state
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+[Command completed successfully]
+
+================================================================================
+END OF DEBUG OUTPUT
+================================================================================
