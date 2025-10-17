@@ -1,0 +1,62 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# macOS Finder metadata
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux system files
+*~
+.directory
+.Trash-*
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+*~
+
+# Debug output files
+debug-output.txt
+package-debug-output.txt
+system-check-output.txt
+waybar-output.txt
+install-debug.log
+
+# Screenshots (should be in docs/issues, not repo root)
+*.png
+*.jpg
+*.jpeg
+*.gif
+!hyprland/wallpapers/*.png
+!hyprland/wallpapers/*.jpg
+
+# Backup files
+*.backup
+*.bak
+*-backup-*
+.config-backup-*
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Testing/debug scripts (keep permanent ones)
+install-debug*.sh
+test-*.sh
+simple-test.sh
+
+# User-specific configuration
+.env
+.env.local
