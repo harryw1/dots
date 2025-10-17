@@ -594,11 +594,17 @@ main() {
     fi
 
     # Install packages unless explicitly skipped
+    echo "[DEBUG] SKIP_PACKAGES=$SKIP_PACKAGES"
     if [ "$SKIP_PACKAGES" = false ]; then
+        echo "[DEBUG] Checking if Arch Linux..."
         if is_arch_linux; then
+            echo "[DEBUG] Arch Linux detected, proceeding with installation"
             ((current_step++))
+            echo "[DEBUG] About to call print_step"
             print_step $current_step $total_steps "Checking repository configuration"
+            echo "[DEBUG] About to call check_repositories"
             check_repositories || return 1
+            echo "[DEBUG] check_repositories completed"
 
             ((current_step++))
             print_step $current_step $total_steps "Optimizing mirrorlist"
