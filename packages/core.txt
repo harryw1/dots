@@ -52,3 +52,6 @@ grim
 slurp
 cliphist
 fprintd  # Fingerprint authentication
+btop  # System monitor (used by waybar)
+jq  # JSON processor (required for waybar scaling script)
+bc  # Calculator (required for waybar scaling script)

@@ -22,6 +22,7 @@ visual-studio-code-bin
 pacseek
 swayosd-git  # On-screen display for volume and brightness
 wlogout  # Wayland logout menu
+bluetuith-bin  # TUI Bluetooth manager
 
 # Wallpaper management
 waypaper  # GUI wallpaper manager for Wayland (works with hyprpaper)

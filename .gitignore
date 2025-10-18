@@ -60,3 +60,6 @@ simple-test.sh
 # User-specific configuration
 .env
 .env.local
+
+# Auto-generated files
+waybar/scaling.css

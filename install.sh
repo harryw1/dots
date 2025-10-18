@@ -728,6 +728,13 @@ main() {
         print_warning "wlogout configuration directory not found, skipping"
     fi
 
+    # Install btop configuration
+    if [ -d "$DOTFILES_DIR/btop" ]; then
+        create_symlink "$DOTFILES_DIR/btop" "$CONFIG_DIR/btop" "btop"
+    else
+        print_warning "btop configuration directory not found, skipping"
+    fi
+
     # Install Starship configuration
     if command -v starship &> /dev/null; then
         print_info "Installing Starship Catppuccin Frappe preset..."
