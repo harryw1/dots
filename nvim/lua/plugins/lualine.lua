@@ -7,12 +7,11 @@ return {
     -- Get the catppuccin theme
     local catppuccin_theme = require("lualine.themes.catppuccin")
 
-    -- Override all backgrounds to use frappe.base instead of mantle
-    for _, section in pairs(catppuccin_theme) do
-      for _, component in pairs(section) do
-        if component.bg then
-          component.bg = frappe.base
-        end
+    -- Only override section c (main status line) backgrounds to use frappe.base
+    -- Leave sections a and b alone as they use contrasting accent colors
+    for mode, sections in pairs(catppuccin_theme) do
+      if sections.c and sections.c.bg then
+        sections.c.bg = frappe.base
       end
     end
 
