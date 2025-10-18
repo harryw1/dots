@@ -52,6 +52,9 @@ return {
           WhichKeyDesc = { fg = colors.text },
           WhichKeyFloat = { bg = colors.base },
           WhichKeyBorder = { bg = colors.base, fg = colors.surface0 },
+          -- Fix status line colors (lualine)
+          StatusLine = { bg = colors.base },
+          StatusLineNC = { bg = colors.base },
         }
       end,
     },
