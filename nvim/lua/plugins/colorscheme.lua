@@ -1,76 +1,39 @@
--- Catppuccin Frappe Theme Configuration
+-- Minimal Catppuccin Frappe Configuration
 return {
-  -- Add catppuccin
   {
     "catppuccin/nvim",
     name = "catppuccin",
     priority = 1000,
     opts = {
-      flavour = "frappe", -- latte, frappe, macchiato, mocha
-      transparent_background = false,
-      show_end_of_buffer = false,
-      term_colors = true,
-      dim_inactive = {
-        enabled = false,
-        shade = "dark",
-        percentage = 0.15,
-      },
-      no_italic = false,
-      no_bold = false,
-      no_underline = false,
-      styles = {
-        comments = { "italic" },
-        conditionals = { "italic" },
-        loops = {},
-        functions = {},
-        keywords = {},
-        strings = {},
-        variables = {},
-        numbers = {},
-        booleans = {},
-        properties = {},
-        types = {},
-        operators = {},
-      },
-      color_overrides = {},
-      custom_highlights = {},
-      integrations = {
-        cmp = true,
-        gitsigns = true,
-        nvimtree = true,
-        treesitter = true,
-        notify = true,
-        mini = {
-          enabled = true,
-          indentscope_color = "",
-        },
-        native_lsp = {
-          enabled = true,
-          virtual_text = {
-            errors = { "italic" },
-            hints = { "italic" },
-            warnings = { "italic" },
-            information = { "italic" },
-          },
-          underlines = {
-            errors = { "underline" },
-            hints = { "underline" },
-            warnings = { "underline" },
-            information = { "underline" },
-          },
-          inlay_hints = {
-            background = true,
-          },
-        },
-        telescope = {
-          enabled = true,
-        },
-        which_key = true,
-      },
+      flavour = "frappe",
+      -- Fix: Make floating windows use the same background as normal windows
+      custom_highlights = function(colors)
+        return {
+          NormalFloat = { bg = colors.base },
+          FloatBorder = { bg = colors.base, fg = colors.surface0 },
+          FloatTitle = { bg = colors.base, fg = colors.text },
+          -- Fix Snacks explorer colors
+          SnacksPickerBorder = { bg = colors.base, fg = colors.surface0 },
+          SnacksPickerInput = { bg = colors.base, fg = colors.text },
+          SnacksPickerPrompt = { fg = colors.text },
+          SnacksWinBar = { bg = colors.base, fg = colors.text },
+          SnacksWinBarNC = { bg = colors.base, fg = colors.text },
+          -- Fix cursor colors
+          Cursor = { bg = colors.text, fg = colors.base },
+          TermCursor = { bg = colors.text, fg = colors.base },
+          TermCursorNC = { bg = colors.overlay0, fg = colors.base },
+          -- Fix directory colors
+          Directory = { fg = colors.blue },
+          -- Fix which-key colors
+          WhichKey = { fg = colors.blue },
+          WhichKeyGroup = { fg = colors.mauve },
+          WhichKeyDesc = { fg = colors.text },
+          WhichKeyFloat = { bg = colors.base },
+          WhichKeyBorder = { bg = colors.base, fg = colors.surface0 },
+        }
+      end,
     },
   },
-
-  -- Configure LazyVim to use catppuccin
   {
     "LazyVim/LazyVim",
     opts = {

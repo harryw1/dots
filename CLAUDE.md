@@ -191,13 +191,15 @@ When editing configurations, files are in this repository but active via symlink
 | wlogout | `./wlogout/` | `~/.config/wlogout/` |
 | SDDM | `./sddm/theme.conf` | `/etc/sddm.conf.d/theme.conf` |
 | Starship | `./starship/starship.toml` | `~/.config/starship.toml` |
-| Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (merged with LazyVim) |
+| Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (files symlinked into LazyVim) |
 
 ## Key Design Decisions
 
 1. **Catppuccin Frappe Everywhere**: All theming must use the Catppuccin Frappe palette. Color definitions are in `hyprland/conf/theme.conf`.
 
-2. **LazyVim Integration**: The install script clones LazyVim starter and then overlays custom configurations from `./nvim/lua/`. This allows upstream LazyVim updates while preserving customizations.
+2. **LazyVim Integration**: The install script clones LazyVim starter and then symlinks custom configurations from `./nvim/lua/`. Changes to the dots repo immediately affect the active Neovim config. This allows upstream LazyVim updates while preserving customizations.
+
+   **Critical Catppuccin Fix**: The minimal colorscheme config overrides `NormalFloat` background to match `base` color instead of the default darker `mantle`. This fixes color mismatches in Snacks.explorer, completion menus, and all floating windows. Additional highlight overrides ensure consistent Frappe colors across all UI elements.
 
 3. **Conflict Resolution**: The install script automatically resolves package conflicts (e.g., PulseAudio → PipeWire, NetworkManager → iwd) using `pacman --ask=4`.
 
