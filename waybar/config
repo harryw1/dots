@@ -95,8 +95,8 @@
     "idle_inhibitor": {
         "format": "{icon}",
         "format-icons": {
-            "activated": "󰅶 ",
-            "deactivated": "󰾪 "
+            "activated": "󰅶 Awake",
+            "deactivated": "󰾪 Chill"
         },
         "tooltip-format-activated": "Idle inhibitor active",
         "tooltip-format-deactivated": "Idle inhibitor inactive"

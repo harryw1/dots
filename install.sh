@@ -489,11 +489,33 @@ install_lazyvim() {
     # Remove .git directory so it becomes the user's own repo
     rm -rf "$nvim_config/.git"
 
-    # Apply our custom configurations (Catppuccin theme + font settings)
+    # Symlink our custom configurations (Catppuccin theme + font settings)
     if [ -d "$DOTFILES_DIR/nvim/lua" ]; then
-        print_info "Applying Catppuccin Frappe theme and custom settings..."
-        cp -r "$DOTFILES_DIR/nvim/lua/"* "$nvim_config/lua/"
-        print_success "Custom configurations applied"
+        print_info "Creating symlinks for custom configurations..."
+
+        # Symlink each subdirectory's files (plugins, config, etc.)
+        find "$DOTFILES_DIR/nvim/lua" -mindepth 1 -type d | while read -r subdir; do
+            local rel_path="${subdir#$DOTFILES_DIR/nvim/lua/}"
+            local target_dir="$nvim_config/lua/$rel_path"
+
+            # Create target directory if it doesn't exist
+            mkdir -p "$target_dir"
+
+            # Symlink each file in the subdirectory
+            find "$subdir" -maxdepth 1 -type f -name "*.lua" | while read -r file; do
+                local filename=$(basename "$file")
+                local target_file="$target_dir/$filename"
+
+                # Remove existing file/symlink if present
+                [ -e "$target_file" ] && rm -f "$target_file"
+
+                # Create symlink
+                ln -s "$file" "$target_file"
+                print_info "  Symlinked: lua/$rel_path/$filename"
+            done
+        done
+
+        print_success "Custom configuration symlinks created"
     fi
 
     print_success "LazyVim installed with Catppuccin Frappe theme!"
