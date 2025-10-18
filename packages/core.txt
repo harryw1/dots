@@ -35,7 +35,6 @@ tailscale  # Mesh VPN for secure device connections
 # Bluetooth
 bluez
 bluez-utils
-blueman
 
 # Audio
 pipewire
