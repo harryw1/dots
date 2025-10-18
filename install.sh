@@ -902,6 +902,31 @@ main() {
         print_warning "fprintd not installed - skipping fingerprint setup"
     fi
 
+    # Set up iwd (network management)
+    if command -v iwctl &> /dev/null; then
+        print_info "Setting up iwd network management..."
+
+        # Check if NetworkManager is running and disable it
+        if systemctl is-active --quiet NetworkManager 2>/dev/null; then
+            print_info "Disabling NetworkManager in favor of iwd..."
+            if sudo systemctl disable --now NetworkManager 2>/dev/null; then
+                print_success "NetworkManager disabled"
+            else
+                print_warning "Could not disable NetworkManager (needs sudo)"
+            fi
+        fi
+
+        # Enable and start iwd service
+        if sudo systemctl enable --now iwd 2>/dev/null; then
+            print_success "iwd service enabled and started"
+            print_info "Use 'impala' for TUI WiFi management or 'iwctl' for CLI"
+        else
+            print_warning "Could not enable iwd service (needs sudo)"
+        fi
+    else
+        print_warning "iwd not installed - skipping network setup"
+    fi
+
     # Final summary
     echo ""
     echo ""

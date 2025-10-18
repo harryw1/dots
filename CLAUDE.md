@@ -45,10 +45,11 @@ Packages are organized by category in `packages/*.txt`:
 
 The `install.sh` script handles:
 - Repository configuration and mirrorlist optimization
-- Conflict resolution (e.g., PulseAudio → PipeWire migration)
+- Conflict resolution (e.g., PulseAudio → PipeWire, NetworkManager → iwd migration)
 - Automatic yay installation for AUR packages
 - LazyVim setup with Catppuccin theme integration
 - Wallpaper collection setup (clones ~50-200 Catppuccin Frappe wallpapers)
+- Service management (enables iwd service for network connectivity)
 
 ## Common Development Commands
 
@@ -88,6 +89,29 @@ hyprctl monitors
 
 # View active windows
 hyprctl clients
+```
+
+### Network Management (iwd)
+
+```bash
+# Launch impala TUI for WiFi management
+impala
+
+# Interactive iwctl session (alternative)
+iwctl
+
+# Common iwctl commands
+iwctl device list
+iwctl station wlan0 scan
+iwctl station wlan0 get-networks
+iwctl station wlan0 connect "SSID"
+
+# Check iwd service status
+systemctl status iwd
+
+# Enable/disable iwd service
+sudo systemctl enable --now iwd
+sudo systemctl disable iwd
 ```
 
 ### Wallpaper Management
@@ -175,13 +199,15 @@ When editing configurations, files are in this repository but active via symlink
 
 2. **LazyVim Integration**: The install script clones LazyVim starter and then overlays custom configurations from `./nvim/lua/`. This allows upstream LazyVim updates while preserving customizations.
 
-3. **Conflict Resolution**: The install script automatically resolves package conflicts (e.g., PulseAudio → PipeWire) using `pacman --ask=4`.
+3. **Conflict Resolution**: The install script automatically resolves package conflicts (e.g., PulseAudio → PipeWire, NetworkManager → iwd) using `pacman --ask=4`.
 
 4. **Repository Management**: The install script checks and fixes repository configuration, optimizes mirrorlist with reflector, and syncs databases before installation.
 
 5. **XDG Base Directory Compliance**: All configurations follow XDG standards and are placed in `~/.config/`.
 
-6. **Wallpaper Management**: Uses waypaper (GUI) + hyprpaper (backend) + Catppuccin wallpaper collection. The install script automatically clones a curated collection of ~50-200 Frappe wallpapers to `~/.local/share/catppuccin-wallpapers/`. ImageMagick is excluded to avoid package conflicts; waypaper provides a better user experience for wallpaper selection.
+6. **Network Management**: Uses iwd (modern wireless daemon) with impala (TUI frontend). This replaces NetworkManager for a lighter, more efficient WiFi management solution. Waybar network module opens impala on click for interactive WiFi management. Use `impala` for the friendly TUI or `iwctl` for command-line control.
+
+7. **Wallpaper Management**: Uses waypaper (GUI) + hyprpaper (backend) + Catppuccin wallpaper collection. The install script automatically clones a curated collection of ~50-200 Frappe wallpapers to `~/.local/share/catppuccin-wallpapers/`. ImageMagick is excluded to avoid package conflicts; waypaper provides a better user experience for wallpaper selection.
 
 ## Troubleshooting Workflow
 

@@ -28,9 +28,8 @@ rofi-wayland
 firefox
 
 # Network management
-networkmanager
-nm-connection-editor
-network-manager-applet
+iwd  # Modern wireless daemon
+impala  # TUI for managing WiFi with iwd
 tailscale  # Mesh VPN for secure device connections
 
 # Bluetooth

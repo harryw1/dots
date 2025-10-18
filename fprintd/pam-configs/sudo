@@ -3,3 +3,6 @@
 # This tries fingerprint first, then falls back to password
 auth sufficient pam_fprintd.so
 auth include system-auth
+account include system-auth
+password include system-auth
+session include system-auth

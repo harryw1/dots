@@ -124,13 +124,12 @@
         "format-wifi": "󰤨 {essid}",
         "format-ethernet": "󰈀 Connected",
         "format-disconnected": "󰤭 Disconnected",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}",
-        "tooltip-format": "{ifname} via {gwaddr}",
-        "tooltip-format-wifi": "󰤨 {essid} ({signalStrength}%)",
-        "tooltip-format-ethernet": "󰈀 {ifname}",
+        "tooltip-format": "{ifname} via {gwaddr} | {ipaddr}/{cidr}",
+        "tooltip-format-wifi": "󰤨 {essid} ({signalStrength}%) | {ipaddr}",
+        "tooltip-format-ethernet": "󰈀 {ifname} | {ipaddr}/{cidr}",
         "tooltip-format-disconnected": "Disconnected",
-        "on-click": "nm-connection-editor",
-        "on-click-right": "kitty --class nmtui -e nmtui"
+        "on-click": "kitty --class impala -e impala",
+        "on-click-right": "kitty --class iwctl -e iwctl"
     },
 
     "cpu": {
