@@ -51,6 +51,15 @@ The `install.sh` script handles:
 - Wallpaper collection setup (clones ~50-200 Catppuccin Frappe wallpapers)
 - Service management (enables iwd service for network connectivity)
 
+The `update.sh` script provides system-wide updates:
+- Updates all official repository packages (pacman)
+- Updates all AUR packages (yay/paru)
+- Optional mirrorlist optimization for faster downloads
+- Optional package cache cleanup to free disk space
+- Optional orphaned package removal
+- Detection of .pacnew configuration files needing review
+- Branded with matching Catppuccin Frappe TUI design
+
 ## Common Development Commands
 
 ### Installation and Deployment
@@ -70,6 +79,28 @@ The `install.sh` script handles:
 
 # Show installation options
 ./install.sh --help
+```
+
+### System Updates
+
+```bash
+# Full system update (official + AUR packages)
+./update.sh
+
+# Auto-yes all prompts (unattended update)
+./update.sh -y
+
+# Update only AUR packages
+./update.sh --aur-only
+
+# Update only official repository packages
+./update.sh --official-only
+
+# Skip optional maintenance prompts
+./update.sh --skip-clean --skip-orphans
+
+# Show update options
+./update.sh --help
 ```
 
 ### Configuration Management
