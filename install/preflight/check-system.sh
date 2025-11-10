@@ -58,10 +58,16 @@ run_system_checks() {
         print_info "Internet is required for package installation"
         log_warning "System check: No internet connectivity"
 
-        read -p "Continue anyway? (y/N) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            exit 1
+        # Skip prompt in force mode or non-interactive environments
+        if [ "$FORCE" = true ] || [ ! -t 0 ]; then
+            print_info "Continuing without internet (force mode or non-interactive)"
+            log_info "Continuing without internet connectivity (forced)"
+        else
+            read -p "Continue anyway? (y/N) " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                exit 1
+            fi
         fi
     else
         print_success "Internet connectivity confirmed"
