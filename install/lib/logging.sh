@@ -110,6 +110,20 @@ log_phase_end() {
     } >> "$LOG_FILE"
 }
 
+# Log phase skip
+log_phase_skip() {
+    local phase="$1"
+    local reason="${2:-Skipped}"
+    {
+        echo ""
+        echo "================================================================================"
+        echo "PHASE SKIPPED: $phase - $reason"
+        echo "Time: $(date)"
+        echo "================================================================================"
+        echo ""
+    } >> "$LOG_FILE"
+}
+
 # Setup log file output redirection
 # This will tee all output to both console and log file
 logging_setup_tee() {

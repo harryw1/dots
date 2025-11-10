@@ -23,6 +23,15 @@ source "$SCRIPT_DIR/install/preflight/mirrorlist.sh"
 source "$SCRIPT_DIR/install/preflight/conflicts.sh"
 source "$SCRIPT_DIR/install/preflight/migrations.sh"
 
+# Source package modules
+source "$SCRIPT_DIR/install/packages/utils.sh"
+source "$SCRIPT_DIR/install/packages/core.sh"
+source "$SCRIPT_DIR/install/packages/hypr-ecosystem.sh"
+source "$SCRIPT_DIR/install/packages/theming.sh"
+source "$SCRIPT_DIR/install/packages/development.sh"
+source "$SCRIPT_DIR/install/packages/productivity.sh"
+source "$SCRIPT_DIR/install/packages/aur.sh"
+
 # Configuration variables (can be overridden by config file or flags)
 FORCE=false
 SKIP_PACKAGES=false
@@ -33,151 +42,20 @@ RESET=false
 CONFIG_FILE=""
 
 #############################################################################
-# PACKAGE INSTALLATION FUNCTIONS (Not yet modular - future increment)
+# PACKAGE INSTALLATION (Modular)
 #############################################################################
-
-# Install packages from a package list file
-install_packages() {
-    local package_file="$1"
-    local description="$2"
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install $description from $package_file"
-        return 0
-    fi
-
-    if [ ! -f "$package_file" ]; then
-        print_warning "Package file not found: $package_file"
-        log_warning "Package file not found: $package_file"
-        return 1
-    fi
-
-    print_info "Installing $description..."
-    log_info "Installing $description from $package_file"
-
-    # Count packages (excluding comments and empty lines)
-    local package_count=$(grep -v '^#' "$package_file" | grep -v '^$' | wc -l)
-    print_info "Found $package_count packages to install"
-
-    # Install with pacman, using --ask=4 to auto-remove conflicting packages
-    # Strip inline comments and trailing whitespace from package names
-    if ! sudo pacman -S --needed --noconfirm --ask=4 - < <(grep -v '^#' "$package_file" | grep -v '^$' | sed 's/#.*//' | sed 's/[[:space:]]*$//'); then
-        print_error "Failed to install some packages from $description"
-        log_error "Failed to install packages from $description"
-        return 1
-    fi
-
-    print_success "Installed $description"
-    log_success "Installed $description"
-    return 0
-}
-
-# Install yay AUR helper if not present
-install_yay() {
-    # Check if an AUR helper is already installed
-    if command -v yay &> /dev/null || command -v paru &> /dev/null; then
-        return 0
-    fi
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install yay AUR helper"
-        return 0
-    fi
-
-    print_info "Installing yay AUR helper..."
-    log_info "Installing yay AUR helper"
-
-    # Check for required dependencies
-    if ! command -v git &> /dev/null; then
-        print_info "Installing base-devel and git (required for building yay)..."
-        if ! sudo pacman -S --needed --noconfirm base-devel git; then
-            print_error "Failed to install base-devel and git"
-            log_error "Failed to install base-devel and git"
-            return 1
-        fi
-    fi
-
-    # Clone and build yay in /tmp
-    local yay_build_dir="/tmp/yay-build-$$"
-    mkdir -p "$yay_build_dir"
-
-    print_info "Cloning yay repository..."
-    if ! git clone https://aur.archlinux.org/yay.git "$yay_build_dir"; then
-        print_error "Failed to clone yay repository"
-        log_error "Failed to clone yay repository"
-        rm -rf "$yay_build_dir"
-        return 1
-    fi
-
-    print_info "Building and installing yay..."
-    cd "$yay_build_dir"
-    if ! makepkg -si --noconfirm; then
-        print_error "Failed to build yay"
-        log_error "Failed to build yay"
-        cd - > /dev/null
-        rm -rf "$yay_build_dir"
-        return 1
-    fi
-
-    cd - > /dev/null
-    rm -rf "$yay_build_dir"
-
-    print_success "yay installed successfully"
-    log_success "yay installed successfully"
-    return 0
-}
-
-# Install AUR packages
-install_aur_packages() {
-    local package_file="$PACKAGES_DIR/aur.txt"
-
-    if [ ! -f "$package_file" ]; then
-        print_info "No AUR packages file found, skipping"
-        return 0
-    fi
-
-    # Install yay if needed
-    if ! install_yay; then
-        print_warning "Could not install AUR helper"
-        print_info "Install yay or paru manually, then run:"
-        print_info "  yay -S --needed - < packages/aur.txt"
-        return 0
-    fi
-
-    # Check for AUR helper
-    local aur_helper=""
-    if command -v yay &> /dev/null; then
-        aur_helper="yay"
-    elif command -v paru &> /dev/null; then
-        aur_helper="paru"
-    else
-        print_warning "No AUR helper found (yay or paru)"
-        print_info "Skipping AUR packages. Install an AUR helper and run manually:"
-        print_info "  yay -S --needed - < packages/aur.txt"
-        return 0
-    fi
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install AUR packages using $aur_helper"
-        return 0
-    fi
-
-    print_info "Installing AUR packages using $aur_helper..."
-    log_info "Installing AUR packages using $aur_helper"
-    local package_count=$(grep -v '^#' "$package_file" | grep -v '^$' | wc -l)
-    print_info "Found $package_count AUR packages to install"
-
-    # Strip inline comments and trailing whitespace from package names
-    if ! $aur_helper -S --needed --noconfirm - < <(grep -v '^#' "$package_file" | grep -v '^$' | sed 's/#.*//' | sed 's/[[:space:]]*$//'); then
-        print_warning "Failed to install some AUR packages"
-        log_warning "Failed to install some AUR packages"
-        return 1
-    fi
-
-    print_success "Installed AUR packages"
-    log_success "Installed AUR packages"
-    return 0
-}
+# Package installation functions have been moved to modular scripts:
+#   - install/packages/utils.sh       - Shared utilities (install_package_file, install_yay, etc.)
+#   - install/packages/core.sh        - Core packages (install_core_packages)
+#   - install/packages/hypr-ecosystem.sh - Hypr tools (install_hypr_ecosystem_packages)
+#   - install/packages/theming.sh     - Theming packages (install_theming_packages)
+#   - install/packages/development.sh - Development tools (install_development_packages)
+#   - install/packages/productivity.sh - Productivity apps (install_productivity_packages)
+#   - install/packages/aur.sh         - AUR packages (install_aur_packages)
+#
+# These modules are sourced at the top of this script and provide individual
+# package installation functions that are called by install_all_packages() below.
+#############################################################################
 
 # Install LazyVim with custom theme configuration
 install_lazyvim() {
@@ -340,11 +218,12 @@ install_all_packages() {
 
     print_step 7 15 "Installing packages"
 
-    install_packages "$PACKAGES_DIR/core.txt" "core packages"
-    install_packages "$PACKAGES_DIR/hypr-ecosystem.txt" "Hypr ecosystem packages"
-    install_packages "$PACKAGES_DIR/theming.txt" "theming packages"
-    install_packages "$PACKAGES_DIR/development.txt" "development packages"
-    install_packages "$PACKAGES_DIR/productivity.txt" "productivity packages"
+    # Call modular package installation functions
+    install_core_packages
+    install_hypr_ecosystem_packages
+    install_theming_packages
+    install_development_packages
+    install_productivity_packages
     install_aur_packages
 
     log_phase_end "Package Installation" "success"
