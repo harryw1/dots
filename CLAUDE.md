@@ -18,9 +18,29 @@ This repository uses a **symlink-based architecture** where configuration files 
 - Backups are created before symlinking: `~/.config-backup-TIMESTAMP/`
 - `uninstall.sh` removes symlinks (backups are preserved)
 
-### Modular Configuration System
+### Modular Installation System
 
-**Hyprland** uses a modular approach (hyprland/conf/):
+**The installer itself** uses a modular, phase-based architecture:
+
+```
+install/
+├── lib/           # Shared libraries (colors, TUI, logging, state, utils)
+├── preflight/     # System preparation (checks, repos, conflicts, migrations)
+├── packages/      # Package installation (core, hypr-ecosystem, theming, dev, etc.)
+├── config/        # Configuration deployment (hyprland, waybar, neovim, etc.)
+├── services/      # Service management (iwd, fprintd, tailscale)
+└── post-install/  # Final tasks (wallpapers, finalization)
+```
+
+**Key features:**
+- **State tracking**: Progress saved to `~/.local/state/dots/install-state.json`
+- **Resume capability**: `--resume` flag continues from last successful phase
+- **Comprehensive logging**: All output saved to `~/.local/state/dots/logs/`
+- **Error recovery**: Clear error messages with recovery instructions
+- **Configuration files**: `install.conf` for customization
+- **Remote bootstrap**: Single-command installation via curl
+
+**Hyprland configuration** also uses a modular approach (hyprland/conf/):
 - `hyprland.conf` is the main entry point that sources all modular configs
 - Each `.conf` file handles a specific concern (theme, keybinds, animations, etc.)
 - Modifications should be made to individual modular files, not the main file
@@ -43,13 +63,18 @@ Packages are organized by category in `packages/*.txt`:
 - `productivity.txt` - LibreOffice, PDF viewer, file manager, Discord
 - `aur.txt` - AUR packages (waypaper, quickwall, SwayOSD, VS Code, Catppuccin GTK themes)
 
-The `install.sh` script handles:
-- Repository configuration and mirrorlist optimization
-- Conflict resolution (e.g., PulseAudio → PipeWire, NetworkManager → iwd migration)
-- Automatic yay installation for AUR packages
-- LazyVim setup with Catppuccin theme integration
-- Wallpaper collection setup (clones ~50-200 Catppuccin Frappe wallpapers)
-- Service management (enables iwd service for network connectivity)
+The `install.sh` script is an **orchestrator** that sources and executes modular phase scripts:
+- **Preflight**: Repository config, mirrorlist optimization, conflict resolution, migrations
+- **Packages**: Install all package categories (core, hypr-ecosystem, theming, dev, productivity, AUR)
+- **Configuration**: Deploy all configs via symlinks with timestamped backups
+- **Services**: Enable and configure system services (iwd, fprintd, tailscale)
+- **Post-install**: Wallpaper collection, LazyVim setup, final checks
+
+The modular design makes the codebase:
+- **Maintainable**: Small, focused scripts instead of one 1000+ line file
+- **Testable**: Each phase can be tested independently
+- **Recoverable**: State tracking enables resume after failures
+- **Extensible**: Easy to add new phases or modify existing ones
 
 The `update.sh` script provides system-wide updates:
 - Updates all official repository packages (pacman)
@@ -65,14 +90,29 @@ The `update.sh` script provides system-wide updates:
 ### Installation and Deployment
 
 ```bash
-# Fresh installation with all packages (recommended for new systems)
-./install.sh --packages-all
-
-# Interactive package selection
-./install.sh --packages
-
-# Config-only installation (no packages)
+# Full installation (packages + configs)
 ./install.sh
+
+# Config-only installation (skip packages)
+./install.sh --skip-packages
+
+# Force mode (skip prompts, for automation)
+./install.sh --force
+
+# Dry run (show what would happen)
+./install.sh --dry-run
+
+# Resume from failure
+./install.sh --resume
+
+# Reset state and start fresh
+./install.sh --reset
+
+# Use custom config file
+./install.sh --config my-install.conf
+
+# Remote bootstrap (single command install)
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 
 # Remove symlinks
 ./uninstall.sh

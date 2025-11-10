@@ -1,13 +1,31 @@
 #!/usr/bin/env bash
 # logging.sh - Logging system for dotfiles installation
 # Part of the modular dotfiles installation system
-# Provides timestamped log files for debugging
+# Provides timestamped log files for debugging and troubleshooting
 
-# Log directory
+# Requires: Basic utilities (date, mkdir, cat, echo, grep, uname, hostname)
+
+# Log directory and file
 LOG_DIR="$HOME/.local/state/dots/logs"
 LOG_FILE=""
 
-# Initialize logging system
+#############################################################################
+# LOGGING INITIALIZATION
+#############################################################################
+
+# Initialize the logging system
+#
+# Creates the log directory and a timestamped log file. The log file includes
+# a header with system information (OS, kernel, architecture, hostname, etc.)
+# to aid in troubleshooting.
+#
+# Log file naming: install-YYYYMMDD-HHMMSS.log
+# Location: ~/.local/state/dots/logs/
+#
+# Sets the global LOG_FILE variable to the created log file path.
+#
+# Example:
+#   logging_init
 logging_init() {
     # Create log directory if it doesn't exist
     mkdir -p "$LOG_DIR"
@@ -46,7 +64,21 @@ EOF
     } >> "$LOG_FILE"
 }
 
-# Log a message to the log file
+#############################################################################
+# LOGGING FUNCTIONS
+#############################################################################
+
+# Log a message with timestamp and level to the log file
+#
+# Arguments:
+#   $1 - Log level (INFO, ERROR, WARNING, etc.)
+#   $2 - Message to log
+#
+# Format: [YYYY-MM-DD HH:MM:SS] [LEVEL] message
+#
+# Example:
+#   log_message "INFO" "Installation started"
+#   log_message "ERROR" "Package installation failed"
 log_message() {
     local level="$1"
     local message="$2"

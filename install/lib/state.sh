@@ -3,14 +3,39 @@
 # Part of the modular dotfiles installation system
 # Provides JSON-based state tracking and resume capability
 
-# Requires: tui.sh for print functions
+# Requires: tui.sh for print functions, jq for JSON manipulation
 
 # State file location
 STATE_DIR="$HOME/.local/state/dots"
 STATE_FILE="$STATE_DIR/install-state.json"
 MIGRATIONS_DIR="$STATE_DIR/migrations"
 
-# Initialize state system
+#############################################################################
+# STATE INITIALIZATION
+#############################################################################
+
+# Initialize the state management system
+#
+# Creates the state directory and file with default structure if they don't
+# exist. The state file tracks installation progress, completed phases,
+# installed packages, deployed configs, and enabled services.
+#
+# State file structure (JSON):
+#   - version: State file format version
+#   - install_date: ISO 8601 timestamp of first installation
+#   - last_update: ISO 8601 timestamp of last modification
+#   - current_phase: Currently executing phase
+#   - status: not_started, in_progress, completed, or failed
+#   - completed_phases: Array of completed phase names
+#   - failed_phases: Array of failed phase names
+#   - installed_packages: Object with package categories as keys
+#   - configs_deployed: Array of deployed configuration names
+#   - services_enabled: Array of enabled service names
+#   - backup_dir: Path to configuration backup directory
+#   - migrations_applied: Array of applied migration names
+#
+# Example:
+#   state_init
 state_init() {
     # Create state directory if it doesn't exist
     mkdir -p "$STATE_DIR"
@@ -47,7 +72,18 @@ EOF
     fi
 }
 
-# Load state into memory (returns entire JSON)
+#############################################################################
+# STATE ACCESS FUNCTIONS
+#############################################################################
+
+# Load the entire state file as JSON
+#
+# Returns:
+#   JSON string containing the entire state (printed to stdout)
+#   Empty JSON object "{}" if state file doesn't exist
+#
+# Example:
+#   current_state=$(state_load)
 state_load() {
     if [ -f "$STATE_FILE" ]; then
         cat "$STATE_FILE"
@@ -56,19 +92,44 @@ state_load() {
     fi
 }
 
-# Save state from JSON string
+# Save state from a JSON string
+#
+# Arguments:
+#   $1 - JSON string to save as new state
+#
+# Example:
+#   new_state=$(jq '.status = "completed"' "$STATE_FILE")
+#   state_save "$new_state"
 state_save() {
     local json="$1"
     echo "$json" > "$STATE_FILE"
 }
 
-# Update last_update timestamp
+# Update the last_update timestamp to current time
+#
+# Updates the timestamp to current UTC time in ISO 8601 format.
+#
+# Example:
+#   state_update_timestamp
 state_update_timestamp() {
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     jq ".last_update = \"$timestamp\"" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
 }
 
-# Mark a phase as complete
+#############################################################################
+# PHASE TRACKING FUNCTIONS
+#############################################################################
+
+# Mark a phase as successfully completed
+#
+# Adds the phase name to the completed_phases array if not already present.
+# Idempotent - safe to call multiple times for the same phase.
+#
+# Arguments:
+#   $1 - Phase name (e.g., "packages/core", "config/hyprland")
+#
+# Example:
+#   state_mark_phase_complete "packages/core"
 state_mark_phase_complete() {
     local phase="$1"
 

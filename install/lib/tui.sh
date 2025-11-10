@@ -8,12 +8,40 @@
 # Get terminal width (fallback to 80 if tput fails)
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 
-# Function to strip ANSI codes for length calculation
+#############################################################################
+# UTILITY FUNCTIONS
+#############################################################################
+
+# Strip ANSI color codes from a string for accurate length calculation
+#
+# Arguments:
+#   $1 - String with ANSI codes
+#
+# Returns:
+#   String with ANSI codes removed (printed to stdout)
+#
+# Example:
+#   visible_text=$(strip_ansi "$colored_text")
 strip_ansi() {
     echo -e "$1" | sed 's/\x1b\[[0-9;]*m//g'
 }
 
-# Draw box top border with optional title
+#############################################################################
+# BOX DRAWING FUNCTIONS
+#############################################################################
+
+# Draw the top border of a box with optional title
+#
+# Creates a box using Unicode box-drawing characters in Catppuccin Frappe
+# Lavender color. If a title is provided, it's centered with a separator line.
+#
+# Arguments:
+#   $1 - Optional title text (can include ANSI color codes)
+#   $2 - Box width in characters (default: 60)
+#
+# Example:
+#   draw_box "Installation Progress" 70
+#   draw_box "" 50  # No title
 draw_box() {
     local title="$1"
     local width=${2:-60}
@@ -47,7 +75,19 @@ draw_box() {
     fi
 }
 
-# Draw a line inside a box with text
+# Draw a content line inside a box
+#
+# Draws a line of text inside a box with proper borders and padding.
+# Automatically calculates padding to fill the box width.
+#
+# Arguments:
+#   $1 - Text to display (can include ANSI color codes)
+#   $2 - Box width in characters (default: 60)
+#   $3 - Text color (optional, default: FRAPPE_TEXT)
+#
+# Example:
+#   draw_box_line "  Installing packages..." 70
+#   draw_box_line "" 70  # Empty line
 draw_box_line() {
     local text="$1"
     local width=${2:-60}
@@ -69,7 +109,13 @@ draw_box_line() {
     echo -e " ${FRAPPE_LAVENDER}║${NC}"
 }
 
-# Draw box bottom border
+# Draw the bottom border of a box
+#
+# Arguments:
+#   $1 - Box width in characters (default: 60)
+#
+# Example:
+#   draw_box_bottom 70
 draw_box_bottom() {
     local width=${1:-60}
     echo -en "${FRAPPE_LAVENDER}"
@@ -78,7 +124,16 @@ draw_box_bottom() {
     echo -e "╝${NC}"
 }
 
-# Draw a progress bar
+# Draw a progress bar with percentage
+#
+# Creates a visual progress bar in Catppuccin Frappe colors.
+#
+# Arguments:
+#   $1 - Current progress value
+#   $2 - Total/maximum value
+#
+# Example:
+#   draw_progress_bar 7 10  # Shows 70% progress
 draw_progress_bar() {
     local current=$1
     local total=$2
@@ -95,7 +150,21 @@ draw_progress_bar() {
     echo -en "${FRAPPE_LAVENDER}]${NC} ${FRAPPE_YELLOW}${percent}%%${NC}"
 }
 
-# Print a step header
+#############################################################################
+# OUTPUT FUNCTIONS
+#############################################################################
+
+# Print a step header with number and total
+#
+# Displays a formatted step message with progress indication.
+#
+# Arguments:
+#   $1 - Current step number
+#   $2 - Total number of steps
+#   $3 - Step description
+#
+# Example:
+#   print_step 3 10 "Installing packages"
 print_step() {
     local step_num=$1
     local total_steps=$2
