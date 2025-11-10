@@ -1,0 +1,180 @@
+# Dotfiles Installation Configuration
+# Copy this file to 'install.conf' and customize for your system
+#
+# Usage:
+#   cp install.conf.example install.conf
+#   # Edit install.conf with your preferences
+#   ./install.sh --config install.conf
+#
+# Or use default install.conf:
+#   cp install.conf.example install.conf
+#   ./install.sh  # Automatically loads install.conf if it exists
+
+#############################################################################
+# INSTALLATION OPTIONS
+#############################################################################
+
+# Skip package installation
+# Set to true to only deploy configurations without installing packages
+# Default: false
+#SKIP_PACKAGES=false
+
+# Force installation without confirmation prompts
+# Set to true to skip all interactive prompts
+# Default: false
+#FORCE=false
+
+# Disable TUI welcome screen
+# Set to true to skip the fancy welcome screen
+# Default: false (show TUI)
+#SHOW_TUI=true
+
+# Dry run mode
+# Set to true to show what would be done without actually doing it
+# Useful for testing before actual installation
+# Default: false
+#DRY_RUN=false
+
+#############################################################################
+# MACHINE-SPECIFIC SETTINGS
+#############################################################################
+
+# Hostname
+# Used for machine-specific configurations (future feature)
+#HOSTNAME="my-laptop"
+
+# Primary monitor
+# Used for display configuration (future feature)
+#PRIMARY_MONITOR="eDP-1"
+
+# Monitor scaling factor
+# HiDPI scaling for high-resolution displays (future feature)
+#MONITOR_SCALE="1.566667"
+
+#############################################################################
+# FEATURE FLAGS
+#############################################################################
+
+# Enable fingerprint authentication setup
+# Installs fprintd PAM configurations
+# Default: true (if fprintd is installed)
+#ENABLE_FINGERPRINT=true
+
+# Enable Tailscale VPN setup
+# Enables tailscaled service and installs tsui
+# Default: true (if tailscale is installed)
+#ENABLE_TAILSCALE=true
+
+# Enable iwd network management
+# Replaces NetworkManager with iwd
+# Default: true (if iwd is installed)
+#ENABLE_IWD=true
+
+# Install LazyVim
+# Sets up Neovim with LazyVim starter template
+# Default: true
+#INSTALL_LAZYVIM=true
+
+# Download Catppuccin wallpaper collection
+# Clones ~50-200 Frappe wallpapers
+# Default: true
+#DOWNLOAD_WALLPAPERS=true
+
+#############################################################################
+# PACKAGE CATEGORIES
+#############################################################################
+# Enable/disable installation of specific package categories
+# Set to false to skip a category
+# Note: These only work if SKIP_PACKAGES=false
+
+# Core Hyprland packages (required)
+# Includes Hyprland, Waybar, Kitty, Rofi, Mako, etc.
+# Default: true
+#INSTALL_CORE=true
+
+# Hypr ecosystem packages
+# Includes hyprpaper, hypridle, hyprlock, hyprpicker
+# Default: true
+#INSTALL_HYPR_ECOSYSTEM=true
+
+# Theming packages
+# Includes Nerd Fonts, icons, cursors, GTK themes
+# Default: true
+#INSTALL_THEMING=true
+
+# Development tools
+# Includes Python, C++, Neovim, Node.js, Starship, build tools
+# Default: true
+#INSTALL_DEVELOPMENT=true
+
+# Productivity applications
+# Includes LibreOffice, Zathura PDF viewer, Discord, file managers
+# Default: true
+#INSTALL_PRODUCTIVITY=true
+
+# AUR packages
+# Includes VS Code, waypaper, SwayOSD, Catppuccin GTK themes
+# Requires yay or paru AUR helper
+# Default: true
+#INSTALL_AUR=true
+
+#############################################################################
+# SERVICE MANAGEMENT
+#############################################################################
+# Control which services are enabled during installation
+
+# Enable iwd (wireless daemon)
+# Replaces NetworkManager if active
+# Default: true
+#ENABLE_IWD_SERVICE=true
+
+# Enable PipeWire audio
+# Modern audio server (replaces PulseAudio)
+# Default: true (automatic via package installation)
+#ENABLE_PIPEWIRE=true
+
+# Enable Bluetooth service
+# Requires bluez package
+# Default: true (if bluez is installed)
+#ENABLE_BLUETOOTH=true
+
+# Disable NetworkManager
+# If using iwd instead
+# Default: true (when iwd is enabled)
+#DISABLE_NETWORKMANAGER=true
+
+#############################################################################
+# PATHS
+#############################################################################
+# Customize installation paths
+# Generally you shouldn't need to change these
+
+# Backup directory for existing configurations
+# Default: $HOME/.config-backup-TIMESTAMP
+#BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
+
+# State directory for installation tracking
+# Default: $HOME/.local/state/dots
+#STATE_DIR="$HOME/.local/state/dots"
+
+# Log directory
+# Default: $HOME/.local/state/dots/logs
+#LOG_DIR="$HOME/.local/state/dots/logs"
+
+#############################################################################
+# ADVANCED OPTIONS
+#############################################################################
+
+# Verbose output
+# Show detailed information during installation
+# Default: false
+#VERBOSE=false
+
+# Skip confirmation prompts (same as --force)
+# Default: false
+#SKIP_CONFIRMATION=false
+
+# Debug mode
+# Enable bash debug output (set -x)
+# Default: false
+#DEBUG=false
