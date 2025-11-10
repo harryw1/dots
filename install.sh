@@ -277,12 +277,14 @@ setup_wallpapers() {
     if [ -d "$wallpaper_dir/frappe" ]; then
         # Copy up to 3 wallpapers as defaults
         local count=0
-        for wallpaper in "$wallpaper_dir/frappe"/*.{png,jpg} 2>/dev/null; do
+        shopt -s nullglob  # Don't expand if no matches
+        for wallpaper in "$wallpaper_dir/frappe"/*.png "$wallpaper_dir/frappe"/*.jpg; do
             [ -f "$wallpaper" ] || continue
             cp "$wallpaper" "$HOME/.config/hypr/wallpapers/"
             ((count++))
             [ $count -ge 3 ] && break
         done
+        shopt -u nullglob  # Restore default behavior
         print_success "Copied $count default wallpapers"
     fi
 
