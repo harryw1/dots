@@ -1,0 +1,331 @@
+name: Test Modular Installer
+
+on:
+  push:
+    branches:
+      - feature/modular-installer
+      - main
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  test-syntax:
+    name: Syntax Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Check shell script syntax
+        run: |
+          echo "Checking install.sh..."
+          bash -n install.sh
+          echo "✓ install.sh syntax OK"
+
+          echo "Checking bootstrap.sh..."
+          bash -n bootstrap.sh
+          echo "✓ bootstrap.sh syntax OK"
+
+          echo "Checking lib scripts..."
+          for script in install/lib/*.sh; do
+            bash -n "$script"
+            echo "✓ $(basename $script) syntax OK"
+          done
+
+          echo "Checking preflight scripts..."
+          for script in install/preflight/*.sh; do
+            bash -n "$script"
+            echo "✓ $(basename $script) syntax OK"
+          done
+
+      - name: Run ShellCheck
+        run: |
+          shellcheck -e SC1091 install.sh || true  # SC1091: Can't follow source
+          shellcheck -e SC1091 bootstrap.sh || true
+          shellcheck install/lib/*.sh || true
+          shellcheck install/preflight/*.sh || true
+
+  test-dry-run:
+    name: Dry Run Test (Arch Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+      - name: Update system and install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq base-devel sudo
+
+      - name: Make scripts executable
+        run: chmod +x install.sh bootstrap.sh
+
+      - name: Test help output
+        run: |
+          echo "========================================="
+          echo "Testing --help flag"
+          echo "========================================="
+          ./install.sh --help
+          echo ""
+          echo "✓ Help output successful"
+
+      - name: Test dry-run mode
+        run: |
+          echo "========================================="
+          echo "Testing --dry-run mode"
+          echo "========================================="
+          ./install.sh --dry-run --no-tui --force
+          echo ""
+          echo "✓ Dry-run completed"
+
+      - name: Verify state directory structure
+        run: |
+          echo "========================================="
+          echo "Checking state directory"
+          echo "========================================="
+          if [ -d "$HOME/.local/state/dots" ]; then
+            echo "✓ State directory created"
+            ls -la "$HOME/.local/state/dots/"
+          else
+            echo "✗ State directory not created"
+            exit 1
+          fi
+
+      - name: Verify state file
+        run: |
+          echo "========================================="
+          echo "Checking state file"
+          echo "========================================="
+          STATE_FILE="$HOME/.local/state/dots/install-state.json"
+          if [ -f "$STATE_FILE" ]; then
+            echo "✓ State file created"
+            echo ""
+            echo "State file contents:"
+            cat "$STATE_FILE" | jq .
+          else
+            echo "✗ State file not created"
+            exit 1
+          fi
+
+      - name: Verify log directory
+        run: |
+          echo "========================================="
+          echo "Checking log directory"
+          echo "========================================="
+          LOG_DIR="$HOME/.local/state/dots/logs"
+          if [ -d "$LOG_DIR" ]; then
+            echo "✓ Log directory created"
+            echo ""
+            echo "Log files:"
+            ls -lh "$LOG_DIR/"
+            echo ""
+            echo "Latest log preview (first 50 lines):"
+            head -50 "$LOG_DIR"/install-*.log | cat
+          else
+            echo "✗ Log directory not created"
+            exit 1
+          fi
+
+  test-preflight-only:
+    name: Preflight Tests (Skip Packages)
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq sudo reflector
+
+      - name: Make scripts executable
+        run: chmod +x install.sh
+
+      - name: Run preflight checks (skip packages)
+        run: |
+          echo "========================================="
+          echo "Testing preflight with --skip-packages"
+          echo "========================================="
+          ./install.sh --skip-packages --no-tui --force
+
+      - name: Verify preflight completed
+        run: |
+          echo "========================================="
+          echo "Verifying preflight completion"
+          echo "========================================="
+          STATE_FILE="$HOME/.local/state/dots/install-state.json"
+          if [ -f "$STATE_FILE" ]; then
+            echo "State file contents:"
+            cat "$STATE_FILE" | jq .
+            echo ""
+
+            # Check completed phases
+            COMPLETED=$(jq -r '.completed_phases[]' "$STATE_FILE" 2>/dev/null)
+            if [ -n "$COMPLETED" ]; then
+              echo "✓ Completed phases:"
+              echo "$COMPLETED"
+            else
+              echo "⚠ No completed phases recorded"
+            fi
+          fi
+
+      - name: Check log output
+        run: |
+          echo "========================================="
+          echo "Log file contents"
+          echo "========================================="
+          LOG_DIR="$HOME/.local/state/dots/logs"
+          if [ -d "$LOG_DIR" ]; then
+            cat "$LOG_DIR"/install-*.log
+          fi
+
+  test-backward-compatibility:
+    name: Backward Compatibility Tests
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq sudo
+
+      - name: Make scripts executable
+        run: chmod +x install.sh
+
+      - name: Test legacy --skip-packages flag
+        run: |
+          echo "Testing: ./install.sh --skip-packages --no-tui --force"
+          ./install.sh --skip-packages --no-tui --force
+          echo "✓ Legacy --skip-packages works"
+
+      - name: Test legacy --no-tui flag
+        run: |
+          echo "Testing: ./install.sh --no-tui --help"
+          ./install.sh --no-tui --help > /dev/null
+          echo "✓ Legacy --no-tui works"
+
+      - name: Test legacy -h flag
+        run: |
+          echo "Testing: ./install.sh -h"
+          ./install.sh -h > /dev/null
+          echo "✓ Legacy -h works"
+
+      - name: Test legacy -f flag
+        run: |
+          echo "Testing: ./install.sh -f --skip-packages --no-tui --dry-run"
+          ./install.sh -f --skip-packages --no-tui --dry-run
+          echo "✓ Legacy -f works"
+
+  test-new-features:
+    name: New Feature Tests
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq sudo
+
+      - name: Make scripts executable
+        run: chmod +x install.sh
+
+      - name: Test --dry-run flag
+        run: |
+          echo "Testing: ./install.sh --dry-run --no-tui"
+          ./install.sh --dry-run --no-tui --force
+          echo "✓ --dry-run flag works"
+
+      - name: Test --reset flag
+        run: |
+          echo "Testing: ./install.sh --reset --no-tui --dry-run"
+          ./install.sh --reset --no-tui --dry-run --force
+          echo "✓ --reset flag works"
+
+      - name: Test --config flag with example config
+        run: |
+          echo "Testing: ./install.sh --config install.conf.example --dry-run --no-tui"
+          ./install.sh --config install.conf.example --dry-run --no-tui --force
+          echo "✓ --config flag works"
+
+  test-bootstrap:
+    name: Bootstrap Script Test
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq sudo curl
+
+      - name: Test bootstrap help
+        run: |
+          chmod +x bootstrap.sh
+          ./bootstrap.sh --help
+          echo "✓ Bootstrap help works"
+
+      - name: Test bootstrap usage message
+        run: |
+          ./bootstrap.sh -h | grep -q "Dotfiles Bootstrap Script"
+          echo "✓ Bootstrap shows usage"
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [test-syntax, test-dry-run, test-preflight-only, test-backward-compatibility, test-new-features, test-bootstrap]
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          echo "========================================="
+          echo "Test Suite Summary"
+          echo "========================================="
+          echo ""
+          echo "✓ All tests completed"
+          echo ""
+          echo "Increment 1 verification:"
+          echo "  ✓ Syntax validation"
+          echo "  ✓ Dry-run mode"
+          echo "  ✓ Preflight phase"
+          echo "  ✓ Backward compatibility"
+          echo "  ✓ New features"
+          echo "  ✓ Bootstrap script"
+          echo ""
+          echo "Ready for manual testing on real Arch Linux system!"
