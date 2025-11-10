@@ -41,6 +41,15 @@ source "$SCRIPT_DIR/install/config/starship.sh"
 source "$SCRIPT_DIR/install/config/bash.sh"
 source "$SCRIPT_DIR/install/config/misc-configs.sh"
 
+# Source service modules
+source "$SCRIPT_DIR/install/services/network.sh"
+source "$SCRIPT_DIR/install/services/fingerprint.sh"
+source "$SCRIPT_DIR/install/services/tailscale.sh"
+
+# Source post-install modules
+source "$SCRIPT_DIR/install/post-install/wallpapers.sh"
+source "$SCRIPT_DIR/install/post-install/finalize.sh"
+
 # Configuration variables (can be overridden by config file or flags)
 FORCE=false
 SKIP_PACKAGES=false
@@ -67,78 +76,18 @@ CONFIG_FILE=""
 #############################################################################
 
 #############################################################################
-# POST-INSTALLATION UTILITIES
+# UTILITIES (Modular)
 #############################################################################
+# Service and post-installation functions have been moved to modular scripts:
+#   - install/services/network.sh      - iwd network management
+#   - install/services/fingerprint.sh  - fprintd authentication
+#   - install/services/tailscale.sh    - Tailscale VPN service
+#   - install/post-install/wallpapers.sh - Catppuccin wallpaper collection
+#   - install/post-install/finalize.sh  - Final checks and summary
+#
 # NOTE: LazyVim installation has been moved to install/config/neovim.sh
 # and is now part of the configuration deployment phase.
 #############################################################################
-
-# Setup Catppuccin wallpaper collection
-setup_wallpapers() {
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would setup wallpaper collection"
-        return 0
-    fi
-
-    print_info "Setting up Catppuccin wallpaper collection..."
-    log_info "Setting up wallpaper collection"
-
-    local wallpaper_dir="$HOME/.local/share/catppuccin-wallpapers"
-
-    # Clone wallpaper collection if not already present
-    if [ ! -d "$wallpaper_dir" ]; then
-        print_info "Downloading Catppuccin wallpaper collection..."
-        if ! git clone https://github.com/42Willow/wallpapers "$wallpaper_dir"; then
-            print_warning "Failed to clone wallpaper collection"
-            log_warning "Failed to clone wallpaper collection"
-            return 1
-        fi
-        print_success "Wallpaper collection downloaded"
-    else
-        print_info "Wallpaper collection already exists"
-    fi
-
-    # Copy some default Frappe wallpapers to Hyprland config
-    mkdir -p "$HOME/.config/hypr/wallpapers"
-    if [ -d "$wallpaper_dir/frappe" ]; then
-        # Copy up to 3 wallpapers as defaults
-        local count=0
-        shopt -s nullglob  # Don't expand if no matches
-        for wallpaper in "$wallpaper_dir/frappe"/*.png "$wallpaper_dir/frappe"/*.jpg; do
-            [ -f "$wallpaper" ] || continue
-            cp "$wallpaper" "$HOME/.config/hypr/wallpapers/"
-            ((count++))
-            [ $count -ge 3 ] && break
-        done
-        shopt -u nullglob  # Restore default behavior
-        print_success "Copied $count default wallpapers"
-    fi
-
-    # Setup waypaper config
-    print_info "Configuring waypaper..."
-    mkdir -p "$HOME/.config/waypaper"
-    cat > "$HOME/.config/waypaper/config.ini" << EOF
-[Settings]
-folder = $wallpaper_dir/frappe
-wallpaper =
-backend = hyprpaper
-monitors = All
-fill = fill
-sort = name
-color = #0F111A
-subfolders = False
-number_of_columns = 3
-swww_transition_type = any
-swww_transition_step = 90
-swww_transition_angle = 0
-swww_transition_duration = 2
-EOF
-
-    print_success "Wallpaper setup complete"
-    log_success "Wallpaper setup complete"
-    print_info "Browse wallpapers with: waypaper"
-    return 0
-}
 
 #############################################################################
 # MAIN INSTALLATION FUNCTIONS
@@ -205,72 +154,10 @@ setup_services() {
 
     print_step 9 15 "Configuring system services"
 
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would setup services"
-        return 0
-    fi
-
-    # Set up Tailscale
-    if command -v tailscale &> /dev/null; then
-        print_info "Setting up Tailscale..."
-        if sudo systemctl enable tailscaled 2>/dev/null; then
-            print_success "Tailscale service enabled"
-        fi
-
-        # Install tsui if not present
-        if ! command -v tsui &> /dev/null; then
-            print_info "Installing tsui (Tailscale TUI)..."
-            TSUI_URL="https://github.com/neuralinkcorp/tsui/releases/latest/download/tsui-linux-amd64"
-            TSUI_TMP="/tmp/tsui-linux-amd64"
-
-            if curl -sL "$TSUI_URL" -o "$TSUI_TMP" 2>/dev/null; then
-                chmod +x "$TSUI_TMP"
-                if sudo mv "$TSUI_TMP" /usr/local/bin/tsui 2>/dev/null; then
-                    print_success "tsui installed"
-                fi
-            fi
-        fi
-    fi
-
-    # Set up fingerprint authentication
-    if command -v fprintd-enroll &> /dev/null; then
-        print_info "Setting up fingerprint authentication..."
-
-        # Backup and install PAM configs
-        for pam_file in sudo system-local-login polkit-1; do
-            if [ -f "/etc/pam.d/$pam_file" ]; then
-                if [ ! -f "/etc/pam.d/${pam_file}.backup-pre-fprintd" ]; then
-                    sudo cp "/etc/pam.d/$pam_file" "/etc/pam.d/${pam_file}.backup-pre-fprintd" 2>/dev/null
-                fi
-            fi
-        done
-
-        if [ -d "$DOTFILES_DIR/fprintd/pam-configs" ]; then
-            for pam_file in sudo system-local-login polkit-1; do
-                if [ -f "$DOTFILES_DIR/fprintd/pam-configs/$pam_file" ]; then
-                    sudo cp "$DOTFILES_DIR/fprintd/pam-configs/$pam_file" "/etc/pam.d/$pam_file" 2>/dev/null && \
-                        print_success "Installed fingerprint auth for $pam_file"
-                fi
-            done
-        fi
-    fi
-
-    # Set up iwd
-    if command -v iwctl &> /dev/null; then
-        print_info "Setting up iwd network management..."
-
-        # Disable NetworkManager if running
-        if systemctl is-active --quiet NetworkManager 2>/dev/null; then
-            print_info "Disabling NetworkManager in favor of iwd..."
-            sudo systemctl disable --now NetworkManager 2>/dev/null && \
-                print_success "NetworkManager disabled"
-        fi
-
-        # Enable iwd
-        if sudo systemctl enable --now iwd 2>/dev/null; then
-            print_success "iwd service enabled"
-        fi
-    fi
+    # Call modular service setup functions
+    setup_network_service
+    setup_fingerprint_service
+    setup_tailscale_service
 
     log_phase_end "Service Configuration" "success"
     print_success "Service configuration complete"
@@ -283,8 +170,9 @@ post_install_tasks() {
 
     print_step 10 15 "Running post-installation tasks"
 
-    # Setup wallpaper collection
+    # Call modular post-install functions
     setup_wallpapers
+    finalize_installation
 
     # NOTE: LazyVim setup is now handled during config deployment
     # (see install/config/neovim.sh - deploy_neovim_config)
