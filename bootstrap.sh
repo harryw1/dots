@@ -1,11 +1,22 @@
 #!/usr/bin/env bash
 # bootstrap.sh - Remote installation entry point for dotfiles
 # Downloads and executes the full installer
+#
+# Usage:
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+#
+# With custom config:
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+#     CONFIG_URL=https://example.com/my-config.conf bash
+#
+# With installation flags:
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+#     bash -s -- --skip-packages --dry-run
 
 set -e
 
 # Configuration (can be overridden via environment variables)
-REPO_URL="${REPO_URL:-https://www.github.com/harryw1/dots.git}"
+REPO_URL="${REPO_URL:-https://github.com/harryw1/dots.git}"
 REPO_BRANCH="${REPO_BRANCH:-main}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/share/dots}"
 CONFIG_URL="${CONFIG_URL:-}"  # Optional remote config file
@@ -21,6 +32,19 @@ print_info() { echo -e "${BLUE}●${NC} $1"; }
 print_success() { echo -e "${GREEN}✓${NC} $1"; }
 print_error() { echo -e "${RED}✗${NC} $1"; }
 print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
+
+# Banner
+show_banner() {
+    cat << 'EOF'
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║   Hyprland Dotfiles Bootstrap                                 ║
+║   Catppuccin Frappe Edition                                   ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+EOF
+    echo ""
+}
 
 # Check prerequisites
 check_prerequisites() {
@@ -46,7 +70,7 @@ check_prerequisites() {
     # Check for sudo
     if ! command -v sudo &> /dev/null; then
         print_error "sudo is not installed"
-        print_info "Install with: pacman -S sudo"
+        print_info "Install with: su -c 'pacman -S sudo'"
         exit 1
     fi
 
@@ -62,7 +86,7 @@ clone_repository() {
 
     # Check if directory already exists
     if [ -d "$INSTALL_DIR" ]; then
-        print_warning "Installation directory already exists"
+        print_warning "Installation directory already exists: $INSTALL_DIR"
         read -p "Remove and re-clone? (y/N) " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -77,6 +101,9 @@ clone_repository() {
     # Clone the repository
     if ! git clone --branch "$REPO_BRANCH" "$REPO_URL" "$INSTALL_DIR"; then
         print_error "Failed to clone repository"
+        print_info "Check that the repository URL and branch are correct:"
+        print_info "  URL: $REPO_URL"
+        print_info "  Branch: $REPO_BRANCH"
         exit 1
     fi
 
@@ -90,7 +117,7 @@ download_config() {
 
         if ! command -v curl &> /dev/null; then
             print_warning "curl not installed - cannot download custom config"
-            print_info "Install curl or clone manually: sudo pacman -S curl"
+            print_info "Install curl or provide config manually: sudo pacman -S curl"
             return 0
         fi
 
@@ -98,7 +125,7 @@ download_config() {
             print_success "Configuration downloaded"
         else
             print_error "Failed to download configuration from $CONFIG_URL"
-            exit 1
+            print_warning "Continuing without custom config..."
         fi
     fi
 }
@@ -106,65 +133,76 @@ download_config() {
 # Run installation
 run_installation() {
     print_info "Starting installation..."
-    echo ""
-
     cd "$INSTALL_DIR"
 
     # Make install script executable
     chmod +x install.sh
 
     # Run installation with any passed arguments
+    print_info "Running install.sh with arguments: $*"
     ./install.sh "$@"
 }
 
-# Show usage
+# Show usage information
 show_usage() {
-    echo ""
-    echo "Dotfiles Bootstrap Script"
-    echo ""
-    echo "Usage:"
-    echo "  bash <(curl -sL URL) [INSTALL_OPTIONS]"
-    echo ""
-    echo "Environment Variables:"
-    echo "  REPO_URL       Repository URL (default: https://www.github.com/harryw1/dots.git)"
-    echo "  REPO_BRANCH    Branch to clone (default: main)"
-    echo "  INSTALL_DIR    Installation directory (default: ~/.local/share/dots)"
-    echo "  CONFIG_URL     URL to custom config file (optional)"
-    echo ""
-    echo "Examples:"
-    echo "  # Basic installation"
-    echo "  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash"
-    echo ""
-    echo "  # Install from feature branch"
-    echo "  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\"
-    echo "    REPO_BRANCH=feature/modular-installer bash"
-    echo ""
-    echo "  # With custom config"
-    echo "  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\"
-    echo "    CONFIG_URL=https://example.com/my-config.conf bash"
-    echo ""
-    echo "  # Skip package installation"
-    echo "  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\"
-    echo "    bash -s -- --skip-packages"
-    echo ""
+    cat << 'EOF'
+Bootstrap Script Usage:
+
+Basic installation:
+  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+
+With environment variables:
+  REPO_BRANCH=feature/test CONFIG_URL=https://example.com/config.conf \
+    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+
+With installation flags:
+  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+    bash -s -- --skip-packages --dry-run
+
+Environment Variables:
+  REPO_URL       Repository URL (default: https://github.com/harryw1/dots.git)
+  REPO_BRANCH    Branch to clone (default: main)
+  INSTALL_DIR    Installation directory (default: ~/.local/share/dots)
+  CONFIG_URL     URL to custom install.conf file (optional)
+
+Installation Flags (passed after --):
+  --help              Show installer help
+  --dry-run           Show what would be done without doing it
+  --skip-packages     Skip package installation
+  --no-tui            Disable welcome screen
+  --resume            Resume from last failed phase
+  --reset             Reset state and start fresh
+  --config FILE       Use custom configuration file
+
+Examples:
+  # Install from feature branch with dry-run
+  REPO_BRANCH=feature/modular-installer \
+    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+    bash -s -- --dry-run
+
+  # Install with custom config and skip packages
+  CONFIG_URL=https://gist.githubusercontent.com/user/abc/raw/install.conf \
+    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+    bash -s -- --skip-packages
+
+EOF
 }
 
 # Main execution
 main() {
-    # Handle help flag
-    if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    # Check for help flag
+    if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
         show_usage
         exit 0
     fi
 
-    echo ""
-    print_info "Dotfiles Bootstrap Script"
-    echo ""
-
+    show_banner
     check_prerequisites
     clone_repository
     download_config
     run_installation "$@"
+
+    print_success "Bootstrap complete!"
 }
 
 main "$@"

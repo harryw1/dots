@@ -312,9 +312,13 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Load configuration file if specified
+# Load configuration file if specified or if install.conf exists
 if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
+    print_info "Loading configuration from: $CONFIG_FILE"
     source "$CONFIG_FILE"
+elif [ -f "$SCRIPT_DIR/install.conf" ]; then
+    print_info "Loading configuration from: install.conf"
+    source "$SCRIPT_DIR/install.conf"
 fi
 
 # Initialize state and logging
