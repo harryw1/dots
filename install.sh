@@ -32,6 +32,15 @@ source "$SCRIPT_DIR/install/packages/development.sh"
 source "$SCRIPT_DIR/install/packages/productivity.sh"
 source "$SCRIPT_DIR/install/packages/aur.sh"
 
+# Source config modules
+source "$SCRIPT_DIR/install/config/hyprland.sh"
+source "$SCRIPT_DIR/install/config/waybar.sh"
+source "$SCRIPT_DIR/install/config/kitty.sh"
+source "$SCRIPT_DIR/install/config/neovim.sh"
+source "$SCRIPT_DIR/install/config/starship.sh"
+source "$SCRIPT_DIR/install/config/bash.sh"
+source "$SCRIPT_DIR/install/config/misc-configs.sh"
+
 # Configuration variables (can be overridden by config file or flags)
 FORCE=false
 SKIP_PACKAGES=false
@@ -57,73 +66,12 @@ CONFIG_FILE=""
 # package installation functions that are called by install_all_packages() below.
 #############################################################################
 
-# Install LazyVim with custom theme configuration
-install_lazyvim() {
-    if ! command -v nvim &> /dev/null; then
-        print_warning "Neovim not installed - skipping LazyVim setup"
-        return 0
-    fi
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install LazyVim"
-        return 0
-    fi
-
-    print_info "Setting up LazyVim..."
-    log_info "Setting up LazyVim"
-
-    local nvim_config="$HOME/.config/nvim"
-
-    # Backup existing config if present
-    if [ -d "$nvim_config" ]; then
-        backup_if_exists "$nvim_config" "Neovim configuration"
-    fi
-
-    # Clone LazyVim starter
-    print_info "Cloning LazyVim starter template..."
-    if ! git clone https://github.com/LazyVim/starter "$nvim_config"; then
-        print_error "Failed to clone LazyVim starter"
-        log_error "Failed to clone LazyVim starter"
-        return 1
-    fi
-
-    # Remove .git directory so it becomes part of your dotfiles
-    rm -rf "$nvim_config/.git"
-
-    # Symlink custom configuration files from dotfiles
-    print_info "Symlinking custom LazyVim configurations..."
-    local nvim_custom_dir="$DOTFILES_DIR/nvim/lua"
-    if [ -d "$nvim_custom_dir" ]; then
-        # Create necessary directories
-        mkdir -p "$nvim_config/lua/config"
-        mkdir -p "$nvim_config/lua/plugins"
-
-        # Symlink individual files from nvim/lua/config
-        if [ -d "$nvim_custom_dir/config" ]; then
-            for file in "$nvim_custom_dir/config"/*; do
-                if [ -f "$file" ]; then
-                    local filename=$(basename "$file")
-                    create_symlink "$file" "$nvim_config/lua/config/$filename" "Neovim config: $filename"
-                fi
-            done
-        fi
-
-        # Symlink individual files from nvim/lua/plugins
-        if [ -d "$nvim_custom_dir/plugins" ]; then
-            for file in "$nvim_custom_dir/plugins"/*; do
-                if [ -f "$file" ]; then
-                    local filename=$(basename "$file")
-                    create_symlink "$file" "$nvim_config/lua/plugins/$filename" "Neovim plugin: $filename"
-                fi
-            done
-        fi
-    fi
-
-    print_success "LazyVim setup complete"
-    log_success "LazyVim setup complete"
-    print_info "Open Neovim and LazyVim will automatically install plugins"
-    return 0
-}
+#############################################################################
+# POST-INSTALLATION UTILITIES
+#############################################################################
+# NOTE: LazyVim installation has been moved to install/config/neovim.sh
+# and is now part of the configuration deployment phase.
+#############################################################################
 
 # Setup Catppuccin wallpaper collection
 setup_wallpapers() {
@@ -237,146 +185,14 @@ deploy_configurations() {
 
     print_step 8 15 "Deploying configuration files"
 
-    # Ensure .config directory exists
-    mkdir -p "$CONFIG_DIR"
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would deploy all configurations"
-        return 0
-    fi
-
-    # Install Hyprland configuration
-    if [ -d "$DOTFILES_DIR/hyprland" ]; then
-        create_symlink "$DOTFILES_DIR/hyprland" "$CONFIG_DIR/hypr" "Hyprland"
-    fi
-
-    # Install Waybar configuration
-    if [ -d "$DOTFILES_DIR/waybar" ]; then
-        create_symlink "$DOTFILES_DIR/waybar" "$CONFIG_DIR/waybar" "Waybar"
-    fi
-
-    # Install Kitty configuration
-    if [ -d "$DOTFILES_DIR/kitty" ]; then
-        create_symlink "$DOTFILES_DIR/kitty" "$CONFIG_DIR/kitty" "Kitty"
-    fi
-
-    # Install Rofi configuration
-    if [ -d "$DOTFILES_DIR/rofi" ]; then
-        create_symlink "$DOTFILES_DIR/rofi" "$CONFIG_DIR/rofi" "Rofi"
-    fi
-
-    # Install Mako configuration
-    if [ -d "$DOTFILES_DIR/mako" ]; then
-        create_symlink "$DOTFILES_DIR/mako" "$CONFIG_DIR/mako" "Mako"
-    fi
-
-    # Install Zathura configuration
-    if [ -d "$DOTFILES_DIR/zathura" ]; then
-        create_symlink "$DOTFILES_DIR/zathura" "$CONFIG_DIR/zathura" "Zathura"
-    fi
-
-    # Install wlogout configuration
-    if [ -d "$DOTFILES_DIR/wlogout" ]; then
-        create_symlink "$DOTFILES_DIR/wlogout" "$CONFIG_DIR/wlogout" "wlogout"
-    fi
-
-    # Install btop configuration
-    if [ -d "$DOTFILES_DIR/btop" ]; then
-        create_symlink "$DOTFILES_DIR/btop" "$CONFIG_DIR/btop" "btop"
-    fi
-
-    # Install Starship configuration
-    if command -v starship &> /dev/null; then
-        print_info "Installing Starship Catppuccin Frappe preset..."
-
-        # Backup existing config if present
-        if [ -f "$CONFIG_DIR/starship.toml" ]; then
-            backup_if_exists "$CONFIG_DIR/starship.toml" "Starship configuration"
-        fi
-
-        # Install the official Catppuccin Powerline preset
-        if starship preset catppuccin-powerline -o "$CONFIG_DIR/starship.toml"; then
-            print_success "Installed Starship preset"
-
-            # Update the palette to use Frappe variant
-            if [ -f "$CONFIG_DIR/starship.toml" ]; then
-                if grep -q "palette = 'catppuccin_mocha'" "$CONFIG_DIR/starship.toml" 2>/dev/null; then
-                    sed -i "s/palette = 'catppuccin_mocha'/palette = 'catppuccin_frappe'/" "$CONFIG_DIR/starship.toml"
-                    print_success "Configured Catppuccin Frappe theme"
-                fi
-            fi
-        else
-            print_warning "Failed to install Starship preset, trying manual symlink..."
-            if [ -f "$DOTFILES_DIR/starship/starship.toml" ]; then
-                create_symlink "$DOTFILES_DIR/starship/starship.toml" "$CONFIG_DIR/starship.toml" "Starship"
-            fi
-        fi
-
-        # Configure Starship in shell RC files
-        print_info "Setting up Starship shell integration..."
-
-        # Setup for bash
-        if [ -f "$HOME/.bashrc" ]; then
-            if ! grep -q 'starship init bash' "$HOME/.bashrc"; then
-                echo '' >> "$HOME/.bashrc"
-                echo '# Starship prompt' >> "$HOME/.bashrc"
-                echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
-                print_success "Added Starship initialization to .bashrc"
-            fi
-        fi
-
-        # Setup for zsh
-        if [ -f "$HOME/.zshrc" ]; then
-            if ! grep -q 'starship init zsh' "$HOME/.zshrc"; then
-                echo '' >> "$HOME/.zshrc"
-                echo '# Starship prompt' >> "$HOME/.zshrc"
-                echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
-                print_success "Added Starship initialization to .zshrc"
-            fi
-        fi
-    fi
-
-    # Install Bash aliases
-    if [ -f "$DOTFILES_DIR/bash/.bash_aliases" ]; then
-        print_info "Setting up bash aliases..."
-        create_symlink "$DOTFILES_DIR/bash/.bash_aliases" "$HOME/.bash_aliases" "Bash aliases"
-
-        # Add source command to .bashrc if needed
-        if [ -f "$HOME/.bashrc" ]; then
-            if ! grep -q '\.bash_aliases' "$HOME/.bashrc"; then
-                echo '' >> "$HOME/.bashrc"
-                echo '# Load custom bash aliases' >> "$HOME/.bashrc"
-                echo 'if [ -f ~/.bash_aliases ]; then' >> "$HOME/.bashrc"
-                echo '    . ~/.bash_aliases' >> "$HOME/.bashrc"
-                echo 'fi' >> "$HOME/.bashrc"
-                print_success "Added bash aliases to .bashrc"
-            fi
-        fi
-
-        # Do the same for .zshrc
-        if [ -f "$HOME/.zshrc" ]; then
-            if ! grep -q '\.bash_aliases' "$HOME/.zshrc"; then
-                echo '' >> "$HOME/.zshrc"
-                echo '# Load custom bash aliases' >> "$HOME/.zshrc"
-                echo 'if [ -f ~/.bash_aliases ]; then' >> "$HOME/.zshrc"
-                echo '    . ~/.bash_aliases' >> "$HOME/.zshrc"
-                echo 'fi' >> "$HOME/.zshrc"
-                print_success "Added bash aliases to .zshrc"
-            fi
-        fi
-    fi
-
-    # Install SDDM configuration
-    if [ -f "$DOTFILES_DIR/sddm/theme.conf" ]; then
-        print_info "Setting up SDDM theme configuration..."
-        if sudo mkdir -p /etc/sddm.conf.d 2>/dev/null; then
-            if sudo ln -sf "$DOTFILES_DIR/sddm/theme.conf" /etc/sddm.conf.d/theme.conf 2>/dev/null; then
-                print_success "Linked SDDM theme configuration"
-            else
-                print_warning "Failed to create SDDM config symlink (may need sudo)"
-            fi
-        fi
-    fi
+    # Call modular config deployment functions
+    deploy_hyprland_config
+    deploy_waybar_config
+    deploy_kitty_config
+    deploy_neovim_config
+    deploy_starship_config
+    deploy_bash_config
+    deploy_misc_configs
 
     log_phase_end "Configuration Deployment" "success"
     print_success "Configuration deployment complete"
@@ -467,8 +283,11 @@ post_install_tasks() {
 
     print_step 10 15 "Running post-installation tasks"
 
+    # Setup wallpaper collection
     setup_wallpapers
-    install_lazyvim
+
+    # NOTE: LazyVim setup is now handled during config deployment
+    # (see install/config/neovim.sh - deploy_neovim_config)
 
     log_phase_end "Post-Installation" "success"
     print_success "Post-installation complete"
