@@ -38,8 +38,7 @@ tmux              # Terminal multiplexer (classic, stable)
 zellij            # Modern alternative to tmux (Rust)
 
 # Productivity Tools
-taskwarrior       # Command-line task management
-taskwarrior-tui   # TUI for taskwarrior
+task              # Command-line task management
 newsboat          # RSS/Atom feed reader
 
 # Development Tools
