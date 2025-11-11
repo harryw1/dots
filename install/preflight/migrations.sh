@@ -10,6 +10,14 @@ MIGRATIONS_SOURCE_DIR="$DOTFILES_DIR/migrations"
 run_migrations() {
     print_step 6 6 "Checking for migrations"
 
+    # Skip in dry-run mode
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would check and run migrations"
+        log_info "Skipping migrations - dry run mode"
+        echo ""
+        return 0
+    fi
+
     # Check if migrations directory exists
     if [ ! -d "$MIGRATIONS_SOURCE_DIR" ]; then
         print_info "No migrations directory found - skipping"

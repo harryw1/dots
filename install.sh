@@ -268,7 +268,37 @@ show_help() {
 # ARGUMENT PARSING AND MAIN EXECUTION
 #############################################################################
 
-# Parse command line arguments
+# First pass: Extract --config flag to know which config file to load
+# We need to do this first so we can load the config before parsing other flags
+ORIGINAL_ARGS=("$@")
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# Load configuration file (if specified or if install.conf exists)
+# This must happen BEFORE parsing other CLI flags so CLI flags can override config
+if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
+    print_info "Loading configuration from: $CONFIG_FILE"
+    source "$CONFIG_FILE"
+elif [ -f "$SCRIPT_DIR/install.conf" ]; then
+    print_info "Loading configuration from: install.conf"
+    source "$SCRIPT_DIR/install.conf"
+fi
+
+# Second pass: Parse all command line arguments to override config file settings
+set -- "${ORIGINAL_ARGS[@]}"
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
@@ -300,7 +330,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --config)
-            CONFIG_FILE="$2"
+            # Already handled in first pass
             shift 2
             ;;
         *)
@@ -312,23 +342,21 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Load configuration file if specified or if install.conf exists
-if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
-    print_info "Loading configuration from: $CONFIG_FILE"
-    source "$CONFIG_FILE"
-elif [ -f "$SCRIPT_DIR/install.conf" ]; then
-    print_info "Loading configuration from: install.conf"
-    source "$SCRIPT_DIR/install.conf"
+# Handle reset BEFORE initializing state
+# This ensures state_init creates a fresh state after reset
+if [ "$RESET" = true ]; then
+    print_info "Resetting installation state..."
+    if [ -f "$STATE_FILE" ]; then
+        rm -f "$STATE_FILE"
+        print_success "State reset complete"
+    else
+        print_info "No existing state to reset"
+    fi
 fi
 
 # Initialize state and logging
 state_init
 logging_init
-
-# Handle reset
-if [ "$RESET" = true ]; then
-    state_reset
-fi
 
 # Show welcome screen
 if [ "$SHOW_TUI" = true ] && [ "$RESUME" = false ]; then
