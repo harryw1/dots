@@ -115,7 +115,14 @@ clone_repository() {
     # Check if directory already exists
     if [ -d "$INSTALL_DIR" ]; then
         print_warning "Installation directory already exists: $INSTALL_DIR"
-        read -p "Remove and re-clone? (y/N) " -n 1 -r
+
+        # Auto-handle in non-interactive mode (piped input)
+        if [ ! -t 0 ]; then
+            print_info "Non-interactive mode: using existing directory"
+            return 0
+        fi
+
+        read -p "Remove and re-clone? (y/N) " -n 1 -r || true
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             rm -rf "$INSTALL_DIR"

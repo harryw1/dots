@@ -63,7 +63,7 @@ run_system_checks() {
             print_info "Continuing without internet (force mode or non-interactive)"
             log_info "Continuing without internet connectivity (forced)"
         else
-            read -p "Continue anyway? (y/N) " -n 1 -r
+            read -p "Continue anyway? (y/N) " -n 1 -r || true
             echo
             if [[ ! $REPLY =~ ^[Yy]$ ]]; then
                 exit 1

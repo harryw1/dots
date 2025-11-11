@@ -39,6 +39,7 @@ install/
 - **Error recovery**: Clear error messages with recovery instructions
 - **Configuration files**: `install.conf` for customization
 - **Remote bootstrap**: Single-command installation via curl
+- **Non-interactive mode**: Auto-detects piped input (e.g., `curl | bash`) and disables prompts
 
 **Hyprland configuration** also uses a modular approach (hyprland/conf/):
 - `hyprland.conf` is the main entry point that sources all modular configs
@@ -282,6 +283,8 @@ When editing configurations, files are in this repository but active via symlink
 6. **Network Management**: Uses iwd (modern wireless daemon) with impala (TUI frontend). This replaces NetworkManager for a lighter, more efficient WiFi management solution. Waybar network module opens impala on click for interactive WiFi management. Use `impala` for the friendly TUI or `iwctl` for command-line control.
 
 7. **Wallpaper Management**: Uses waypaper (GUI) + hyprpaper (backend) + Catppuccin wallpaper collection. The install script automatically clones a curated collection of ~50-200 Frappe wallpapers to `~/.local/share/catppuccin-wallpapers/`. ImageMagick is excluded to avoid package conflicts; waypaper provides a better user experience for wallpaper selection.
+
+8. **Non-Interactive Mode Handling**: The installer auto-detects when stdin is not a terminal (e.g., `curl | bash`) and automatically enables `--no-tui --force` flags to disable interactive prompts. All `read` commands are protected with `|| true` to prevent failures on EOF. This ensures seamless remote bootstrap installation while maintaining interactive prompts when run locally.
 
 ## Troubleshooting Workflow
 

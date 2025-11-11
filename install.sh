@@ -59,6 +59,15 @@ RESUME=false
 RESET=false
 CONFIG_FILE=""
 
+# Auto-detect non-interactive context (e.g., curl | bash)
+# If stdin is not a terminal, disable interactive features
+if [ ! -t 0 ]; then
+    SHOW_TUI=false
+    FORCE=true
+    print_info "Non-interactive context detected (stdin not a tty)"
+    print_info "Automatically enabling: --no-tui --force"
+fi
+
 #############################################################################
 # PACKAGE INSTALLATION (Modular)
 #############################################################################
@@ -221,11 +230,15 @@ show_final_summary() {
 check_system() {
     if ! command -v hyprctl &> /dev/null; then
         print_warning "hyprctl not found - Hyprland may not be installed"
-        read -p "Continue anyway? (y/N) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            print_info "Installation cancelled"
-            exit 0
+        if [ "$FORCE" = true ]; then
+            print_info "Continuing anyway (--force mode)"
+        else
+            read -p "Continue anyway? (y/N) " -n 1 -r || true
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                print_info "Installation cancelled"
+                exit 0
+            fi
         fi
     fi
 }
@@ -362,7 +375,7 @@ logging_init
 if [ "$SHOW_TUI" = true ] && [ "$RESUME" = false ]; then
     show_welcome
     echo -n "Press Enter to continue or Ctrl+C to cancel..."
-    read -r
+    read -r || true  # Don't fail if stdin closes (e.g., piped input)
     echo ""
 fi
 
