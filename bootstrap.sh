@@ -128,18 +128,51 @@ clone_repository() {
 
     # Auto-handle in non-interactive mode (piped input)
     if [ ! -t 0 ]; then
-      print_info "Non-interactive mode: using existing directory"
-      return 0
-    fi
+      print_info "Non-interactive mode: attempting to update existing repository"
 
-    read -p "Remove and re-clone? (y/N) " -n 1 -r || true
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      rm -rf "$INSTALL_DIR"
-      print_info "Removed existing installation"
+      # Check if it's a valid git repository
+      if [ -d "$INSTALL_DIR/.git" ]; then
+        cd "$INSTALL_DIR"
+
+        # Fetch latest changes
+        print_info "Fetching latest changes..."
+        if ! git fetch origin "$REPO_BRANCH" 2>/dev/null; then
+          print_warning "Failed to fetch updates, using existing files"
+          return 0
+        fi
+
+        # Check if there are local changes
+        if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+          print_warning "Local changes detected, stashing before update..."
+          git stash save "bootstrap auto-stash $(date +%Y%m%d-%H%M%S)" 2>/dev/null || true
+        fi
+
+        # Pull latest changes
+        print_info "Pulling latest changes..."
+        if git pull origin "$REPO_BRANCH" 2>/dev/null; then
+          print_success "Repository updated successfully"
+        else
+          print_warning "Failed to pull updates, using existing files"
+        fi
+
+        cd - > /dev/null
+        return 0
+      else
+        print_warning "Existing directory is not a git repository"
+        print_info "Removing and re-cloning..."
+        rm -rf "$INSTALL_DIR"
+      fi
     else
-      print_info "Using existing installation directory"
-      return 0
+      # Interactive mode - ask user
+      read -p "Remove and re-clone? (y/N) " -n 1 -r || true
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf "$INSTALL_DIR"
+        print_info "Removed existing installation"
+      else
+        print_info "Using existing installation directory"
+        return 0
+      fi
     fi
   fi
 
@@ -219,6 +252,12 @@ Installation Flags (passed after --):
   --reset             Reset state and start fresh
   --config FILE       Use custom configuration file
 
+Behavior:
+  - If installation directory exists, bootstrap will automatically pull latest
+    changes from the repository (non-interactive mode only)
+  - Local changes are automatically stashed before pulling updates
+  - If git operations fail, installation continues with existing files
+
 Examples:
   # Install from feature branch with dry-run
   REPO_BRANCH=feature/modular-installer \
@@ -229,6 +268,10 @@ Examples:
   CONFIG_URL=https://gist.githubusercontent.com/user/abc/raw/install.conf \
     curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
     bash -s -- --skip-packages
+
+  # Force fresh installation (remove existing directory first)
+  rm -rf ~/.local/share/dots
+  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 
 EOF
 }

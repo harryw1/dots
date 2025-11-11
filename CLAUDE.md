@@ -339,6 +339,8 @@ If you want to track any of these, create a directory in the repository and add 
 
 8. **Non-Interactive Mode Handling**: The installer auto-detects when stdin is not a terminal (e.g., `curl | bash`) and automatically enables `--no-tui --force` flags to disable interactive prompts. All `read` commands are protected with `|| true` to prevent failures on EOF. This ensures seamless remote bootstrap installation while maintaining interactive prompts when run locally.
 
+   **Auto-Update Behavior**: When running via `curl | bash` and the installation directory (`~/.local/share/dots`) already exists, the bootstrap script automatically pulls the latest changes from GitHub. Local changes are stashed before updating. This ensures repeated bootstrap runs always use the latest version without manual intervention.
+
 9. **TUI-First Philosophy**: This configuration prioritizes terminal user interfaces (TUI) over GUI applications wherever practical. System management, file browsing, git operations, audio control, and network/Bluetooth configuration are all handled through fast, keyboard-driven TUI applications. This approach reduces resource usage, increases efficiency, and ensures full functionality over SSH.
 
 ## TUI-First Workflow
