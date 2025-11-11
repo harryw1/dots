@@ -1,0 +1,80 @@
+# TUI (Terminal User Interface) Applications
+# For a terminal-first, keyboard-driven workflow
+# Install with: pacman -S --needed - < packages/tui.txt
+
+# System Monitoring and Management
+btop              # Modern resource monitor (CPU, RAM, disk, network)
+ncdu              # Disk usage analyzer with ncurses interface
+iotop             # I/O monitoring
+bandwhich         # Network bandwidth monitor per process
+
+# File Management
+yazi              # Modern file manager (Rust, async, image preview)
+fd                # Fast find alternative (used by yazi)
+ripgrep           # Fast grep alternative (rg)
+fzf               # Fuzzy finder (essential for productivity)
+bat               # Cat with syntax highlighting
+eza               # Modern ls replacement with colors and icons
+zoxide            # Smarter cd command (learns your habits)
+ouch              # Archive extraction/compression tool
+
+# Git
+lazygit           # TUI for git operations
+git-delta         # Syntax highlighter for git diffs
+
+# Audio Control
+pulsemixer        # TUI/CLI mixer for PulseAudio/PipeWire
+
+# Network Management
+# impala          # WiFi management TUI (iwd frontend) - install manually from GitHub
+# Note: impala not in repos, installed separately
+
+# Bluetooth Management
+# bluetuith-bin   # In aur.txt
+
+# Terminal Multiplexer
+tmux              # Terminal multiplexer (classic, stable)
+# OR
+zellij            # Modern alternative to tmux (Rust)
+
+# Productivity Tools
+taskwarrior       # Command-line task management
+taskwarrior-tui   # TUI for taskwarrior
+newsboat          # RSS/Atom feed reader
+
+# Development Tools
+# lazygit         # Already listed above
+helix             # Post-modern text editor (alternative to nvim)
+
+# System Utilities
+dust              # Modern du (disk usage)
+procs             # Modern ps (process viewer)
+bottom            # Another system monitor (alternative to btop)
+
+# Image Viewing
+# Note: You use image.nvim for image viewing in neovim
+# For standalone terminal image viewing:
+viu               # View images in terminal (minimal)
+# OR use: kitty +kitten icat (already available with kitty)
+
+# Archive Tools (for yazi and general use)
+p7zip             # 7z archive support
+unarchiver        # Universal archive extractor
+
+# Optional: Music Players
+# cmus            # Console music player
+# ncspot          # Spotify TUI client (Rust)
+
+# Optional: Email
+# neomutt         # TUI email client
+# aerc            # Modern email client (Go)
+
+# Optional: IRC/Chat
+# weechat         # IRC client
+# irssi           # Alternative IRC client
+
+# Optional: Calendar
+# calcurse        # Calendar and scheduling application
+
+# JSON/Data Tools (for yazi previews)
+jq                # JSON processor

@@ -13,22 +13,38 @@ A modular, robust installation system for Arch Linux with Hyprland window manage
 
 ## Installation
 
+### TUI-First Philosophy
+
+**This installer defaults to TUI-only mode** (headless compatible). GUI components are optional.
+
+- **Default**: Terminal applications only (yazi, lazygit, btop, pulsemixer, etc.)
+- **Optional**: Hyprland GUI via `--gui` or `--full` flags
+
 ### Quick Start (Recommended)
 
-Install everything with a single command:
+**TUI-only installation** (default - headless compatible):
 
 ```bash
-# Authenticate first (credentials cached for 15 minutes)
-sudo -v
-
-# Run installation
 curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 ```
 
-That's it! The bootstrap script will:
+**Interactive GUI selection**:
+
+```bash
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --gui
+```
+
+**Full installation** (all GUI components):
+
+```bash
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --full
+```
+
+The bootstrap script will:
 - Clone the repository to `~/.local/share/dots`
-- Run the full installation (packages + configs)
-- Set up Hyprland with Catppuccin Frappe theming
+- Install core system + TUI applications (default)
+- Optionally install GUI components (if --gui or --full used)
+- Deploy all configurations with Catppuccin Frappe theming
 
 ### Advanced Usage
 
@@ -71,23 +87,30 @@ cd ~/.local/share/dots
 ```bash
 ./install.sh [OPTIONS]
 
-Options:
+Installation Modes:
+  --gui                   Prompt for GUI components (interactive)
+  --minimal               TUI-only install (default, headless compatible)
+  --full                  Install everything (all GUI components)
+  --headless              Same as --minimal (alias)
+
+Other Options:
   -h, --help              Show help message
   -f, --force             Skip confirmation prompts (for automation)
   --skip-packages         Skip package installation (configs only)
-  --no-tui                Disable welcome screen
+  --no-tui                Disable TUI welcome screen
   --dry-run               Show what would be done without doing it
   --resume                Resume from last failed phase
   --reset                 Reset state and start fresh
   --config FILE           Use custom configuration file
 
 Examples:
-  ./install.sh                    # Full installation with prompts
+  ./install.sh                    # TUI-only installation (default)
+  ./install.sh --gui              # Interactive GUI selection
+  ./install.sh --full             # Install everything
   ./install.sh --skip-packages    # Only deploy configurations
   ./install.sh --dry-run          # Preview what will be installed
-  ./install.sh --force            # Automated installation (no prompts)
+  ./install.sh --force --full     # Automated full installation
   ./install.sh --resume           # Continue after a failure
-  ./install.sh --config my.conf   # Use custom configuration
 ```
 
 ### What Gets Installed
@@ -100,13 +123,10 @@ The installation process handles everything automatically:
    - Conflict resolution (PulseAudio → PipeWire, NetworkManager → iwd)
    - Migration system for updates
 
-2. **Package Installation** (all categories):
-   - Core Hyprland packages (Waybar, Mako, Kitty, etc.)
-   - Hypr ecosystem tools (hyprpaper, hypridle, hyprlock, hyprpicker)
-   - Theming (Catppuccin themes, Nerd Fonts, icons, cursors)
-   - Development tools (Python, C++, Neovim, Node.js, build tools)
-   - Productivity (LibreOffice, PDF viewer, Discord, file manager)
-   - AUR packages (waypaper, quickwall, SwayOSD, VS Code, etc.)
+2. **Package Installation**:
+   - **Always installed** (TUI-first): Core system, TUI applications, development tools, theming
+   - **Optional GUI** (--gui or --full): Hyprland, Waybar, Firefox, LibreOffice, Discord/Slack
+   - **Default behavior**: TUI-only (headless compatible, no GUI components)
    - Automatic yay installation for AUR packages
 
 3. **Configuration Deployment**:

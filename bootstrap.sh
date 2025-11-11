@@ -3,15 +3,25 @@
 # Downloads and executes the full installer
 #
 # Usage:
+#   # DEFAULT: TUI-only installation (headless compatible)
 #   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+#
+#   # Interactive GUI selection
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --gui
+#
+#   # Full installation (all GUI components)
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --full
+#
+#   # Minimal (explicit, same as default)
+#   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --minimal
 #
 # With custom config:
 #   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
 #     CONFIG_URL=https://example.com/my-config.conf bash
 #
-# With installation flags:
+# With other flags:
 #   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
-#     bash -s -- --skip-packages --dry-run
+#     bash -s -- --full --force
 
 set -e
 

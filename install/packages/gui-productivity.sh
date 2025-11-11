@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# productivity.sh - Productivity tools package installation
+# gui-productivity.sh - Productivity package installation
 # Part of the modular dotfiles installation system
-# Installs LibreOffice, PDF viewer, file manager, Discord
+# Installs LibreOffice, Thunderbird, and productivity apps
 
 # This script is sourced by install.sh, not executed directly
 # Requires: packages/utils.sh, tui.sh, logging.sh, state.sh
 
-install_productivity_packages() {
-    local phase_name="packages/productivity"
+install_gui_productivity_packages() {
+    local phase_name="packages/gui-productivity"
 
     # Check if should skip all packages
     if should_skip_packages; then
@@ -22,11 +22,11 @@ install_productivity_packages() {
     fi
 
     log_phase_start "$phase_name"
-    print_step 5 6 "Installing productivity packages"
+    print_step 5 8 "Installing productivity applications"
 
-    local package_file="$PACKAGES_DIR/productivity.txt"
+    local package_file="$PACKAGES_DIR/gui-productivity.txt"
 
-    if ! install_package_file "$package_file" "productivity packages"; then
+    if ! install_package_file "$package_file" "productivity applications"; then
         log_phase_end "$phase_name" "failed"
         return 1
     fi

@@ -4,29 +4,19 @@
 # Then install packages with:
 #   yay -S --needed - < packages/aur.txt
 #   or: paru -S --needed - < packages/aur.txt
+#
+# This file contains core AUR packages for TUI-first system
+# For GUI-specific AUR packages, see gui-essential-aur.txt
+# For communication apps, see gui-communication.txt
 
-# Themes
+# Themes (used by both GUI and some TUI apps)
 catppuccin-gtk-theme-frappe
 catppuccin-cursors-frappe
 catppuccin-sddm-theme-frappe
 
-# Communication
-discord
-zoom
+# System utilities (TUI)
+pacseek          # TUI package manager
+bluetuith-bin    # TUI Bluetooth manager
 
-# Productivity
-slack-desktop
-visual-studio-code-bin
-
-# System utilities
-pacseek
-swayosd-git  # On-screen display for volume and brightness
-wlogout  # Wayland logout menu
-bluetuith-bin  # TUI Bluetooth manager
-
-# Wallpaper management
-waypaper  # GUI wallpaper manager for Wayland (works with hyprpaper)
-quickwall  # CLI tool for downloading wallpapers from Unsplash
-
-# Hyprland plugins (if needed)
-# hyprland-plugin-example
+# Wallpaper management (CLI)
+quickwall        # CLI tool for downloading wallpapers from Unsplash

@@ -26,10 +26,13 @@ source "$SCRIPT_DIR/install/preflight/migrations.sh"
 # Source package modules
 source "$SCRIPT_DIR/install/packages/utils.sh"
 source "$SCRIPT_DIR/install/packages/core.sh"
-source "$SCRIPT_DIR/install/packages/hypr-ecosystem.sh"
 source "$SCRIPT_DIR/install/packages/theming.sh"
 source "$SCRIPT_DIR/install/packages/development.sh"
-source "$SCRIPT_DIR/install/packages/productivity.sh"
+source "$SCRIPT_DIR/install/packages/tui.sh"
+source "$SCRIPT_DIR/install/packages/gui-essential.sh"
+source "$SCRIPT_DIR/install/packages/gui-browsers.sh"
+source "$SCRIPT_DIR/install/packages/gui-productivity.sh"
+source "$SCRIPT_DIR/install/packages/gui-communication.sh"
 source "$SCRIPT_DIR/install/packages/aur.sh"
 
 # Source config modules
@@ -59,6 +62,14 @@ RESUME=false
 RESET=false
 CONFIG_FILE=""
 
+# GUI installation mode variables
+INSTALL_MODE="tui-only"  # Default: TUI-only (headless compatible)
+# Modes: tui-only, minimal-gui, full
+INSTALL_GUI_ESSENTIAL=false
+INSTALL_GUI_BROWSERS=false
+INSTALL_GUI_PRODUCTIVITY=false
+INSTALL_GUI_COMMUNICATION=false
+
 # Auto-detect non-interactive context (e.g., curl | bash)
 # If stdin is not a terminal, disable interactive features
 if [ ! -t 0 ]; then
@@ -72,13 +83,16 @@ fi
 # PACKAGE INSTALLATION (Modular)
 #############################################################################
 # Package installation functions have been moved to modular scripts:
-#   - install/packages/utils.sh       - Shared utilities (install_package_file, install_yay, etc.)
-#   - install/packages/core.sh        - Core packages (install_core_packages)
-#   - install/packages/hypr-ecosystem.sh - Hypr tools (install_hypr_ecosystem_packages)
-#   - install/packages/theming.sh     - Theming packages (install_theming_packages)
-#   - install/packages/development.sh - Development tools (install_development_packages)
-#   - install/packages/productivity.sh - Productivity apps (install_productivity_packages)
-#   - install/packages/aur.sh         - AUR packages (install_aur_packages)
+#   - install/packages/utils.sh            - Shared utilities (install_package_file, install_yay, etc.)
+#   - install/packages/core.sh             - Core packages (install_core_packages) - TUI/headless compatible
+#   - install/packages/theming.sh          - Theming packages (install_theming_packages)
+#   - install/packages/development.sh      - Development tools (install_development_packages)
+#   - install/packages/tui.sh              - TUI applications (install_tui_packages)
+#   - install/packages/gui-essential.sh    - Essential GUI (install_gui_essential_packages)
+#   - install/packages/gui-browsers.sh     - Web browsers (install_gui_browsers_packages)
+#   - install/packages/gui-productivity.sh - Productivity apps (install_gui_productivity_packages)
+#   - install/packages/gui-communication.sh - Communication apps (install_gui_communication_packages)
+#   - install/packages/aur.sh              - AUR packages (install_aur_packages)
 #
 # These modules are sourced at the top of this script and provide individual
 # package installation functions that are called by install_all_packages() below.
@@ -97,6 +111,75 @@ fi
 # NOTE: LazyVim installation has been moved to install/config/neovim.sh
 # and is now part of the configuration deployment phase.
 #############################################################################
+
+#############################################################################
+# GUI SELECTION PROMPTS
+#############################################################################
+
+# Prompt user for GUI component selection (interactive mode only)
+prompt_gui_selection() {
+    # Skip if in force/non-interactive mode
+    if [ "$FORCE" = true ]; then
+        return 0
+    fi
+
+    echo ""
+    print_step 1 2 "GUI Component Selection"
+    echo ""
+
+    # Prompt 1: Install Hyprland GUI environment?
+    print_info "This installer defaults to a TUI-only system (headless compatible)."
+    print_info "GUI components (Hyprland, Waybar, etc.) are optional."
+    echo ""
+
+    read -p "${FRAPPE_BLUE}Install Hyprland GUI environment?${NC} [Y/n] " -n 1 -r GUI_RESPONSE || true
+    echo ""
+
+    if [[ ! $GUI_RESPONSE =~ ^[Nn]$ ]]; then
+        INSTALL_GUI_ESSENTIAL=true
+        INSTALL_MODE="minimal-gui"
+        print_success "Will install essential GUI components"
+        echo ""
+
+        # Prompt 2: Web browser
+        read -p "${FRAPPE_BLUE}Install web browser (Firefox)?${NC} [y/N] " -n 1 -r BROWSER_RESPONSE || true
+        echo ""
+        if [[ $BROWSER_RESPONSE =~ ^[Yy]$ ]]; then
+            INSTALL_GUI_BROWSERS=true
+            print_success "Will install Firefox"
+        else
+            print_info "Skipping web browser (TUI alternatives: lynx, w3m)"
+        fi
+        echo ""
+
+        # Prompt 3: Productivity suite
+        read -p "${FRAPPE_BLUE}Install productivity suite (LibreOffice, Thunderbird)?${NC} [y/N] " -n 1 -r PRODUCTIVITY_RESPONSE || true
+        echo ""
+        if [[ $PRODUCTIVITY_RESPONSE =~ ^[Yy]$ ]]; then
+            INSTALL_GUI_PRODUCTIVITY=true
+            print_success "Will install productivity applications"
+        else
+            print_info "Skipping productivity suite (TUI alternatives available)"
+        fi
+        echo ""
+
+        # Prompt 4: Communication apps
+        read -p "${FRAPPE_BLUE}Install communication apps (Discord, Slack, Zoom)?${NC} [y/N] " -n 1 -r COMM_RESPONSE || true
+        echo ""
+        if [[ $COMM_RESPONSE =~ ^[Yy]$ ]]; then
+            INSTALL_GUI_COMMUNICATION=true
+            print_success "Will install communication applications"
+        else
+            print_info "Skipping communication apps"
+        fi
+        echo ""
+    else
+        INSTALL_MODE="tui-only"
+        print_info "Headless/TUI-only mode selected"
+        print_info "No GUI components will be installed"
+        echo ""
+    fi
+}
 
 #############################################################################
 # MAIN INSTALLATION FUNCTIONS
@@ -124,12 +207,37 @@ install_all_packages() {
 
     print_step 7 15 "Installing packages"
 
-    # Call modular package installation functions
+    # Install core packages (always - TUI tools, audio, network)
     install_core_packages
-    install_hypr_ecosystem_packages
+
+    # Install theming packages (needed for consistent appearance)
     install_theming_packages
+
+    # Install development tools (always - Neovim, compilers, etc.)
     install_development_packages
-    install_productivity_packages
+
+    # Install TUI applications (always - yazi, lazygit, btop, etc.)
+    install_tui_packages
+
+    # Install GUI packages conditionally
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        install_gui_essential_packages
+        install_gui_essential_aur_packages
+    fi
+
+    if [ "$INSTALL_GUI_BROWSERS" = true ]; then
+        install_gui_browsers_packages
+    fi
+
+    if [ "$INSTALL_GUI_PRODUCTIVITY" = true ]; then
+        install_gui_productivity_packages
+    fi
+
+    if [ "$INSTALL_GUI_COMMUNICATION" = true ]; then
+        install_gui_communication_packages
+    fi
+
+    # Install base AUR packages (always - themes, TUI tools)
     install_aur_packages
 
     log_phase_end "Package Installation" "success"
@@ -255,6 +363,14 @@ show_help() {
     draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Options:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}              Show this help message" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-f, --force${NC}             Skip confirmation prompts" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Installation Modes:${NC}" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--gui${NC}                   Prompt for GUI components (interactive)" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--minimal${NC}               TUI-only install (no GUI, headless compatible)" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--full${NC}                  Install everything (all GUI components)" $box_width
+    draw_box_line "    ${FRAPPE_GREEN}--headless${NC}              Same as --minimal (alias)" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Other Options:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--skip-packages${NC}         Skip package installation" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}                Disable TUI welcome screen" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--dry-run${NC}               Show what would be done without doing it" $box_width
@@ -262,13 +378,16 @@ show_help() {
     draw_box_line "    ${FRAPPE_GREEN}--reset${NC}                 Reset state and start fresh" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--config FILE${NC}           Use custom configuration file" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Package Categories:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}                Required Hyprland packages" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}hypr-ecosystem.txt${NC}      Hypr tools" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Package Categories (TUI-first):${NC}" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}                Core system (headless compatible)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}tui.txt${NC}                 TUI applications (yazi, lazygit, btop)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}         Development tools (Neovim, compilers)" $box_width
     draw_box_line "    ${FRAPPE_PEACH}theming.txt${NC}             Fonts, icons, cursors" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}         Python, C++, Node.js, Neovim" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}productivity.txt${NC}        LibreOffice, PDF viewer" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}aur.txt${NC}                 AUR packages" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}gui-essential.txt${NC}       Essential GUI (Hyprland, Waybar)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}gui-browsers.txt${NC}        Web browsers (Firefox)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}gui-productivity.txt${NC}    Office suite (LibreOffice)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}gui-communication.txt${NC}   Chat apps (Discord, Slack)" $box_width
+    draw_box_line "    ${FRAPPE_PEACH}aur.txt${NC}                 Core AUR packages (themes, TUI tools)" $box_width
     draw_box_line "" $box_width
     draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  Logs: ~/.local/state/dots/logs/" $box_width
     draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  State: ~/.local/state/dots/install-state.json" $box_width
@@ -320,6 +439,29 @@ while [[ $# -gt 0 ]]; do
             ;;
         -f|--force)
             FORCE=true
+            shift
+            ;;
+        --gui)
+            # Interactive GUI selection mode
+            INSTALL_MODE="interactive"
+            shift
+            ;;
+        --minimal|--headless)
+            # TUI-only mode (headless compatible)
+            INSTALL_MODE="tui-only"
+            INSTALL_GUI_ESSENTIAL=false
+            INSTALL_GUI_BROWSERS=false
+            INSTALL_GUI_PRODUCTIVITY=false
+            INSTALL_GUI_COMMUNICATION=false
+            shift
+            ;;
+        --full)
+            # Install everything mode
+            INSTALL_MODE="full"
+            INSTALL_GUI_ESSENTIAL=true
+            INSTALL_GUI_BROWSERS=true
+            INSTALL_GUI_PRODUCTIVITY=true
+            INSTALL_GUI_COMMUNICATION=true
             shift
             ;;
         --skip-packages)
@@ -401,6 +543,11 @@ echo ""
 
 # Run preflight
 run_preflight
+
+# Prompt for GUI selection if in interactive mode
+if [ "$INSTALL_MODE" = "interactive" ] && [ "$SKIP_PACKAGES" = false ]; then
+    prompt_gui_selection
+fi
 
 # Install packages unless skipped
 if [ "$SKIP_PACKAGES" = false ]; then

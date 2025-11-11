@@ -1,0 +1,12 @@
+# Communication applications (optional GUI)
+# Install with: pacman -S --needed - < packages/gui-communication.txt
+#
+# These are AUR packages and require yay or paru
+# TUI alternatives exist for some (e.g., cordless for Discord, slack-term)
+# but lack feature parity with official clients
+#
+# Install this if you need team communication tools
+
+discord
+slack-desktop
+zoom

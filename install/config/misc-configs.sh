@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # misc-configs.sh - Miscellaneous configuration deployment
 # Part of the modular dotfiles installation system
-# Deploys Rofi, Mako, Zathura, wlogout, btop, and SDDM configurations
+# Deploys Rofi, Mako, Zathura, wlogout, btop, SDDM, Git, GTK, and Waypaper configurations
 
 # This script is sourced by install.sh, not executed directly
 # Requires: lib/utils.sh, lib/tui.sh, lib/logging.sh, lib/state.sh
@@ -50,6 +50,43 @@ deploy_misc_configs() {
     # Install btop configuration
     if [ -d "$DOTFILES_DIR/btop" ]; then
         create_symlink "$DOTFILES_DIR/btop" "$CONFIG_DIR/btop" "btop"
+    fi
+
+    # Install Git configuration
+    if [ -f "$DOTFILES_DIR/git/.gitconfig" ]; then
+        create_symlink "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig" "Git config"
+    fi
+
+    if [ -f "$DOTFILES_DIR/git/.gitignore_global" ]; then
+        create_symlink "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global" "Git global ignore"
+    fi
+
+    # Install GTK 3.0 configuration
+    if [ -d "$DOTFILES_DIR/gtk-3.0" ]; then
+        create_symlink "$DOTFILES_DIR/gtk-3.0" "$CONFIG_DIR/gtk-3.0" "GTK 3.0"
+    fi
+
+    # Install GTK 4.0 configuration
+    if [ -d "$DOTFILES_DIR/gtk-4.0" ]; then
+        create_symlink "$DOTFILES_DIR/gtk-4.0" "$CONFIG_DIR/gtk-4.0" "GTK 4.0"
+    fi
+
+    # Install Waypaper configuration
+    if [ -d "$DOTFILES_DIR/waypaper" ]; then
+        create_symlink "$DOTFILES_DIR/waypaper" "$CONFIG_DIR/waypaper" "Waypaper"
+    fi
+
+    # Install TUI application configs
+    if [ -d "$DOTFILES_DIR/bluetuith" ]; then
+        create_symlink "$DOTFILES_DIR/bluetuith" "$CONFIG_DIR/bluetuith" "Bluetuith"
+    fi
+
+    if [ -d "$DOTFILES_DIR/lazygit" ]; then
+        create_symlink "$DOTFILES_DIR/lazygit" "$CONFIG_DIR/lazygit" "Lazygit"
+    fi
+
+    if [ -d "$DOTFILES_DIR/yazi" ]; then
+        create_symlink "$DOTFILES_DIR/yazi" "$CONFIG_DIR/yazi" "Yazi"
     fi
 
     # Install SDDM configuration (requires sudo)

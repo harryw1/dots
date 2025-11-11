@@ -1,56 +1,27 @@
-# Core packages required for basic Hyprland functionality
+# Core packages for TUI-first system (headless compatible)
 # Install with: pacman -S --needed - < packages/core.txt
-
-# Compositor and display
-hyprland
-xdg-desktop-portal-hyprland
-qt5-wayland
-qt6-wayland
-
-# Essential utilities
-waybar
-mako
-polkit-gnome
-wl-clipboard
-
-# Terminal
-kitty
-
-# File manager
-thunar
-thunar-archive-plugin
-file-roller
-
-# Application launcher
-rofi-wayland
-
-# Browser
-firefox
+#
+# This file contains only packages that work in both GUI and headless environments
+# For Hyprland GUI, see packages/gui-essential.txt
 
 # Network management
-iwd  # Modern wireless daemon
-impala  # TUI for managing WiFi with iwd
-tailscale  # Mesh VPN for secure device connections
+iwd         # Modern wireless daemon
+impala      # TUI for managing WiFi with iwd
+tailscale   # Mesh VPN for secure device connections
 
-# Bluetooth
+# Bluetooth (works headless and GUI)
 bluez
 bluez-utils
 
-# Audio
+# Audio (PipeWire works in headless too)
 pipewire
 pipewire-alsa
 pipewire-pulse
 pipewire-jack
 wireplumber
-pavucontrol
 
-# System utilities
-brightnessctl
-playerctl
-grim
-slurp
-cliphist
+# System utilities (TUI/CLI tools)
 fprintd  # Fingerprint authentication
-btop  # System monitor (used by waybar)
-jq  # JSON processor (required for waybar scaling script)
-bc  # Calculator (required for waybar scaling script)
+btop     # System monitor TUI
+jq       # JSON processor
+bc       # Calculator

@@ -4,53 +4,87 @@ This directory contains package lists organized by category for easy installatio
 
 ## Package Files
 
-- **`core.txt`** - Essential packages required for Hyprland to function
-  - Compositor, Wayland support, display utilities
-  - Terminal, file manager, launcher
-  - Network and Bluetooth management
-  - Audio (PipeWire)
-  - Basic utilities
+### Core Packages (Always Installed)
 
-- **`hypr-ecosystem.txt`** - Optional Hyprland ecosystem tools
-  - hyprpaper (wallpaper daemon)
-  - hypridle (idle management)
-  - hyprlock (screen locker)
-  - hyprpicker (color picker)
+- **`core.txt`** - Core system packages (headless compatible)
+  - Network management (iwd, tailscale)
+  - Bluetooth (bluez)
+  - Audio (PipeWire)
+  - System utilities (btop, jq, bc, fprintd)
 
 - **`theming.txt`** - Visual theming packages
   - GTK and Qt themes
-  - Icon themes (Papirus, Adwaita)
-  - Cursor themes (Bibata)
+  - Icon themes (Papirus)
+  - Cursor themes
   - Fonts (Nerd Fonts, Noto, Font Awesome)
 
 - **`development.txt`** - Development tools
   - Python (pip, virtualenv, ipython)
   - C++ (gcc, clang, cmake, gdb, lldb)
   - Build essentials
-  - Text editors (neovim)
+  - Neovim with LazyVim
 
-- **`productivity.txt`** - Office and productivity applications
-  - LibreOffice
-  - PDF viewer (Zathura)
-  - Image viewer (imv)
-  - Document conversion (Pandoc)
+- **`tui.txt`** - Terminal User Interface applications (DEFAULT)
+  - System monitoring (btop, ncdu, bandwhich)
+  - File management (yazi, fd, ripgrep, fzf)
+  - Git tools (lazygit, delta)
+  - Audio control (pulsemixer)
+  - Terminal multiplexer (tmux/zellij)
+  - Productivity (taskwarrior, newsboat)
+  - Modern CLI replacements (bat, eza, zoxide, dust, procs)
 
-- **`aur.txt`** - Arch User Repository packages
+- **`aur.txt`** - Core AUR packages
   - Catppuccin themes
-  - Additional community packages
-  - Requires an AUR helper (yay or paru)
-  - See file header for AUR helper installation instructions
+  - TUI tools (pacseek, bluetuith)
+  - CLI utilities (quickwall)
+
+### GUI Packages (Optional - Install with --gui or --full)
+
+- **`gui-essential.txt`** - Essential Hyprland GUI
+  - Hyprland compositor
+  - Waybar, Mako, Rofi
+  - Kitty terminal
+  - File manager (Thunar)
+  - Screenshot tools, utilities
+  - Zathura (PDF), imv (images)
+
+- **`gui-essential-aur.txt`** - Essential GUI AUR packages
+  - SwayOSD, wlogout, waypaper
+
+- **`gui-browsers.txt`** - Web browsers
+  - Firefox
+
+- **`gui-productivity.txt`** - Office and productivity
+  - LibreOffice suite
+  - Thunderbird email
+  - Document tools (pandoc, LaTeX)
+  - Calculator, note-taking (Obsidian)
+
+- **`gui-communication.txt`** - Communication apps (AUR)
+  - Discord, Slack, Zoom
 
 ## Installation
+
+### TUI-First Default
+
+**By default, the installer installs only TUI applications** (headless compatible).
+
+GUI components are optional and require explicit flags or interactive selection.
 
 ### Using the install script (recommended)
 
 ```bash
-# Interactive package selection
-./install.sh --packages
+# Default: TUI-only installation (headless compatible)
+./install.sh
 
-# Install all packages non-interactively
-./install.sh --packages-all
+# Interactive GUI selection (prompts for which GUI components to install)
+./install.sh --gui
+
+# Minimal/headless (same as default - explicit)
+./install.sh --minimal
+
+# Full installation (all GUI components)
+./install.sh --full
 ```
 
 ### Manual installation

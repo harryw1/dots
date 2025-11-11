@@ -1,0 +1,167 @@
+/* Waypaper GTK Stylesheet - Catppuccin Frappe Theme */
+/* This stylesheet customizes the waypaper GUI to match the Catppuccin Frappe color scheme */
+
+/* Catppuccin Frappe Colors */
+@define-color base #303446;
+@define-color mantle #292c3c;
+@define-color crust #232634;
+@define-color text #c6d0f5;
+@define-color subtext1 #b5bfe2;
+@define-color subtext0 #a5adce;
+@define-color overlay2 #949cbb;
+@define-color overlay1 #838ba7;
+@define-color overlay0 #737994;
+@define-color surface2 #626880;
+@define-color surface1 #51576d;
+@define-color surface0 #414559;
+@define-color mauve #ca9ee6;
+@define-color blue #8caaee;
+@define-color green #a6d189;
+@define-color red #e78284;
+
+/* Main window */
+window {
+    background-color: @base;
+    color: @text;
+}
+
+/* Headers and titles */
+headerbar {
+    background-color: @mantle;
+    color: @text;
+    border-bottom: 1px solid @surface0;
+}
+
+headerbar button {
+    background-color: @surface0;
+    color: @text;
+    border: 1px solid @surface1;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+headerbar button:hover {
+    background-color: @surface1;
+    border-color: @mauve;
+}
+
+headerbar button:active {
+    background-color: @surface2;
+}
+
+/* Scrolled windows and lists */
+scrolledwindow {
+    background-color: @base;
+}
+
+/* Image grid/thumbnails */
+flowbox {
+    background-color: @base;
+}
+
+flowboxchild {
+    background-color: @surface0;
+    border: 2px solid @surface0;
+    border-radius: 8px;
+    margin: 4px;
+}
+
+flowboxchild:selected {
+    background-color: @surface1;
+    border-color: @mauve;
+}
+
+flowboxchild:hover {
+    border-color: @blue;
+}
+
+/* Buttons */
+button {
+    background-color: @surface0;
+    color: @text;
+    border: 1px solid @surface1;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+button:hover {
+    background-color: @surface1;
+    border-color: @mauve;
+}
+
+button:active {
+    background-color: @surface2;
+}
+
+/* Entry fields */
+entry {
+    background-color: @surface0;
+    color: @text;
+    border: 1px solid @surface1;
+    border-radius: 6px;
+    padding: 6px;
+}
+
+entry:focus {
+    border-color: @mauve;
+}
+
+/* Dropdowns and combo boxes */
+combobox button {
+    background-color: @surface0;
+    color: @text;
+    border: 1px solid @surface1;
+}
+
+combobox button:hover {
+    background-color: @surface1;
+    border-color: @mauve;
+}
+
+/* Checkboxes */
+checkbutton {
+    color: @text;
+}
+
+checkbutton check {
+    background-color: @surface0;
+    border: 1px solid @surface1;
+    border-radius: 3px;
+}
+
+checkbutton check:checked {
+    background-color: @mauve;
+    border-color: @mauve;
+}
+
+/* Labels */
+label {
+    color: @text;
+}
+
+/* Scrollbars */
+scrollbar {
+    background-color: @base;
+}
+
+scrollbar slider {
+    background-color: @surface1;
+    border-radius: 10px;
+}
+
+scrollbar slider:hover {
+    background-color: @surface2;
+}
+
+/* Tooltips */
+tooltip {
+    background-color: @mantle;
+    color: @text;
+    border: 1px solid @surface0;
+    border-radius: 6px;
+}
+
+/* Separators */
+separator {
+    background-color: @surface0;
+}

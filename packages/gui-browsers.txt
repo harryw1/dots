@@ -1,0 +1,7 @@
+# Web browsers (optional GUI)
+# Install with: pacman -S --needed - < packages/gui-browsers.txt
+#
+# TUI alternatives available: lynx, w3m, browsh
+# Most users will want Firefox for modern web browsing
+
+firefox

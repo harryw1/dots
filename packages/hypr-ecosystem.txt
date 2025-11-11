@@ -1,7 +1,0 @@
-# Hyprland ecosystem tools (optional but recommended)
-# Install with: pacman -S --needed - < packages/hypr-ecosystem.txt
-
-hyprpaper
-hypridle
-hyprlock
-hyprpicker

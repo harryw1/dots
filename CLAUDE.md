@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a dotfiles repository for Arch Linux and Hyprland window manager configuration. It serves as a staging area for configuration files before deployment via symlinks to the system.
 
+**Repository Location**: `~/dots` (canonical location)
+- System symlinks may reference files via `~/.local/share/dots/` depending on installation history
+- Always work from `~/dots` for git operations and configuration edits
+
 ## Architecture Overview
 
 ### Symlink-Based Deployment Model
@@ -91,8 +95,17 @@ The `update.sh` script provides system-wide updates:
 ### Installation and Deployment
 
 ```bash
-# Full installation (packages + configs)
+# DEFAULT: TUI-only installation (headless compatible, no GUI)
 ./install.sh
+
+# Interactive GUI selection (prompts for which GUI components to install)
+./install.sh --gui
+
+# Minimal/headless (same as default - explicit)
+./install.sh --minimal
+
+# Full installation (all GUI components + TUI)
+./install.sh --full
 
 # Config-only installation (skip packages)
 ./install.sh --skip-packages
@@ -112,8 +125,11 @@ The `update.sh` script provides system-wide updates:
 # Use custom config file
 ./install.sh --config my-install.conf
 
-# Remote bootstrap (single command install)
+# Remote bootstrap (TUI-only by default)
 curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+
+# Remote bootstrap with GUI
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash -s -- --full
 
 # Remove symlinks
 ./uninstall.sh
@@ -252,9 +268,12 @@ waybar --version
 
 When editing configurations, files are in this repository but active via symlinks:
 
+### Core Configurations
+
 | Component | Repository Path | System Symlink Target |
 |-----------|----------------|----------------------|
 | Hyprland | `./hyprland/` | `~/.config/hypr/` |
+| Hyprlock | `./hyprland/hyprlock.conf` | `~/.config/hypr/hyprlock.conf` |
 | Waybar | `./waybar/` | `~/.config/waybar/` |
 | Kitty | `./kitty/` | `~/.config/kitty/` |
 | Rofi | `./rofi/` | `~/.config/rofi/` |
@@ -265,6 +284,40 @@ When editing configurations, files are in this repository but active via symlink
 | SDDM | `./sddm/theme.conf` | `/etc/sddm.conf.d/theme.conf` |
 | Starship | `./starship/starship.toml` | `~/.config/starship.toml` |
 | Neovim | `./nvim/lua/` | `~/.config/nvim/lua/` (files symlinked into LazyVim) |
+
+### System Configurations
+
+| Component | Repository Path | System Symlink Target |
+|-----------|----------------|----------------------|
+| Git | `./git/.gitconfig` | `~/.gitconfig` |
+| Git Ignore | `./git/.gitignore_global` | `~/.gitignore_global` |
+| GTK 3.0 | `./gtk-3.0/` | `~/.config/gtk-3.0/` |
+| GTK 4.0 | `./gtk-4.0/` | `~/.config/gtk-4.0/` |
+| Waypaper | `./waypaper/` | `~/.config/waypaper/` |
+
+### TUI Application Configurations
+
+| Component | Repository Path | System Symlink Target |
+|-----------|----------------|----------------------|
+| Bluetuith | `./bluetuith/` | `~/.config/bluetuith/` |
+| Lazygit | `./lazygit/` | `~/.config/lazygit/` |
+| Yazi | `./yazi/` | `~/.config/yazi/` |
+| Pulsemixer | N/A (no config) | Uses terminal colors |
+| Tmux | `./tmux/` (optional) | `~/.config/tmux/` |
+| Zellij | `./zellij/` (optional) | `~/.config/zellij/` |
+
+### Optional Configurations (Not Tracked)
+
+These configurations exist on your system but are intentionally not tracked in the repository. They may contain machine-specific or sensitive information:
+
+- **Discord** (`~/.config/discord/`) - Contains session tokens and cache
+- **Obsidian** (`~/.config/obsidian/`) - Note-taking app with personal vaults
+- **Bluetooth** (`~/.config/bluetuith/`) - Bluetooth TUI settings (minimal config)
+- **dconf** (`~/.config/dconf/`) - GNOME settings database (auto-generated)
+- **GitHub CLI** (`~/.config/gh/`) - Contains authentication tokens
+- **Application cache/state** - Various apps store temporary data
+
+If you want to track any of these, create a directory in the repository and add the configuration files.
 
 ## Key Design Decisions
 
@@ -285,6 +338,165 @@ When editing configurations, files are in this repository but active via symlink
 7. **Wallpaper Management**: Uses waypaper (GUI) + hyprpaper (backend) + Catppuccin wallpaper collection. The install script automatically clones a curated collection of ~50-200 Frappe wallpapers to `~/.local/share/catppuccin-wallpapers/`. ImageMagick is excluded to avoid package conflicts; waypaper provides a better user experience for wallpaper selection.
 
 8. **Non-Interactive Mode Handling**: The installer auto-detects when stdin is not a terminal (e.g., `curl | bash`) and automatically enables `--no-tui --force` flags to disable interactive prompts. All `read` commands are protected with `|| true` to prevent failures on EOF. This ensures seamless remote bootstrap installation while maintaining interactive prompts when run locally.
+
+9. **TUI-First Philosophy**: This configuration prioritizes terminal user interfaces (TUI) over GUI applications wherever practical. System management, file browsing, git operations, audio control, and network/Bluetooth configuration are all handled through fast, keyboard-driven TUI applications. This approach reduces resource usage, increases efficiency, and ensures full functionality over SSH.
+
+## TUI-First Workflow
+
+This configuration embraces a **terminal-first, keyboard-driven** workflow that minimizes GUI application usage while maintaining full system functionality.
+
+### Philosophy
+
+- **Keyboard > Mouse**: All primary workflows should be achievable without touching the mouse
+- **Terminal > GUI**: Prefer TUI applications for better performance and SSH compatibility
+- **Minimal > Bloated**: Install only what's needed, avoid feature-heavy GUI applications
+- **Fast > Pretty**: Prioritize responsiveness and efficiency over visual complexity
+
+### Core TUI Applications
+
+**System Management**:
+- **btop** - Real-time system monitor (CPU, RAM, disk, network)
+- **ncdu** - Disk usage analyzer
+- **bandwhich** - Network bandwidth monitor per process
+
+**File Management**:
+- **yazi** - Modern file manager with image preview
+- **fd** - Fast find alternative
+- **ripgrep** (rg) - Fast grep for content search
+- **fzf** - Fuzzy finder (essential for shell productivity)
+
+**Git Operations**:
+- **lazygit** - Full-featured git TUI
+- **delta** - Syntax-highlighted diffs
+
+**System Control**:
+- **pulsemixer** - Audio control (volume, device switching)
+- **bluetuith** - Bluetooth device management
+- **impala** - WiFi network management (iwd frontend)
+
+**Development**:
+- **neovim/lazyvim** - Text editing, coding, document editing
+- **image.nvim** - Image viewing in Neovim
+
+**Terminal Enhancement**:
+- **tmux** or **zellij** - Terminal multiplexer for session management
+- **bat** - Cat with syntax highlighting
+- **eza** - Modern ls with colors and icons
+- **zoxide** - Smart cd that learns your habits
+- **dust** - Modern du for disk usage
+- **procs** - Modern ps for process viewing
+
+**Productivity**:
+- **taskwarrior** + **taskwarrior-tui** - Task management
+- **newsboat** - RSS feed reader
+
+### Integration Points
+
+**Hyprland Keybindings**: All TUI apps can be launched with Super+key combinations:
+```conf
+bind = $mainMod, E, exec, kitty -e yazi          # File manager
+bind = $mainMod, G, exec, kitty -e lazygit       # Git
+bind = $mainMod, V, exec, kitty -e pulsemixer    # Audio
+bind = $mainMod, B, exec, kitty -e bluetuith     # Bluetooth
+bind = $mainMod, W, exec, kitty -e impala        # WiFi
+```
+
+**Waybar Modules**: Status bar elements open relevant TUI apps on click:
+- Network module → impala
+- Volume module → pulsemixer
+- Bluetooth module → bluetuith
+
+### Minimal GUI Applications
+
+The configuration includes minimal GUI applications only where TUI alternatives are impractical:
+
+**Essential GUI**:
+- **Hyprland** - Wayland compositor (necessary for graphics)
+- **Waybar** - Status bar (visual system information)
+- **Kitty** - Terminal emulator (GPU-accelerated, essential for TUI apps)
+- **Rofi** - Application launcher (fast, minimal)
+- **Zathura** - PDF viewer (minimal, vim-like)
+
+**Optional GUI** (productivity-focused):
+- **LibreOffice** - Document editing (when terminal editors won't suffice)
+- **Firefox** - Web browsing (no TUI alternative)
+- **Discord/Slack** - Communication (if needed)
+
+### Minimal Installation Mode
+
+**Default installation is now TUI-only (headless compatible)**:
+
+```bash
+# TUI-only (default - no flags needed)
+./install.sh
+
+# Or explicit
+./install.sh --minimal
+```
+
+This installs:
+- Core system packages (network, audio, Bluetooth)
+- All TUI applications (`packages/tui.txt`)
+- Development tools (Neovim, compilers)
+- Theming (fonts, icons)
+- NO GUI components (no Hyprland, no Firefox, etc.)
+- Development tools
+- System theming (for consistency)
+
+Skip:
+- LibreOffice and office suite
+- GUI image viewers
+- Optional GUI applications
+
+### Remote/Headless Usage
+
+The TUI-first approach ensures full system management over SSH:
+
+```bash
+# SSH into machine
+ssh user@machine
+
+# All system management available via TUI
+btop                    # Monitor system
+yazi                    # Browse files
+lazygit                 # Manage git repos
+pulsemixer              # Control audio
+bluetuith               # Manage Bluetooth
+impala                  # Connect to WiFi
+nvim                    # Edit files/code
+```
+
+### Performance Benefits
+
+TUI-first workflow provides:
+- **Lower RAM usage** - Terminal apps use 10-50MB vs 200-500MB for GUI equivalents
+- **Faster startup** - TUI apps launch in <100ms vs 1-3s for GUI apps
+- **Better SSH experience** - Full functionality remotely
+- **Reduced battery usage** - No GPU rendering for most tasks
+- **Snappier response** - Direct terminal rendering vs GUI framework overhead
+
+### Learning Curve
+
+TUI applications have a steeper initial learning curve but pay dividends in long-term efficiency:
+
+1. **Week 1**: Learn basic navigation (j/k/h/l, common keybinds)
+2. **Week 2**: Master your most-used tools (file manager, git, system monitor)
+3. **Month 1**: Develop muscle memory, see productivity gains
+4. **Month 3+**: Significantly faster than GUI equivalents, hate using the mouse
+
+### Documentation
+
+Each TUI application has a README in its config directory with:
+- Installation instructions
+- Essential keybindings
+- Integration examples
+- Tips and troubleshooting
+
+Locations:
+- `bluetuith/README.md`
+- `lazygit/README.md`
+- `yazi/README.md`
+- `pulsemixer/README.md`
 
 ## Troubleshooting Workflow
 

@@ -1,0 +1,59 @@
+# Global gitignore patterns
+# https://git-scm.com/docs/gitignore
+
+# Editor & IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+Desktop.ini
+.directory
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.class
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+node_modules/
+target/
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Temporary
+*.tmp
+*.temp
+*.bak
+*.backup
+.~lock.*
+
+# Testing
+.coverage
+coverage/
+htmlcov/
+.pytest_cache/
+.hypothesis/

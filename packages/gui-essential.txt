@@ -1,0 +1,51 @@
+# Essential GUI packages for Hyprland
+# This is the minimal GUI setup required for a functional Hyprland environment
+# Install with: pacman -S --needed - < packages/gui-essential.txt
+#
+# This file is installed when user opts for GUI during installation
+# For headless/TUI-only systems, skip this file entirely
+
+# Compositor and display
+hyprland
+xdg-desktop-portal-hyprland
+qt5-wayland
+qt6-wayland
+
+# Status bar and notifications
+waybar
+mako
+
+# Authentication and clipboard
+polkit-gnome
+wl-clipboard
+
+# Terminal emulator
+kitty
+
+# File manager
+thunar
+thunar-archive-plugin
+file-roller
+
+# Application launcher
+rofi-wayland
+
+# Hyprland ecosystem tools
+hyprpaper   # Wallpaper daemon
+hypridle    # Idle management
+hyprlock    # Screen locker
+hyprpicker  # Color picker
+
+# PDF viewer (minimal, keyboard-driven)
+zathura
+zathura-pdf-mupdf
+
+# Image viewer (minimal, keyboard-driven)
+imv
+
+# Screenshot and utilities
+grim           # Screenshot tool
+slurp          # Region selector
+brightnessctl  # Screen brightness control
+playerctl      # Media player control
+cliphist       # Clipboard history manager

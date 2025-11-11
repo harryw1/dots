@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# hypr-ecosystem.sh - Hypr ecosystem package installation
+# tui.sh - TUI applications package installation
 # Part of the modular dotfiles installation system
-# Installs Hypr-specific tools (hyprpaper, hypridle, hyprlock, etc.)
+# Installs terminal-based applications for TUI-first workflow
 
 # This script is sourced by install.sh, not executed directly
 # Requires: packages/utils.sh, tui.sh, logging.sh, state.sh
 
-install_hypr_ecosystem_packages() {
-    local phase_name="packages/hypr-ecosystem"
+install_tui_packages() {
+    local phase_name="packages/tui"
 
     # Check if should skip all packages
     if should_skip_packages; then
@@ -17,16 +17,16 @@ install_hypr_ecosystem_packages() {
 
     # Check if phase already completed
     if state_phase_completed "$phase_name"; then
-        print_info "Hypr ecosystem packages already installed"
+        print_info "TUI packages already installed"
         return 0
     fi
 
     log_phase_start "$phase_name"
-    print_step 2 6 "Installing Hypr ecosystem packages"
+    print_step 6 7 "Installing TUI applications"
 
-    local package_file="$PACKAGES_DIR/hypr-ecosystem.txt"
+    local package_file="$PACKAGES_DIR/tui.txt"
 
-    if ! install_package_file "$package_file" "Hypr ecosystem packages"; then
+    if ! install_package_file "$package_file" "TUI applications"; then
         log_phase_end "$phase_name" "failed"
         return 1
     fi
