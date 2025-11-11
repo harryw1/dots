@@ -18,17 +18,18 @@ deploy_neovim_config() {
     log_phase_start "$phase_name"
     print_step 4 8 "Setting up LazyVim"
 
+    # Check dry-run mode first
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would install LazyVim"
+        log_phase_skip "$phase_name" "Dry run"
+        return 0
+    fi
+
     # Check if Neovim is installed
     if ! command -v nvim &> /dev/null; then
         print_warning "Neovim not installed - skipping LazyVim setup"
         log_phase_skip "$phase_name" "Neovim not installed"
         state_mark_phase_complete "$phase_name"
-        return 0
-    fi
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install LazyVim"
-        log_phase_skip "$phase_name" "Dry run"
         return 0
     fi
 

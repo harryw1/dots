@@ -18,17 +18,18 @@ deploy_starship_config() {
     log_phase_start "$phase_name"
     print_step 5 8 "Installing Starship configuration"
 
+    # Check dry-run mode first
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would deploy Starship config"
+        log_phase_skip "$phase_name" "Dry run"
+        return 0
+    fi
+
     # Check if Starship is installed
     if ! command -v starship &> /dev/null; then
         print_warning "Starship not installed - skipping configuration"
         log_phase_skip "$phase_name" "Starship not installed"
         state_mark_phase_complete "$phase_name"
-        return 0
-    fi
-
-    if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would deploy Starship config"
-        log_phase_skip "$phase_name" "Dry run"
         return 0
     fi
 
