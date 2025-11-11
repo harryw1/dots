@@ -57,6 +57,14 @@ check_mirrorlist() {
 sync_package_database() {
     print_step 4 6 "Syncing package databases"
 
+    # Skip actual sync in dry-run mode
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would sync package databases"
+        log_info "Skipping package database sync - dry run mode"
+        echo ""
+        return 0
+    fi
+
     print_info "Syncing package databases to ensure latest versions..."
     log_info "Syncing package databases"
 

@@ -77,6 +77,34 @@ check_prerequisites() {
     print_success "Prerequisites met"
 }
 
+# Validate sudo access
+validate_sudo_access() {
+    print_info "Validating sudo access..."
+
+    # Try to validate sudo without prompting
+    if sudo -n true 2>/dev/null; then
+        print_success "Sudo access confirmed (cached credentials)"
+        return 0
+    fi
+
+    # If not cached, provide guidance
+    print_warning "Sudo authentication required"
+    print_info ""
+    print_info "Installation requires sudo access for package management."
+    print_info ""
+    print_info "To authenticate, run this command first:"
+    print_info "  sudo -v"
+    print_info ""
+    print_info "Then re-run the bootstrap within 15 minutes while credentials are cached."
+    print_info ""
+    print_info "Alternatively, download and run locally:"
+    print_info "  git clone -b $REPO_BRANCH $REPO_URL $INSTALL_DIR"
+    print_info "  cd $INSTALL_DIR && ./install.sh"
+    print_info ""
+
+    return 1
+}
+
 # Clone repository
 clone_repository() {
     print_info "Cloning dotfiles repository..."
@@ -198,6 +226,25 @@ main() {
 
     show_banner
     check_prerequisites
+
+    # Check if running in dry-run mode (skip sudo validation for dry-run)
+    local skip_sudo=false
+    for arg in "$@"; do
+        if [[ "$arg" == "--dry-run" ]]; then
+            skip_sudo=true
+            break
+        fi
+    done
+
+    # Validate sudo access unless in dry-run mode
+    if [ "$skip_sudo" = false ]; then
+        if ! validate_sudo_access; then
+            exit 1
+        fi
+    else
+        print_info "Skipping sudo validation (dry-run mode)"
+    fi
+
     clone_repository
     download_config
     run_installation "$@"
