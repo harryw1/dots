@@ -1,59 +1,138 @@
-This repository serves as a staging area for dotfiles and configuration for Arch Linux with Hyprland window manager.
+# Hyprland Dotfiles
+
+A modular, robust installation system for Arch Linux with Hyprland window manager and Catppuccin Frappe theming.
+
+## Features
+
+- **Modular Architecture**: Phase-based installation with state tracking and resume capability
+- **Catppuccin Frappe Theme**: Beautiful, consistent theming across all components
+- **State Management**: Resume installations after failures, track progress
+- **Remote Installation**: Bootstrap from a single curl command
+- **Configuration System**: Customize installation behavior with config files
+- **Comprehensive Logging**: Detailed logs for debugging and troubleshooting
 
 ## Installation
 
-### Quick Start
+### Method 1: Direct Installation (Recommended for Local Development)
+
+Clone the repository and run the installer:
 
 ```bash
-# Install configs and packages (interactive)
-./install.sh --packages
+# Clone repository
+git clone https://github.com/harryw1/dots.git ~/.local/share/dots
+cd ~/.local/share/dots
 
-# Or just install configs (skip packages)
+# Complete installation (packages + configs)
 ./install.sh
+
+# Config-only installation (skip packages)
+./install.sh --skip-packages
+```
+
+### Method 2: Remote Bootstrap (Recommended for Fresh Systems)
+
+Install everything with a single command:
+
+```bash
+# Basic installation
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+
+# From a specific branch
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  REPO_BRANCH=feature/modular-installer bash
+
+# With custom configuration
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  CONFIG_URL=https://example.com/my-config.conf bash
+
+# Skip packages, only deploy configs
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  bash -s -- --skip-packages
 ```
 
 ### Installation Options
 
-**Complete installation (recommended for fresh systems):**
 ```bash
-./install.sh --packages-all
-```
-This will automatically:
-1. Sync package databases to ensure latest versions
-2. Resolve package conflicts (e.g., PulseAudio → PipeWire)
-3. Install ALL packages from all categories:
-   - Core Hyprland packages (Waybar, Mako, etc.)
-   - Hypr ecosystem tools (hyprpaper, hypridle, hyprlock)
-   - Theming (Catppuccin themes, Nerd Fonts, icons)
-   - Development tools (Python, C++, Neovim, LazyVim)
-   - Productivity (LibreOffice, PDF tools, Discord, etc.)
-   - **AUR packages** (waypaper, quickwall, SwayOSD, VS Code, etc.)
-4. Install yay AUR helper if not present
-5. Clone Catppuccin Frappe wallpaper collection (~50-200 wallpapers)
-6. Backup existing configs to `~/.config-backup-TIMESTAMP/`
-7. Create symlinks from this repository to `~/.config/`
-8. Set up LazyVim with Catppuccin Frappe theme
+./install.sh [OPTIONS]
 
-**Interactive installation (choose which package groups to install):**
-```bash
-./install.sh --packages
-```
-Shows a menu to selectively install package groups.
+Options:
+  -h, --help              Show help message
+  -f, --force             Skip confirmation prompts (for automation)
+  --skip-packages         Skip package installation (configs only)
+  --no-tui                Disable welcome screen
+  --dry-run               Show what would be done without doing it
+  --resume                Resume from last failed phase
+  --reset                 Reset state and start fresh
+  --config FILE           Use custom configuration file
 
-**Config-only installation (skip package installation):**
+Examples:
+  ./install.sh                    # Full installation with prompts
+  ./install.sh --skip-packages    # Only deploy configurations
+  ./install.sh --dry-run          # Preview what will be installed
+  ./install.sh --force            # Automated installation (no prompts)
+  ./install.sh --resume           # Continue after a failure
+  ./install.sh --config my.conf   # Use custom configuration
+```
+
+### What Gets Installed
+
+The installation process handles everything automatically:
+
+1. **System Preparation**:
+   - Repository configuration and mirrorlist optimization
+   - Package database sync
+   - Conflict resolution (PulseAudio → PipeWire, NetworkManager → iwd)
+   - Migration system for updates
+
+2. **Package Installation** (all categories):
+   - Core Hyprland packages (Waybar, Mako, Kitty, etc.)
+   - Hypr ecosystem tools (hyprpaper, hypridle, hyprlock, hyprpicker)
+   - Theming (Catppuccin themes, Nerd Fonts, icons, cursors)
+   - Development tools (Python, C++, Neovim, Node.js, build tools)
+   - Productivity (LibreOffice, PDF viewer, Discord, file manager)
+   - AUR packages (waypaper, quickwall, SwayOSD, VS Code, etc.)
+   - Automatic yay installation for AUR packages
+
+3. **Configuration Deployment**:
+   - Backup existing configs to `~/.config-backup-TIMESTAMP/`
+   - Symlink configs from repository to `~/.config/`
+   - LazyVim setup with Catppuccin Frappe theme
+   - Bash aliases and shell configuration
+   - SDDM login manager theme
+
+4. **Service Configuration**:
+   - iwd for WiFi management (replaces NetworkManager)
+   - fprintd for fingerprint authentication
+   - Tailscale VPN service
+
+5. **Post-Installation**:
+   - Catppuccin Frappe wallpaper collection (~50-200 wallpapers)
+   - Final system checks and validation
+
+See [packages/README.md](packages/README.md) for package details.
+
+### Customizing Installation
+
+Create a custom configuration file to control installation behavior:
+
 ```bash
+# Copy example config
+cp install.conf.example install.conf
+
+# Edit configuration
+nano install.conf
+
+# Run installation with custom config
+./install.sh --config install.conf
+# Or if named 'install.conf', it's loaded automatically
 ./install.sh
 ```
-Only creates symlinks, doesn't install any packages.
 
-**Show all options:**
-```bash
-./install.sh --help
-```
+See [install.conf.example](install.conf.example) for all available options.
 
 ### Post-Installation Setup
 
-After running `./install.sh --packages-all`, complete these essential steps:
+After running `./install.sh`, complete these essential steps:
 
 1. **Browse and select a wallpaper** (required for transparency effects):
    ```bash
@@ -91,6 +170,27 @@ Packages are organized in the `packages/` directory:
 
 See [packages/README.md](packages/README.md) for details.
 
+### State Management and Resume
+
+The installer tracks progress and can resume after failures:
+
+```bash
+# If installation fails, resume from last successful phase
+./install.sh --resume
+
+# Reset state and start fresh
+./install.sh --reset
+
+# Check state
+cat ~/.local/state/dots/install-state.json
+
+# View logs
+ls ~/.local/state/dots/logs/
+```
+
+State file location: `~/.local/state/dots/install-state.json`
+Logs location: `~/.local/state/dots/logs/`
+
 ### Uninstall
 
 To remove the symlinks:
@@ -99,6 +199,73 @@ To remove the symlinks:
 ```
 
 Backups are preserved in `~/.config-backup-TIMESTAMP/`
+
+## Architecture
+
+This repository uses a **modular, phase-based architecture**:
+
+```
+install/
+├── lib/                    # Shared libraries (sourced first)
+│   ├── colors.sh              # Color definitions and Catppuccin Frappe palette
+│   ├── tui.sh                 # TUI helper functions (draw_box, progress bars)
+│   ├── utils.sh               # Common utility functions
+│   ├── logging.sh             # Logging system (file + console)
+│   └── state.sh               # State management (tracking, resume)
+│
+├── preflight/              # Phase 1: System preparation
+│   ├── trap-errors.sh         # Error handling and recovery
+│   ├── check-system.sh        # Verify Arch Linux, dependencies
+│   ├── repositories.sh        # Configure pacman repos
+│   ├── mirrorlist.sh          # Optimize mirrorlist with reflector
+│   ├── conflicts.sh           # Resolve package conflicts
+│   └── migrations.sh          # Migration system for updates
+│
+├── packages/               # Phase 2: Package installation
+│   ├── utils.sh               # Shared package utilities
+│   ├── core.sh                # Core Hyprland packages
+│   ├── hypr-ecosystem.sh      # Hypr-specific tools
+│   ├── theming.sh             # Fonts, icons, themes
+│   ├── development.sh         # Development tools
+│   ├── productivity.sh        # Productivity apps
+│   └── aur.sh                 # AUR packages (with yay auto-install)
+│
+├── config/                 # Phase 3: Configuration deployment
+│   ├── hyprland.sh            # Hyprland window manager config
+│   ├── waybar.sh              # Waybar status bar
+│   ├── kitty.sh               # Kitty terminal
+│   ├── neovim.sh              # LazyVim with Catppuccin
+│   ├── starship.sh            # Starship shell prompt
+│   ├── bash.sh                # Bash aliases and config
+│   └── misc-configs.sh        # Rofi, Mako, Zathura, btop, etc.
+│
+├── services/               # Phase 4: Service management
+│   ├── network.sh             # iwd WiFi management
+│   ├── fingerprint.sh         # fprintd authentication
+│   └── tailscale.sh           # Tailscale VPN
+│
+└── post-install/           # Phase 5: Final setup
+    ├── wallpapers.sh          # Catppuccin wallpaper collection
+    └── finalize.sh            # Final checks and summary
+```
+
+### Key Design Principles
+
+1. **Symlink-Based Deployment**: Config files remain in the repo and are symlinked to `~/.config/`, so git changes immediately affect the system.
+
+2. **Modular Organization**: Each phase is broken into small, focused scripts. Easy to understand, test, and modify.
+
+3. **Idempotent Operations**: Safe to run multiple times. Scripts check state before making changes.
+
+4. **State Tracking**: Installation progress is tracked in `~/.local/state/dots/install-state.json`. Enables resume functionality.
+
+5. **Comprehensive Logging**: All output logged to `~/.local/state/dots/logs/` with timestamps. Valuable for debugging.
+
+6. **Error Recovery**: Error traps provide clear messages and recovery instructions. --resume flag continues from failures.
+
+7. **Catppuccin Frappe Everywhere**: Consistent theming across all components using the Frappe color palette.
+
+See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 ## Configuration
 
@@ -195,11 +362,64 @@ pkill -USR2 waybar  # Reload waybar
 grep -i error ~/.local/share/hyprland/hyprland.log | tail -20
 ```
 
+## System Updates
+
+Keep your system up-to-date with the included update script:
+
+```bash
+# Full system update (official + AUR packages)
+./update.sh
+
+# Auto-confirm all prompts (unattended update)
+./update.sh -y
+
+# Update only AUR packages
+./update.sh --aur-only
+
+# Update only official repository packages
+./update.sh --official-only
+
+# Skip optional maintenance
+./update.sh --skip-clean --skip-orphans
+
+# Show all options
+./update.sh --help
+```
+
+The update script:
+- Updates all official repository packages (pacman)
+- Updates all AUR packages (yay/paru)
+- Optionally optimizes mirrorlist for faster downloads
+- Optionally cleans package cache to free disk space
+- Optionally removes orphaned packages
+- Detects .pacnew files needing manual review
+- Matches Catppuccin Frappe TUI design
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+Key points:
+- Follow the modular architecture
+- Maintain Catppuccin Frappe theming
+- Ensure idempotent operations
+- Add comprehensive logging
+- Update documentation
+- Test thoroughly before submitting PRs
+
+## Migration from Previous Versions
+
+If you're upgrading from the old monolithic `install.sh`, see [MIGRATION.md](MIGRATION.md) for details.
+
+The new modular system is **backward compatible** - existing usage patterns still work.
+
 ## Goals
 
-- Python development tools
-- C++ development tools
-- Office productivity tools
-- WiFi management (GUI or TUI)
-- Bluetooth management (GUI or TUI)
-- Catppuccin Frappe aesthetic throughout
+- Python development tools ✅
+- C++ development tools ✅
+- Office productivity tools ✅
+- WiFi management (iwd + impala TUI) ✅
+- Bluetooth management (blueman GUI) ✅
+- Catppuccin Frappe aesthetic throughout ✅
+- Modular, maintainable codebase ✅
+- State tracking and resume capability ✅
