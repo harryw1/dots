@@ -13,9 +13,46 @@ A modular, robust installation system for Arch Linux with Hyprland window manage
 
 ## Installation
 
-### Method 1: Direct Installation (Recommended for Local Development)
+### Quick Start (Recommended)
 
-Clone the repository and run the installer:
+Install everything with a single command:
+
+```bash
+# Authenticate first (credentials cached for 15 minutes)
+sudo -v
+
+# Run installation
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
+```
+
+That's it! The bootstrap script will:
+- Clone the repository to `~/.local/share/dots`
+- Run the full installation (packages + configs)
+- Set up Hyprland with Catppuccin Frappe theming
+
+### Advanced Usage
+
+```bash
+# Preview what will be installed (dry-run, no sudo needed)
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  bash -s -- --dry-run
+
+# With custom configuration
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  CONFIG_URL=https://example.com/my-config.conf bash
+
+# Skip packages, only deploy configs
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  bash -s -- --skip-packages
+
+# From a specific branch (for testing)
+curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  REPO_BRANCH=develop bash
+```
+
+### Local Installation (Alternative Method)
+
+For local development or if you prefer not to use curl | bash:
 
 ```bash
 # Clone repository
@@ -27,27 +64,6 @@ cd ~/.local/share/dots
 
 # Config-only installation (skip packages)
 ./install.sh --skip-packages
-```
-
-### Method 2: Remote Bootstrap (Recommended for Fresh Systems)
-
-Install everything with a single command:
-
-```bash
-# Basic installation
-curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
-
-# From a specific branch
-curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
-  REPO_BRANCH=feature/modular-installer bash
-
-# With custom configuration
-curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
-  CONFIG_URL=https://example.com/my-config.conf bash
-
-# Skip packages, only deploy configs
-curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
-  bash -s -- --skip-packages
 ```
 
 ### Installation Options
