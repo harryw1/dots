@@ -26,8 +26,7 @@ git-delta         # Syntax highlighter for git diffs
 pulsemixer        # TUI/CLI mixer for PulseAudio/PipeWire
 
 # Network Management
-# impala          # WiFi management TUI (iwd frontend) - install manually from GitHub
-# Note: impala not in repos, installed separately
+impala            # WiFi management TUI (iwd frontend)
 
 # Bluetooth Management
 # bluetuith-bin   # In aur.txt
@@ -39,6 +38,8 @@ zellij            # Modern alternative to tmux (Rust)
 
 # Productivity Tools
 newsboat          # RSS/Atom feed reader
+task              # Command-line todo list manager (Taskwarrior)
+taskwarrior-tui   # TUI frontend for Taskwarrior
 
 # Development Tools
 # lazygit         # Already listed above

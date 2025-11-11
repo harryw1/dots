@@ -17,7 +17,6 @@ catppuccin-sddm-theme-frappe
 # System utilities (TUI)
 pacseek          # TUI package manager
 bluetuith-bin    # TUI Bluetooth manager
-task             # TUI task management
 
 # Wallpaper management (CLI)
 quickwall        # CLI tool for downloading wallpapers from Unsplash
