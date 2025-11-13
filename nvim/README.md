@@ -20,6 +20,8 @@ All required packages are included in the dotfiles installation. The key depende
 - `ripgrep` - Fast grep tool (for Telescope)
 - `fd` - Fast find alternative
 - `lazygit` - Terminal UI for git
+- `lua` - Lua interpreter
+- `luarocks` - Lua package manager (required for plugins with native dependencies like markdown-preview.nvim)
 
 **Fonts:**
 - JetBrains Mono Nerd Font (for icons and ligatures)
@@ -193,6 +195,39 @@ LazyVim uses `<space>` as the leader key. Essential keybindings:
 - `<Esc><Esc>` - Exit terminal mode
 
 ## Troubleshooting
+
+### Build/Installation Errors
+
+If you encounter build errors when LazyVim installs plugins, check the following:
+
+**Missing LuaRocks:**
+Some plugins (like `markdown-preview.nvim`) require LuaRocks to install native Lua dependencies:
+```bash
+# Check if luarocks is installed
+which luarocks
+
+# If missing, install it (should be in development.txt)
+sudo pacman -S luarocks lua
+```
+
+**Missing Build Tools:**
+Ensure all build dependencies are installed:
+```bash
+# Check if base-devel is installed (includes make, gcc, etc.)
+pacman -Q base-devel
+
+# If missing, install it
+sudo pacman -S base-devel
+```
+
+**Node.js for markdown-preview.nvim:**
+The markdown preview plugin requires Node.js:
+```bash
+# Check Node.js version
+node --version
+
+# Should be Node.js 14+ (included in development.txt)
+```
 
 ### Plugins Not Loading
 ```bash

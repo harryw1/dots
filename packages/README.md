@@ -23,6 +23,7 @@ This directory contains package lists organized by category for easy installatio
   - C++ (gcc, clang, cmake, gdb, lldb)
   - Build essentials
   - Neovim with LazyVim
+  - Lua and LuaRocks (required for Neovim plugins with native dependencies)
 
 - **`tui.txt`** - Terminal User Interface applications (DEFAULT)
   - System monitoring (btop, ncdu, bandwhich)

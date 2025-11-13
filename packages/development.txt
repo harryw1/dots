@@ -35,6 +35,10 @@ npm
 yarn                  # Alternative package manager
 pnpm                  # Fast, disk-efficient package manager
 
+# Lua development (required for some Neovim plugins with native dependencies)
+lua
+luarocks              # Lua package manager (required for plugins like markdown-preview.nvim)
+
 # Shell prompt
 starship
 
