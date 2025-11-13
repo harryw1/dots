@@ -31,6 +31,9 @@ impala            # WiFi management TUI (iwd frontend)
 # Bluetooth Management
 # bluetuith-bin   # In aur.txt
 
+# Terminal Emulator
+kitty             # Terminal emulator (requires display server X11/Wayland, but TUI tool)
+
 # Terminal Multiplexer
 tmux              # Terminal multiplexer (classic, stable)
 # OR

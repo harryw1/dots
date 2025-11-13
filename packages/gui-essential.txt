@@ -20,6 +20,8 @@ polkit-gnome
 wl-clipboard
 
 # Terminal emulator
+# Note: kitty is also in packages/tui.txt (installed in TUI mode)
+# Kept here for GUI installations to ensure it's available
 kitty
 
 # File manager

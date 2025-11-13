@@ -10,13 +10,13 @@ This guide covers installing a minimal, TUI-focused configuration ideal for:
 ## What is Included
 
 ### Core System
-- **Hyprland** - Wayland compositor (minimal GUI layer)
-- **Waybar** - Status bar for system information
-- **Kitty** - Terminal emulator (GPU-accelerated)
-- **Rofi** - Application launcher
+- **Hyprland** - Wayland compositor (minimal GUI layer) - *Optional, only with --gui flag*
+- **Waybar** - Status bar for system information - *Optional, only with --gui flag*
+- **Kitty** - Terminal emulator (GPU-accelerated, requires display server)
+- **Rofi** - Application launcher - *Optional, only with --gui flag*
 - **PipeWire** - Audio server
 - **iwd** - Network management (lightweight)
-- **Hyprland ecosystem** - hyprpaper, hypridle, hyprlock
+- **Hyprland ecosystem** - hyprpaper, hypridle, hyprlock - *Optional, only with --gui flag*
 
 ### TUI Applications (from `packages/tui.txt`)
 - **System monitoring**: btop, ncdu, bandwhich, iotop
@@ -184,7 +184,14 @@ zellij            # Start session
 Ctrl-p ?          # Show help
 ```
 
-### 4. Shell Enhancements
+### 4. Shell Configuration
+
+The installer automatically sets up:
+- **`.bash_profile`**: Created for login shells (TTY logins), sources `.bashrc` and handles kitty auto-launch
+- **`.bashrc`**: Enhanced with TTY optimizations, starship integration, and aliases
+- **Default shell**: Attempts to set bash as default (may require password in non-force mode)
+
+**Manual Shell Enhancements** (optional):
 
 Add to `~/.bashrc`:
 
@@ -302,6 +309,59 @@ pulsemixer        # Audio control
 nvim              # Code editing
 ```
 
+## TTY vs Terminal Emulator Strategy
+
+### Understanding the Setup
+
+This installation uses a **dual-strategy approach** for terminal access:
+
+1. **Enhanced TTY (Text Console)**: Works everywhere (headless, SSH, local console)
+   - Configured with starship prompt, 256-color support, and optimized settings
+   - Always available as fallback
+   - Limited to basic terminal features (no true color, ligatures, or images)
+
+2. **Kitty Terminal Emulator**: Superior experience when display server is available
+   - Requires X11 or Wayland display server
+   - Full features: true color, font ligatures, images, GPU acceleration
+   - Auto-launches when logging in via TTY if display server is detected
+   - Falls back to enhanced TTY if no display server
+
+### How It Works
+
+**On TTY Login (Local Console)**:
+- If display server (X11/Wayland) is running → automatically launches kitty
+- If no display server → uses enhanced TTY with starship and optimized colors
+- Both provide starship prompt and all TUI applications
+
+**On SSH**:
+- Always uses enhanced TTY (kitty auto-launch is disabled for SSH)
+- Full TUI application support
+- Starship prompt works perfectly
+
+**In GUI Environment**:
+- Kitty is available as the terminal emulator
+- All features enabled (true color, ligatures, etc.)
+
+### Starting a Display Server
+
+If you want to use kitty on a laptop with a display but no display server running:
+
+**For X11**:
+```bash
+startx
+# Or with a window manager:
+startx /usr/bin/i3  # or your preferred WM
+```
+
+**For Wayland (Hyprland)**:
+```bash
+# If Hyprland is installed:
+Hyprland
+# Or via display manager (SDDM, GDM, etc.)
+```
+
+Once the display server starts, logging in via TTY will automatically launch kitty.
+
 ## Headless Mode (No Hyprland)
 
 For true headless servers, skip Hyprland entirely:
@@ -322,6 +382,8 @@ ln -sf ~/dots/bluetuith ~/.config/bluetuith
 ln -sf ~/dots/lazygit ~/.config/lazygit
 ln -sf ~/dots/yazi ~/.config/yazi
 ```
+
+**Note**: Even in headless mode, kitty is installed (it's a TUI tool). It simply won't launch automatically without a display server, and you'll use the enhanced TTY instead.
 
 ## Performance Tuning
 
@@ -361,6 +423,24 @@ Edit `~/.config/waybar/config`:
 ```
 
 ## Troubleshooting
+
+### TTY Login Issues
+
+**Kitty not auto-launching on TTY login**:
+- Check if display server is running: `echo $DISPLAY` or `echo $WAYLAND_DISPLAY`
+- Verify kitty is installed: `command -v kitty`
+- Check `.bash_profile` exists and has kitty auto-launch logic
+- If no display server, enhanced TTY will be used (this is expected)
+
+**Starship prompt not showing**:
+- Ensure starship is installed: `pacman -Q starship`
+- Check `.bashrc` sources starship: `grep starship ~/.bashrc`
+- Reload shell: `source ~/.bashrc` or `source ~/.bash_profile`
+
+**Default shell not bash**:
+- Check current shell: `echo $SHELL`
+- Change manually: `chsh -s $(which bash)` (requires password)
+- Log out and back in for changes to take effect
 
 ### TUI apps not launching
 
