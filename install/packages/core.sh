@@ -24,9 +24,23 @@ install_core_packages() {
     log_phase_start "$phase_name"
     print_step 1 6 "Installing core packages"
 
+    # Install core system packages
     local package_file="$PACKAGES_DIR/core.txt"
-
     if ! install_package_file "$package_file" "core packages"; then
+        log_phase_end "$phase_name" "failed"
+        return 1
+    fi
+
+    # Install network tools (essential: curl, wget, rsync, etc.)
+    local network_file="$PACKAGES_DIR/network-tools.txt"
+    if ! install_package_file "$network_file" "network tools"; then
+        log_phase_end "$phase_name" "failed"
+        return 1
+    fi
+
+    # Install documentation tools (tldr, man pages)
+    local docs_file="$PACKAGES_DIR/documentation.txt"
+    if ! install_package_file "$docs_file" "documentation tools"; then
         log_phase_end "$phase_name" "failed"
         return 1
     fi

@@ -1,0 +1,21 @@
+# Font packages (headless-safe)
+# These packages have no display server dependencies and can be installed
+# in headless/TUI-only environments. Fonts will be available when GUI is
+# added later or when accessed via terminal.
+# Install with: pacman -S --needed - < packages/theming-fonts.txt
+
+# Nerd Fonts (programming with icons)
+ttf-jetbrains-mono-nerd
+ttf-firacode-nerd
+ttf-meslo-nerd
+
+# System fonts
+noto-fonts
+noto-fonts-emoji
+noto-fonts-cjk
+ttf-dejavu
+ttf-liberation
+
+# Icon fonts
+ttf-font-awesome
+ttf-nerd-fonts-symbols  # Additional Nerd Font symbols for Waybar and icons

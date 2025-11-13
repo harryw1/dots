@@ -251,17 +251,24 @@ deploy_configurations() {
 
     print_step 8 15 "Deploying configuration files"
 
-    # Call modular config deployment functions
-    deploy_hyprland_config
-    deploy_waybar_config
-    deploy_kitty_config
+    # Always deploy TUI-safe configs
     deploy_neovim_config
     deploy_starship_config
     deploy_bash_config
-    deploy_misc_configs
+    deploy_misc_configs  # Handles TUI/GUI split internally
 
-    log_phase_end "Configuration Deployment" "success"
-    print_success "Configuration deployment complete"
+    # Deploy GUI configs only if GUI mode enabled
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        deploy_hyprland_config
+        deploy_waybar_config
+        deploy_kitty_config
+        log_phase_end "Configuration Deployment" "success"
+        print_success "Configuration deployment complete (TUI + GUI)"
+    else
+        log_phase_end "Configuration Deployment" "success"
+        print_success "Configuration deployment complete (TUI-only)"
+    fi
+
     echo ""
 }
 
@@ -300,25 +307,9 @@ post_install_tasks() {
 }
 
 # Show final summary
-show_final_summary() {
-    echo ""
-    echo ""
+show_gui_next_steps() {
     local box_width=70
-    draw_box "Installation Complete!" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} All packages installed" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Configurations symlinked to ~/.config/" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} LazyVim configured with Catppuccin Frappe" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Wallpaper collection downloaded" $box_width
-
-    if [ -d "$BACKUP_DIR" ]; then
-        draw_box_line "" $box_width
-        draw_box_line "  ${FRAPPE_YELLOW}📦${NC} Backups: $BACKUP_DIR" $box_width
-    fi
-
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_PEACH}Next Steps:${NC}" $box_width
-    draw_box_line "" $box_width
+    # GUI-specific next steps
     draw_box_line "  ${FRAPPE_TEXT}1. Browse and select a wallpaper:${NC}" $box_width
     draw_box_line "     ${FRAPPE_BLUE}waypaper${NC}" $box_width
     draw_box_line "" $box_width
@@ -328,6 +319,59 @@ show_final_summary() {
     draw_box_line "  ${FRAPPE_TEXT}3. Reload Hyprland:${NC}" $box_width
     draw_box_line "     ${FRAPPE_BLUE}hyprctl reload${NC}" $box_width
     draw_box_line "" $box_width
+}
+
+show_tui_next_steps() {
+    local box_width=70
+    # TUI-specific next steps
+    draw_box_line "  ${FRAPPE_TEXT}1. Reload your shell to apply changes:${NC}" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}source ~/.bashrc${NC}" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_TEXT}2. Explore TUI applications:${NC}" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}yazi${NC}       - File manager" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}lazygit${NC}    - Git interface" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}btop${NC}       - System monitor" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}nvim${NC}       - Text editor" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_TEXT}3. Connect to WiFi:${NC}" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}impala${NC}     - WiFi manager TUI" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_TEXT}4. To add GUI later, run:${NC}" $box_width
+    draw_box_line "     ${FRAPPE_BLUE}./install.sh --full${NC}" $box_width
+    draw_box_line "" $box_width
+}
+
+show_final_summary() {
+    echo ""
+    echo ""
+    local box_width=70
+    draw_box "Installation Complete!" $box_width
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} All packages installed" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Configurations symlinked to ~/.config/" $box_width
+    draw_box_line "  ${FRAPPE_GREEN}✓${NC} LazyVim configured with Catppuccin Frappe" $box_width
+
+    # Only mention wallpapers if GUI installed
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        draw_box_line "  ${FRAPPE_GREEN}✓${NC} Wallpaper collection downloaded" $box_width
+    fi
+
+    if [ -d "$BACKUP_DIR" ]; then
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_YELLOW}📦${NC} Backups: $BACKUP_DIR" $box_width
+    fi
+
+    draw_box_line "" $box_width
+    draw_box_line "  ${FRAPPE_PEACH}Next Steps:${NC}" $box_width
+    draw_box_line "" $box_width
+
+    # Show appropriate next steps based on installation mode
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        show_gui_next_steps
+    else
+        show_tui_next_steps
+    fi
+
     draw_box_bottom $box_width
     echo ""
 
@@ -336,16 +380,19 @@ show_final_summary() {
 
 # Check system before starting
 check_system() {
-    if ! command -v hyprctl &> /dev/null; then
-        print_warning "hyprctl not found - Hyprland may not be installed"
-        if [ "$FORCE" = true ]; then
-            print_info "Continuing anyway (--force mode)"
-        else
-            read -p "Continue anyway? (y/N) " -n 1 -r || true
-            echo
-            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                print_info "Installation cancelled"
-                exit 0
+    # Only check for Hyprland if GUI mode is enabled
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        if ! command -v hyprctl &> /dev/null; then
+            print_warning "hyprctl not found - Hyprland may not be installed"
+            if [ "$FORCE" = true ]; then
+                print_info "Continuing anyway (--force mode)"
+            else
+                read -p "Continue anyway? (y/N) " -n 1 -r || true
+                echo
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    print_info "Installation cancelled"
+                    exit 0
+                fi
             fi
         fi
     fi

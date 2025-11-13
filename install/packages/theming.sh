@@ -24,11 +24,22 @@ install_theming_packages() {
     log_phase_start "$phase_name"
     print_step 3 6 "Installing theming packages"
 
-    local package_file="$PACKAGES_DIR/theming.txt"
-
-    if ! install_package_file "$package_file" "theming packages"; then
+    # Always install fonts (headless-safe)
+    local fonts_file="$PACKAGES_DIR/theming-fonts.txt"
+    if ! install_package_file "$fonts_file" "fonts"; then
         log_phase_end "$phase_name" "failed"
         return 1
+    fi
+
+    # Install GUI theming only if GUI mode enabled
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        local gui_theming_file="$PACKAGES_DIR/theming-gui.txt"
+        if ! install_package_file "$gui_theming_file" "GUI theming"; then
+            log_phase_end "$phase_name" "failed"
+            return 1
+        fi
+    else
+        print_info "Skipping GUI theming packages (TUI-only mode)"
     fi
 
     # Mark phase complete

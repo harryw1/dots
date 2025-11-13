@@ -1,0 +1,12 @@
+# Additional programming language toolchains (optional)
+# Install these if you work with Rust or Go
+# Install with: pacman -S --needed - < packages/languages.txt
+
+# Rust programming language
+rustup           # Rust toolchain installer and version manager
+# After installing rustup, run: rustup default stable
+# This installs: rustc, cargo, rust-analyzer, rustfmt, clippy
+
+# Go programming language
+go               # Go compiler and toolchain
+gopls            # Go language server for LSP

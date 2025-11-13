@@ -24,11 +24,22 @@ install_aur_packages() {
     log_phase_start "$phase_name"
     print_step 6 6 "Installing AUR packages"
 
-    local package_file="$PACKAGES_DIR/aur.txt"
-
-    if ! install_aur_package_file "$package_file" "AUR packages"; then
+    # Always install TUI AUR packages (headless-safe)
+    local tui_package_file="$PACKAGES_DIR/aur-tui.txt"
+    if ! install_aur_package_file "$tui_package_file" "AUR TUI packages"; then
         log_phase_end "$phase_name" "failed"
         return 1
+    fi
+
+    # Install GUI theme AUR packages only if GUI mode enabled
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        local gui_theme_file="$PACKAGES_DIR/aur-gui-themes.txt"
+        if ! install_aur_package_file "$gui_theme_file" "AUR GUI theme packages"; then
+            log_phase_end "$phase_name" "failed"
+            return 1
+        fi
+    else
+        print_info "Skipping AUR GUI theme packages (TUI-only mode)"
     fi
 
     # Mark phase complete

@@ -1,0 +1,18 @@
+# GUI theming packages (requires display server)
+# These packages depend on X11/Wayland and should only be installed
+# when GUI environment is enabled.
+# Install with: pacman -S --needed - < packages/theming-gui.txt
+
+# Icon themes
+papirus-icon-theme
+adwaita-icon-theme
+
+# Qt theming (requires X11 libraries)
+qt5ct
+qt6ct
+kvantum
+
+# Wallpaper tools (optional)
+# imagemagick  # For creating solid color backgrounds (manual install if needed)
+# Note: We use waypaper + Catppuccin wallpapers instead. To install manually:
+#   sudo pacman -S imagemagick

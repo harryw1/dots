@@ -61,12 +61,29 @@ install/
 ### Package Management Strategy
 
 Packages are organized by category in `packages/*.txt`:
-- `core.txt` - Essential Hyprland system packages
+
+**Core/TUI Packages (always installed):**
+- `core.txt` - Essential system packages
+- `network-tools.txt` - Network utilities (curl, wget, rsync, httpie, mosh, openssh)
+- `documentation.txt` - Documentation tools (tldr/tealdeer, man pages)
+- `tui.txt` - TUI applications (yazi, lazygit, btop, taskwarrior, etc.)
+- `development.txt` - Python, C++, Node.js, Neovim, LazyVim, build tools, markdown/spell check
+- `data-processing.txt` - Data format processors (yq, miller, sd, choose)
+- `languages.txt` - Optional language toolchains (Rust, Go)
+
+**GUI Packages (optional, conditional):**
+- `theming-fonts.txt` - Fonts (Nerd Fonts) - headless safe, always installed
+- `theming-gui.txt` - Qt/GTK theming (only with GUI)
 - `hypr-ecosystem.txt` - Hypr-specific tools (hyprpaper, hypridle, etc.)
-- `theming.txt` - Fonts (Nerd Fonts required), icons, cursors, GTK themes
-- `development.txt` - Python, C++, Neovim, LazyVim, Node.js, Starship, build tools
-- `productivity.txt` - LibreOffice, PDF viewer, file manager, Discord
-- `aur.txt` - AUR packages (waypaper, quickwall, SwayOSD, VS Code, Catppuccin GTK themes)
+- `gui-essential.txt` - Hyprland, Waybar, Kitty, Rofi, Mako, etc.
+- `gui-browsers.txt` - Firefox
+- `gui-productivity.txt` - LibreOffice, Zathura
+- `gui-communication.txt` - Discord, Slack
+
+**AUR Packages:**
+- `aur-tui.txt` - TUI tools (pacseek, bluetuith-bin, quickwall)
+- `aur-gui-themes.txt` - GUI themes (Catppuccin GTK/SDDM/cursors)
+- `gui-essential-aur.txt` - GUI AUR packages (waypaper, etc.)
 
 The `install.sh` script is an **orchestrator** that sources and executes modular phase scripts:
 - **Preflight**: Repository config, mirrorlist optimization, conflict resolution, migrations
@@ -379,6 +396,27 @@ This configuration embraces a **terminal-first, keyboard-driven** workflow that 
 **Development**:
 - **neovim/lazyvim** - Text editing, coding, document editing
 - **image.nvim** - Image viewing in Neovim
+- **curl/wget/rsync** - Network transfers, API testing
+- **httpie** - User-friendly HTTP client
+- **uv** - Fast Python package manager
+- **yarn/pnpm** - Node.js package managers
+
+**Note-Taking & Documentation**:
+- **obsidian.nvim** - Obsidian-compatible wiki links, daily notes, backlinks, tags
+- **render-markdown.nvim** - Beautiful in-editor markdown rendering
+- **marksman** - LSP for markdown (auto-completion, goto definition)
+- **img-clip.nvim** - Paste images from clipboard into markdown
+- **image.nvim** - Display images inline in terminal (Kitty graphics protocol)
+- **glow** - Terminal markdown renderer
+- **pandoc** - Universal document converter
+- **aspell/hunspell** - Spell checking
+- **tldr/tealdeer** - Quick command examples
+
+**Data Processing**:
+- **yq** - YAML processor (jq for YAML)
+- **miller** - CSV/TSV processing
+- **sd** - Modern sed replacement
+- **choose** - Modern cut replacement
 
 **Terminal Enhancement**:
 - **tmux** or **zellij** - Terminal multiplexer for session management
@@ -465,8 +503,78 @@ lazygit                 # Manage git repos
 pulsemixer              # Control audio
 bluetuith               # Manage Bluetooth
 impala                  # Connect to WiFi
-nvim                    # Edit files/code
+nvim                    # Edit files/code/notes
 ```
+
+### Note-Taking in TUI Mode
+
+The Neovim configuration provides **Obsidian-like note-taking capabilities** entirely in TUI mode, perfect for developers who want to maintain notes, documentation, and meeting notes alongside their code.
+
+**Features (90% of Obsidian functionality):**
+- ✅ **Wiki links**: `[[note name]]` with auto-completion
+- ✅ **Daily notes**: Quick access to daily journal entries
+- ✅ **Backlinks**: See which notes reference the current note
+- ✅ **Tags**: Organize with `#tag` syntax
+- ✅ **Beautiful rendering**: Headings, lists, code blocks styled in-editor
+- ✅ **Image support**: Display images inline (Kitty terminal)
+- ✅ **Clipboard paste**: Paste images directly from clipboard
+- ✅ **Spell checking**: Automatic spell check in markdown files
+- ✅ **LSP completion**: Auto-complete for wiki links and references
+- ✅ **Plain text + Git**: All notes are plain markdown files, version controlled
+
+**Keybindings (obsidian.nvim):**
+```vim
+<leader>on  - New note
+<leader>os  - Search notes
+<leader>oq  - Quick switch between notes
+<leader>ob  - Show backlinks
+<leader>ot  - Search tags
+<leader>od  - Open today's daily note
+<leader>ol  - Show all links in current note
+<leader>of  - Follow link under cursor
+<leader>p   - Paste image from clipboard
+<leader>ss  - Toggle spell check
+<leader>mp  - Markdown preview in browser (optional)
+```
+
+**Workflow Example:**
+```bash
+# Create notes directory
+mkdir -p ~/notes/daily ~/notes/templates
+
+# Start Neovim
+nvim
+
+# In Neovim:
+# - Press <leader>od to open today's daily note
+# - Type [[meeting notes]] to create a link
+# - Press <leader>of on the link to create/open that note
+# - Paste screenshots with <leader>p
+# - See beautiful rendering automatically
+# - All files are plain markdown in ~/notes/
+```
+
+**vs. Obsidian GUI:**
+- ✅ **Faster**: No Electron overhead, instant startup
+- ✅ **SSH-friendly**: Full functionality over SSH
+- ✅ **Keyboard-driven**: No mouse required
+- ✅ **Git-native**: Easy version control and sync
+- ❌ **No graph view**: Cannot visualize note connections (GUI only)
+- ❌ **No canvas**: Cannot create visual whiteboards
+- ✅ **Mobile sync**: Use Obsidian mobile app with same ~/notes/ directory
+
+**Spell Checking:**
+- Automatic in markdown, text, and git commit files
+- Keybindings: `]s` next error, `[s` previous error, `z=` suggestions, `zg` add to dictionary
+
+**Image Handling:**
+- Paste from clipboard: `<leader>p` (saves to `assets/images/`)
+- View inline: Images render in terminal automatically (Kitty protocol)
+- Alt text support: `![description](path/to/image.png)`
+
+**Document Conversion:**
+- **pandoc** included for converting markdown to PDF, HTML, DOCX, etc.
+- Example: `pandoc note.md -o note.pdf`
 
 ### Performance Benefits
 

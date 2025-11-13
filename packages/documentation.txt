@@ -1,0 +1,14 @@
+# Documentation and help tools
+# Quick access to command examples and documentation
+# Install with: pacman -S --needed - < packages/documentation.txt
+
+# Man pages (likely already installed via base/base-devel)
+man-db           # Manual page system
+man-pages        # Linux man pages
+
+# Quick command examples (HIGHLY RECOMMENDED)
+tealdeer         # Fast tldr client in Rust - quick command examples
+# Alternative: tldr (if you prefer the original)
+
+# Cheat sheets
+# Note: Consider 'cheat' from AUR for customizable cheat sheets
