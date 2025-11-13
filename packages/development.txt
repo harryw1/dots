@@ -39,6 +39,9 @@ pnpm                  # Fast, disk-efficient package manager
 lua
 luarocks              # Lua package manager (required for plugins like markdown-preview.nvim)
 
+# Image processing (required for image.nvim plugin)
+imagemagick           # Image processing library (required for image.nvim's magick Lua module)
+
 # Shell prompt
 starship
 

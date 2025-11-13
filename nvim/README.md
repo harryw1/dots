@@ -22,6 +22,7 @@ All required packages are included in the dotfiles installation. The key depende
 - `lazygit` - Terminal UI for git
 - `lua` - Lua interpreter
 - `luarocks` - Lua package manager (required for plugins with native dependencies like markdown-preview.nvim)
+- `imagemagick` - Image processing library (required for image.nvim plugin)
 
 **Fonts:**
 - JetBrains Mono Nerd Font (for icons and ligatures)
@@ -211,8 +212,10 @@ sudo pacman -S luarocks lua
 ```
 
 **image.nvim luarocks.nvim Error:**
-The `image.nvim` plugin requires `luarocks.nvim` which provides a local LuaRocks installation. This is automatically configured in `nvim/lua/plugins/image.lua`. If you see errors about luarocks not being found:
+The `image.nvim` plugin requires `luarocks.nvim` and ImageMagick. This is automatically configured in `nvim/lua/plugins/image.lua`. If you see errors about luarocks not being found:
 - Ensure `luarocks.nvim` is installed (it's a dependency of `image.nvim`)
+- Ensure ImageMagick is installed: `sudo pacman -S imagemagick` (included in development.txt)
+- The `luarocks.nvim` plugin will automatically install the `magick` Lua rock
 - The plugin will automatically set up a local luarocks installation in `~/.local/share/nvim/lazy-rocks/`
 - If issues persist, try clearing the cache: `rm -rf ~/.local/share/nvim/lazy-rocks`
 
