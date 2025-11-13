@@ -16,6 +16,7 @@ This guide covers installing a minimal, TUI-focused configuration ideal for:
 - **Rofi** - Application launcher - *Optional, only with --gui flag*
 - **PipeWire** - Audio server
 - **iwd** - Network management (lightweight)
+- **Tailscale** - Mesh VPN for secure device connections (includes tsui TUI)
 - **Hyprland ecosystem** - hyprpaper, hypridle, hyprlock - *Optional, only with --gui flag*
 
 ### TUI Applications (from `packages/tui.txt`)
@@ -164,6 +165,12 @@ bluetuith         # Bluetooth management
 **WiFi** - impala:
 ```bash
 impala            # WiFi management TUI
+```
+
+**Tailscale VPN** - tailscale and tsui:
+```bash
+sudo tailscale up    # Connect to Tailscale
+tsui                 # Manage Tailscale with TUI
 ```
 
 ### 3. Terminal Multiplexer

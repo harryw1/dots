@@ -20,8 +20,19 @@ pipewire-pulse
 pipewire-jack
 wireplumber
 
+# Version control
+git      # Version control system (essential for system management)
+
 # System utilities (TUI/CLI tools)
 fprintd  # Fingerprint authentication
 btop     # System monitor TUI
 jq       # JSON processor
 bc       # Calculator
+
+# Archive utilities (essential for file operations)
+unzip    # Extract ZIP archives
+zip      # Create ZIP archives
+
+# File utilities
+tree     # Directory tree visualization
+less     # File viewer (pager) - useful for logs, man pages, etc.

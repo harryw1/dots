@@ -10,7 +10,11 @@ This directory contains package lists organized by category for easy installatio
   - Network management (iwd, tailscale)
   - Bluetooth (bluez)
   - Audio (PipeWire)
+  - Version control (git)
   - System utilities (btop, jq, bc, fprintd)
+  - Archive utilities (unzip, zip)
+  - File utilities (tree, less)
+  - Note: tsui (Tailscale TUI) is automatically installed during service configuration
 
 - **`theming.txt`** - Visual theming packages
   - GTK and Qt themes
