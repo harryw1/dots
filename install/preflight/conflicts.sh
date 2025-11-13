@@ -31,6 +31,17 @@ resolve_conflicts() {
         print_info "NetworkManager will be disabled during service configuration"
     fi
 
+    # yq vs go-yq conflict (both provide the yq binary)
+    if pacman -Qq go-yq &> /dev/null; then
+        conflicts_found=true
+        print_warning "go-yq detected - conflicts with yq package"
+        log_warning "go-yq conflict detected"
+        print_info "Removing go-yq (yq will be installed instead)..."
+        sudo pacman -Rdd --noconfirm go-yq 2>/dev/null || true
+        print_success "go-yq removed"
+        log_success "go-yq removed successfully"
+    fi
+
     if [ "$conflicts_found" = false ]; then
         print_success "No package conflicts detected"
         log_info "No package conflicts found"

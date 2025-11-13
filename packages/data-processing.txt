@@ -7,7 +7,7 @@
 
 # YAML processor
 yq               # YAML processor (compatible with jq syntax)
-go-yq            # Alternative YAML processor written in Go
+# go-yq            # Alternative YAML processor written in Go (conflicts with yq)
 
 # CSV/TSV processing
 miller           # Like awk/sed/cut/join/sort for CSV/TSV/JSON

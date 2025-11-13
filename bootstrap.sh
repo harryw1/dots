@@ -84,6 +84,19 @@ check_prerequisites() {
     exit 1
   fi
 
+  # Check for jq (needed for state management in the main installer)
+  if ! command -v jq &>/dev/null; then
+    print_warning "jq not found - installing for state management"
+    if ! sudo pacman -S --noconfirm jq; then
+      print_error "Failed to install jq"
+      print_info "Install manually with: sudo pacman -S jq"
+      exit 1
+    fi
+    print_success "Installed jq"
+  else
+    print_success "jq is available"
+  fi
+
   print_success "Prerequisites met"
 }
 
