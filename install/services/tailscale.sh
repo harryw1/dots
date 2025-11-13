@@ -85,81 +85,44 @@ setup_tailscale_service() {
     
     if [ "$tsui_needs_install" = true ]; then
         print_info "Installing tsui (Tailscale TUI)..."
+        print_info "Using official install script from neuralink.com"
         
-        # Detect architecture
-        local arch=$(uname -m)
-        local tsui_arch=""
+        # Use the official install script as recommended by tsui
+        local install_script_url="https://neuralink.com/tsui/install.sh"
+        local install_script_tmp="/tmp/tsui-install.sh"
         
-        case "$arch" in
-            x86_64)
-                tsui_arch="amd64"
-                ;;
-            aarch64|arm64)
-                tsui_arch="arm64"
-                ;;
-            armv7l|armv6l)
-                tsui_arch="arm"
-                ;;
-            *)
-                print_warning "Unsupported architecture for tsui: $arch"
-                print_info "tsui may not be available for this architecture"
-                log_warning "Unsupported architecture for tsui: $arch"
-                tsui_arch="amd64"  # Fallback to amd64, may fail
-                ;;
-        esac
-        
-        local tsui_url="https://github.com/neuralinkcorp/tsui/releases/latest/download/tsui-linux-${tsui_arch}"
-        local tsui_tmp="/tmp/tsui-linux-${tsui_arch}"
-
-        print_info "Downloading tsui for architecture: $tsui_arch"
-        print_info "URL: $tsui_url"
-        
-        # Download with explicit error checking (don't use -f flag so we can check HTTP code)
-        local http_code=$(curl -w "%{http_code}" -sSL "$tsui_url" -o "$tsui_tmp" 2>/dev/null)
-        local curl_exit=$?
-        
-        # Check if download was successful (HTTP 200) and file exists
-        if [ "$curl_exit" -eq 0 ] && [ "$http_code" = "200" ] && [ -f "$tsui_tmp" ] && [ -s "$tsui_tmp" ]; then
-            # Verify it's actually a binary, not HTML/text
-            local file_type=$(file -b "$tsui_tmp" 2>/dev/null || echo "unknown")
+        # Download the install script
+        if curl -fsSL "$install_script_url" -o "$install_script_tmp" 2>/dev/null; then
+            # Make it executable
+            chmod +x "$install_script_tmp"
             
-            # Check if it's a binary executable (ELF, Mach-O, or similar)
-            if echo "$file_type" | grep -qE "(ELF|executable|binary|Mach-O)" || [ "$(head -c 4 "$tsui_tmp" 2>/dev/null | od -An -tx1 | tr -d ' \n')" = "7f454c46" ]; then
-                chmod +x "$tsui_tmp"
-                if sudo mv "$tsui_tmp" /usr/local/bin/tsui 2>/dev/null; then
-                    print_success "tsui installed successfully"
-                    log_success "tsui installed to /usr/local/bin/tsui (architecture: $tsui_arch)"
+            # Run the install script (it handles architecture detection and installation)
+            print_info "Running tsui install script..."
+            if bash "$install_script_tmp" 2>&1; then
+                # Verify installation was successful
+                if command -v tsui &> /dev/null; then
+                    local installed_path=$(command -v tsui)
+                    print_success "tsui installed successfully at $installed_path"
+                    log_success "tsui installed successfully using official install script"
                 else
-                    print_warning "Failed to install tsui to /usr/local/bin"
-                    log_warning "Failed to install tsui to /usr/local/bin"
-                    rm -f "$tsui_tmp"
+                    print_warning "tsui install script ran but tsui command not found"
+                    log_warning "tsui install script completed but command not available"
+                    print_info "You may need to add tsui to your PATH or install manually"
                 fi
             else
-                # File is not a binary - likely HTML error page
-                print_warning "Downloaded file is not a valid binary (type: $file_type)"
-                print_info "This may indicate the release URL is incorrect or the file doesn't exist"
-                log_warning "Downloaded file is not a binary: $file_type"
-                
-                # Show first few lines to help debug
-                if [ -f "$tsui_tmp" ] && [ -s "$tsui_tmp" ]; then
-                    print_info "Downloaded content preview:"
-                    head -3 "$tsui_tmp" | while read -r line; do
-                        print_info "  $line"
-                    done
-                fi
-                
-                rm -f "$tsui_tmp"
-                print_warning "tsui installation failed - please install manually"
-                print_info "Check releases at: https://github.com/neuralinkcorp/tsui/releases"
+                print_warning "tsui install script failed"
+                log_warning "tsui install script execution failed"
+                print_info "You may need to install tsui manually:"
+                print_info "  curl -fsSL https://neuralink.com/tsui/install.sh | bash"
             fi
+            
+            # Clean up install script
+            rm -f "$install_script_tmp"
         else
-            # Download failed or got non-200 response
-            print_warning "Failed to download tsui (HTTP code: ${http_code:-unknown})"
-            print_info "URL may be incorrect or the release may not be available for this architecture"
-            log_warning "Failed to download tsui from $tsui_url (HTTP: ${http_code:-unknown})"
-            rm -f "$tsui_tmp"
-            print_info "Check releases at: https://github.com/neuralinkcorp/tsui/releases"
-            print_info "You may need to install tsui manually"
+            print_warning "Failed to download tsui install script"
+            log_warning "Failed to download tsui install script from $install_script_url"
+            print_info "You can install tsui manually with:"
+            print_info "  curl -fsSL https://neuralink.com/tsui/install.sh | bash"
         fi
     else
         print_info "tsui already installed"

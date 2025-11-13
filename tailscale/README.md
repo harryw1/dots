@@ -18,7 +18,7 @@ Tailscale creates a secure network between your devices using WireGuard. It's pe
 
 The `install.sh` script will:
 1. Install `tailscale` from the official Arch repositories
-2. Download and install the `tsui` binary from GitHub releases
+2. Install `tsui` using the official install script from neuralink.com
 3. Enable the Tailscale systemd service
 
 ### Manual Installation
@@ -30,11 +30,8 @@ sudo pacman -S tailscale
 # Enable and start Tailscale
 sudo systemctl enable --now tailscaled
 
-# Download tsui (check for latest version at https://github.com/neuralinkcorp/tsui/releases)
-cd /tmp
-wget https://github.com/neuralinkcorp/tsui/releases/latest/download/tsui-linux-amd64
-chmod +x tsui-linux-amd64
-sudo mv tsui-linux-amd64 /usr/local/bin/tsui
+# Download and install tsui using the official install script (recommended)
+curl -fsSL https://neuralink.com/tsui/install.sh | bash
 ```
 
 ## First-Time Setup
