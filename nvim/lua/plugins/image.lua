@@ -1,28 +1,14 @@
 -- Image.nvim - Display images in the terminal
 -- Works with Kitty terminal (uses Kitty graphics protocol)
 -- Displays images inline in markdown, allowing for visual note-taking
+-- Uses magick_cli processor to avoid luarocks build issues
 
 return {
-  -- luarocks.nvim - Provides local luarocks installation for plugins that need it
-  -- Required by image.nvim for native Lua dependencies
-  -- Must load early to set up local luarocks before image.nvim tries to use it
-  {
-    "vhyrro/luarocks.nvim",
-    priority = 1001, -- Load before image.nvim
-    lazy = false, -- Load immediately, not lazily
-    opts = {
-      rocks = { "magick" }, -- Install magick rock required by image.nvim
-    },
-  },
   {
     "3rd/image.nvim",
-    dependencies = {
-      "vhyrro/luarocks.nvim",
-    },
-    -- Ensure luarocks.nvim is fully initialized before image.nvim loads
-    lazy = true,
-    event = "VeryLazy",
+    build = false, -- Don't build the luarocks rock (uses CLI instead)
     opts = {
+      processor = "magick_cli", -- Use ImageMagick CLI instead of Lua rock
       backend = "kitty", -- Use Kitty terminal graphics protocol
       integrations = {
         markdown = {
