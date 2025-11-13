@@ -210,6 +210,12 @@ which luarocks
 sudo pacman -S luarocks lua
 ```
 
+**image.nvim luarocks.nvim Error:**
+The `image.nvim` plugin requires `luarocks.nvim` which provides a local LuaRocks installation. This is automatically configured in `nvim/lua/plugins/image.lua`. If you see errors about luarocks not being found:
+- Ensure `luarocks.nvim` is installed (it's a dependency of `image.nvim`)
+- The plugin will automatically set up a local luarocks installation in `~/.local/share/nvim/lazy-rocks/`
+- If issues persist, try clearing the cache: `rm -rf ~/.local/share/nvim/lazy-rocks`
+
 **Missing Build Tools:**
 Ensure all build dependencies are installed:
 ```bash

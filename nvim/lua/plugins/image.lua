@@ -3,8 +3,18 @@
 -- Displays images inline in markdown, allowing for visual note-taking
 
 return {
+  -- luarocks.nvim - Provides local luarocks installation for plugins that need it
+  -- Required by image.nvim for native Lua dependencies
+  {
+    "vhyrro/luarocks.nvim",
+    priority = 1000,
+    config = true,
+  },
   {
     "3rd/image.nvim",
+    dependencies = {
+      "vhyrro/luarocks.nvim",
+    },
     opts = {
       backend = "kitty", -- Use Kitty terminal graphics protocol
       integrations = {
