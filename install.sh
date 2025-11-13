@@ -251,17 +251,17 @@ deploy_configurations() {
 
     print_step 8 15 "Deploying configuration files"
 
-    # Always deploy TUI-safe configs
+    # Always deploy TUI-safe configs (including Kitty - it's a terminal, not a GUI app)
     deploy_neovim_config
     deploy_starship_config
     deploy_bash_config
+    deploy_kitty_config  # Kitty is a terminal emulator, works in TUI mode
     deploy_misc_configs  # Handles TUI/GUI split internally
 
     # Deploy GUI configs only if GUI mode enabled
     if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
         deploy_hyprland_config
         deploy_waybar_config
-        deploy_kitty_config
         log_phase_end "Configuration Deployment" "success"
         print_success "Configuration deployment complete (TUI + GUI)"
     else

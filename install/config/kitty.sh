@@ -36,6 +36,22 @@ deploy_kitty_config() {
         log_warning "Kitty directory not found: $DOTFILES_DIR/kitty"
     fi
 
+    # Note: Default terminal is typically set by the window manager/compositor
+    # (e.g., Hyprland keybinds) or desktop environment, not via xdg-settings
+    # Rofi and other launchers will use kitty if configured in their configs
+
+    # Verify font is available
+    if [ "$DRY_RUN" != true ] && command -v fc-list &> /dev/null; then
+        if fc-list | grep -qi "jetbrains.*nerd" 2>/dev/null; then
+            print_success "JetBrainsMono Nerd Font is available"
+            log_info "JetBrainsMono Nerd Font verified"
+        else
+            print_warning "JetBrainsMono Nerd Font not found in font cache"
+            print_info "Try running: fc-cache -fv"
+            log_warning "JetBrainsMono Nerd Font not found in font cache"
+        fi
+    fi
+
     # Mark phase complete
     state_mark_phase_complete "$phase_name"
     log_phase_end "$phase_name" "success"

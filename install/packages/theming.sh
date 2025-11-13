@@ -31,6 +31,19 @@ install_theming_packages() {
         return 1
     fi
 
+    # Refresh font cache after font installation
+    if [ "$DRY_RUN" != true ]; then
+        print_info "Refreshing font cache..."
+        if command -v fc-cache &> /dev/null; then
+            fc-cache -fv &> /dev/null || true
+            print_success "Font cache refreshed"
+            log_info "Font cache refreshed"
+        else
+            print_warning "fc-cache not found - fonts may not be immediately available"
+            log_warning "fc-cache not found"
+        fi
+    fi
+
     # Install GUI theming only if GUI mode enabled
     if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
         local gui_theming_file="$PACKAGES_DIR/theming-gui.txt"
