@@ -24,12 +24,24 @@ deploy_zsh_config() {
         return 0
     fi
 
-    # Check if zsh is installed
+    # Check if zsh is installed, install if missing
     if ! command -v zsh &> /dev/null; then
-        print_warning "zsh is not installed. Install with: sudo pacman -S zsh"
-        print_info "Skipping zsh configuration"
-        log_warning "zsh not installed, skipping configuration"
-        return 0
+        print_warning "zsh is not installed"
+        print_info "Installing zsh..."
+        log_info "zsh not found, installing..."
+        
+        if [ "$DRY_RUN" = true ]; then
+            print_info "[DRY RUN] Would install zsh"
+        else
+            if ! sudo pacman -S --needed --noconfirm zsh; then
+                print_error "Failed to install zsh"
+                print_info "Install manually with: sudo pacman -S zsh"
+                log_error "Failed to install zsh"
+                return 1
+            fi
+            print_success "Installed zsh"
+            log_success "Installed zsh"
+        fi
     fi
 
     # Set zsh as default shell if not already (optional, only in force mode)
