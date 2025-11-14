@@ -1,0 +1,1 @@
+/home/harryweiss/.local/share/dots/nvim/lua/plugins/colorscheme.lua

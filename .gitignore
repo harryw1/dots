@@ -1,0 +1,70 @@
+# Cursor IDE files
+Cursor/logs/
+Cursor/Cache/
+Cursor/CachedData/
+Cursor/CachedProfilesData/
+Cursor/Code Cache/
+Cursor/Crashpad/
+Cursor/DawnGraphiteCache/
+Cursor/DawnWebGPUCache/
+Cursor/GPUCache/
+Cursor/Local Storage/
+Cursor/Session Storage/
+Cursor/Shared Dictionary/
+Cursor/SharedStorage*
+Cursor/Trust Tokens*
+Cursor/Network Persistent State
+Cursor/Preferences
+Cursor/Cookies*
+Cursor/machineid
+Cursor/blob_storage/
+Cursor/sentry/
+Cursor/.org.chromium.Chromium.*
+Cursor/User/globalStorage/
+Cursor/User/History/
+Cursor/User/workspaceStorage/
+Cursor/Backups/
+Cursor/code.lock
+Cursor/languagepacks.json
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.tmp
+*~
+*.swp
+*.swo
+
+# Application caches and temporary files
+*.log
+*.cache
+
+# Go telemetry
+go/telemetry/
+
+# Pulse audio cookie (may contain sensitive data)
+pulse/cookie
+
+# System-specific files
+dconf/user
+
+# Browser data
+mozilla/firefox/Crash Reports/
+
+# Lock files
+*.lock
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary directories
+tmp/
+temp/
+

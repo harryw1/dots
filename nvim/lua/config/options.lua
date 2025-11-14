@@ -1,0 +1,1 @@
+/home/harryweiss/.local/share/dots/nvim/lua/config/options.lua
