@@ -1,1 +1,0 @@
-/home/harryweiss/.local/share/dots/nvim/lua/plugins/markdown.lua
