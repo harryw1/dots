@@ -1,37 +1,60 @@
 /**
  * Catppuccin Frappe Theme for Rofi
+ * Clean and minimal aesthetic following official Catppuccin Frappe palette
  * Based on https://github.com/catppuccin/rofi
  */
 
 * {
-    // Catppuccin Frappe Colors
-    bg-col:  #303446;
-    bg-col-light: #303446;
-    border-col: #303446;
-    selected-col: #303446;
-    blue: #8caaee;
-    fg-col: #c6d0f5;
-    fg-col2: #e78284;
-    grey: #626880;
-    mauve: #ca9ee6;
-    pink: #f4b8e4;
-    green: #a6d189;
-
-    width: 600;
-    font: "JetBrainsMono Nerd Font Mono 10";
+    // ============================================
+    // Catppuccin Frappe Official Color Palette
+    // ============================================
+    // Base colors
+    bg-col:        #303446;  // Base
+    bg-col-light:  #414559;  // Surface0
+    surface0:      #414559;  // Surface0
+    surface1:      #51576d;  // Surface1
+    surface2:      #626880;  // Surface2
+    
+    // Text colors
+    fg-col:        #c6d0f5;  // Text
+    fg-col2:       #e78284;  // Red (for urgent/errors)
+    grey:          #626880;  // Overlay2 (muted text)
+    
+    // Accent colors
+    mauve:         #ca9ee6;  // Mauve (primary accent)
+    blue:          #8caaee;  // Blue
+    green:         #a6d189;  // Green
+    pink:          #f4b8e4;  // Pink
+    red:           #e78284;  // Red
+    yellow:        #e5c890;  // Yellow
+    peach:         #ef9f76;  // Peach
+    teal:          #81c8be;  // Teal
+    
+    // UI element colors
+    border-col:    @mauve;
+    selected-col:  @mauve;
+    
+    // ============================================
+    // Layout & Typography
+    // ============================================
+    width: 650;
+    font: "JetBrainsMono Nerd Font Mono 11";
 }
 
-element-text, element-icon , mode-switcher {
+element-text, element-icon {
     background-color: inherit;
     text-color:       inherit;
 }
 
+
 window {
-    height: 450px;
-    border: 2px;
+    height: 500px;
+    border: 2;
     border-color: @mauve;
     background-color: @bg-col;
-    border-radius: 8px;
+    border-radius: 12px;
+    padding: 0;
+    transparency: "real";
 }
 
 mainbox {
@@ -41,56 +64,135 @@ mainbox {
 inputbar {
     children: [prompt,entry];
     background-color: @bg-col;
-    border-radius: 5px;
-    padding: 8px;
-    margin: 8px;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    spacing: 8px;
+    border: 0;
 }
 
 prompt {
-    background-color: @mauve;
-    padding: 6px 8px;
-    text-color: @bg-col;
-    border-radius: 3px;
-    margin: 0 8px 0 0;
+    background-color: transparent;
+    padding: 0;
+    text-color: @grey;
+    border-radius: 0;
+    margin: 0;
+    spacing: 0;
 }
 
 textbox-prompt-colon {
     expand: false;
-    str: ":";
+    str: "";
+    text-color: transparent;
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
 }
 
 entry {
-    padding: 6px;
+    background-color: transparent;
+    padding: 0;
     text-color: @fg-col;
-    background-color: @bg-col;
     placeholder: "Search...";
     placeholder-color: @grey;
+    cursor: text;
+    cursor-color: @fg-col;
+    spacing: 0;
+    border: 0;
+}
+
+/* Ensure text inside entry is visible */
+entry textbox {
+    background-color: transparent;
+    text-color: @fg-col;
 }
 
 listview {
-    border: 0px 0px 0px;
-    padding: 6px 0px 0px;
-    margin: 0 8px 8px 8px;
+    border: 0;
+    padding: 4px 0px 0px;
+    margin: 0 10px 10px 10px;
     columns: 1;
-    lines: 8;
+    lines: 9;
     background-color: @bg-col;
+    spacing: 3px;
+    scrollbar: true;
+    fixed-height: 0;
+}
+
+/* Scrollbar styling - minimal and clean */
+scrollbar {
+    width: 3px;
+    padding: 0;
+    handle-width: 6px;
+    border: 0;
+    handle-color: @mauve;
+    background-color: @surface0;
+    border-radius: 2px;
 }
 
 element {
-    padding: 8px;
+    padding: 8px 10px;
     background-color: @bg-col;
     text-color: @fg-col;
-    border-radius: 5px;
+    border-radius: 6px;
+    margin: 1px 0px;
+    cursor: pointer;
+}
+
+/* Active state (hover) - subtle highlight */
+element normal.active {
+    background-color: @surface0;
+    text-color: @fg-col;
+}
+
+element selected.active {
+    background-color: @mauve;
+    text-color: @bg-col;
+}
+
+/* Urgent state - red accent for important items */
+element normal.urgent {
+    background-color: @bg-col;
+    text-color: @red;
+    border: 1;
+    border-color: @red;
+    border-radius: 6px;
+}
+
+element selected.urgent {
+    background-color: @red;
+    text-color: @bg-col;
+    border-radius: 6px;
+}
+
+/* Alternate states - same as normal (no alternating highlight) */
+element alternate.normal {
+    background-color: @bg-col;
+    text-color: @fg-col;
+}
+
+element alternate.active {
+    background-color: @surface0;
+    text-color: @fg-col;
+}
+
+element alternate.urgent {
+    background-color: @bg-col;
+    text-color: @red;
+    border: 1;
+    border-color: @red;
+    border-radius: 6px;
 }
 
 element-icon {
     size: 24px;
-    margin: 0 8px 0 0;
+    margin: 0 10px 0 0;
 }
 
 element selected {
     background-color: @mauve;
     text-color: @bg-col;
+    border-radius: 6px;
 }
 
 element-text selected {
@@ -98,34 +200,90 @@ element-text selected {
 }
 
 mode-switcher {
-    spacing: 0;
-    margin: 0 8px 8px 8px;
+    spacing: 3px;
+    margin: 0 10px 10px 10px;
+}
+
+/* Sidebar styling */
+sidebar {
+    border-color: @grey;
+    border: 2;
+    background-color: @bg-col;
 }
 
 button {
-    padding: 10px;
-    background-color: @bg-col-light;
+    padding: 8px 12px;
+    background-color: @surface0;
     text-color: @grey;
     vertical-align: 0.5;
     horizontal-align: 0.5;
-    border-radius: 5px;
+    border-radius: 6px;
+    margin: 0 2px;
 }
 
 button selected {
-  background-color: @mauve;
-  text-color: @bg-col;
+    background-color: @mauve;
+    text-color: @bg-col;
+    border-radius: 6px;
 }
 
 message {
     background-color: @bg-col;
-    margin: 8px;
+    margin: 10px;
     padding: 8px;
-    border-radius: 5px;
+    border-radius: 6px;
+    border: 1;
+    border-color: @grey;
 }
 
 textbox {
-    padding: 6px;
+    background-color: transparent;
+    padding: 0;
     margin: 0;
     text-color: @fg-col;
-    background-color: @bg-col;
+    border: 0;
+}
+
+/* Row number indicators - minimal styling */
+num-filtered-rows {
+    expand: false;
+    text-color: @grey;
+    background-color: transparent;
+    margin: 0px 4px 0px 0px;
+    font-size: 10px;
+}
+
+num-rows {
+    expand: false;
+    text-color: @grey;
+    background-color: transparent;
+    margin: 0px 0px;
+    font-size: 10px;
+}
+
+textbox-num-sep {
+    expand: false;
+    str: "/";
+    text-color: @grey;
+    background-color: transparent;
+    margin: 0px 2px;
+    font-size: 10px;
+}
+
+/* Case indicator - minimal */
+case-indicator {
+    spacing: 0;
+    text-color: @grey;
+    margin: 0px 0px 0px 4px;
+    font-size: 10px;
+}
+
+/* Overlay for search matches - highlight matching text */
+overlay {
+    padding: 0px 0.15em;
+    background-color: @mauve;
+    foreground-color: @bg-col;
+    margin: 0px 0.15em;
+    text-color: @bg-col;
+    border-radius: 2px;
 }

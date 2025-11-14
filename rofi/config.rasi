@@ -1,33 +1,91 @@
 // Rofi Configuration
-// Main config file
+// Main config file - Robust configuration following best practices
 
 configuration {
-    // Display settings
+    // ============================================
+    // Display Settings
+    // ============================================
     modi: "drun,run,window";
     show-icons: true;
     icon-theme: "Papirus-Dark";
-    display-drun: " Apps";
-    display-run: " Run";
-    display-window: " Windows";
+    
+    // Window positioning - centered for clean minimal look
+    location: 0;  // 0 = center
+    anchor: center;
+    x-offset: 0;
+    y-offset: 0;
+    
+    // Display labels for different modes (empty for minimal look)
+    display-drun: "";
+    display-run: "";
+    display-window: "";
+    
+    // Format strings for cleaner output
     drun-display-format: "{name}";
-    window-format: "{w} · {c} · {t}";
-
-    // Behavior
+    drun-match-fields: "name,generic,exec,categories";
+    drun-show-actions: false;  // Hide actions, show only applications
+    window-format: "{w}  {c}  {t}";
+    window-match-fields: "all";
+    
+    // ============================================
+    // Behavior & Matching
+    // ============================================
+    // Sorting and matching
     sort: true;
     sorting-method: "fzf";
     matching: "fuzzy";
-    scroll-method: 0;
+    tokenize: true;  // Token-based matching for better results
+    
+    // History and completion
     disable-history: false;
-
-    // Terminal for running commands
+    completion-mode: 0;  // 0 = window, 1 = history, 2 = both
+    
+    // Navigation
+    scroll-method: 1;  // 1 = continuous (smooth scrolling)
+    cycle: true;  // Wrap around when navigating
+    
+    // ============================================
+    // Performance Optimization
+    // ============================================
+    // Enable async pre-reading for faster startup
+    async-pre-read: 25;  // Pre-read 25 items asynchronously
+    threads: 0;  // 0 = auto-detect based on CPU cores
+    
+    // ============================================
+    // Accessibility
+    // ============================================
+    case-sensitive: false;
+    sidebar-mode: false;
+    fullscreen: false;
+    
+    // Keybindings: Using rofi defaults
+    // (Custom keybindings removed to avoid conflicts)
+    
+    // ============================================
+    // Terminal & Execution
+    // ============================================
     terminal: "kitty";
-
-    // SSH settings
+    run-shell-command: "{terminal} -e {cmd}";
+    run-command: "{cmd}";
+    
+    // ============================================
+    // SSH Configuration
+    // ============================================
     ssh-client: "ssh";
     ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";
-
-    // File browser
-    run-shell-command: "{terminal} -e {cmd}";
+    
+    // ============================================
+    // Additional Display Options
+    // ============================================
+    display-windowcd: " cd";
+    display-ssh: " SSH";
+    display-keys: " Keys";
+    
+    // ============================================
+    // Combined Mode (combi)
+    // ============================================
+    // Enable combi mode for unified search across modi
+    combi-modi: "drun,run";
 }
 
 // Load Catppuccin Frappe theme
