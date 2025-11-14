@@ -44,10 +44,8 @@ deploy_zsh_config() {
         fi
     fi
 
-    # Set zsh as default shell if not already (optional, only in force mode)
-    if [ "$FORCE" = true ]; then
-        setup_default_shell_zsh
-    fi
+    # Set zsh as default shell if not already
+    setup_default_shell_zsh
 
     # Create .zprofile for login shells (TTY)
     setup_zprofile
@@ -95,15 +93,30 @@ setup_default_shell_zsh() {
     print_info "Current shell: $current_shell"
     print_info "zsh path: $zsh_path"
 
-    # Try to change shell (only in force mode)
-    print_info "Attempting to change default shell to zsh (force mode)..."
+    # Try to change shell
+    # Note: chsh requires the user's password (not sudo), so it may prompt
+    print_info "Attempting to change default shell to zsh..."
+    
+    # In non-interactive mode (piped input), we can't prompt for password
+    if [ ! -t 0 ]; then
+        print_warning "Cannot change shell in non-interactive mode (password required)"
+        print_info "After installation, run manually:"
+        print_info "  chsh -s $zsh_path"
+        log_warning "Skipping shell change (non-interactive mode)"
+        return 0
+    fi
+    
+    # Try to change shell (will prompt for password if needed)
     if chsh -s "$zsh_path" 2>/dev/null; then
         print_success "Changed default shell to zsh"
+        print_info "New shell will take effect after you log out and back in"
         log_info "Changed default shell to: $zsh_path"
     else
-        print_warning "Failed to change default shell (may require password)"
-        print_info "You can change it manually with: chsh -s $zsh_path"
-        log_warning "Failed to change default shell automatically"
+        print_warning "Could not change default shell automatically"
+        print_info "This requires your password. Please run manually:"
+        print_info "  chsh -s $zsh_path"
+        print_info "The new shell will take effect after you log out and back in."
+        log_warning "Could not change default shell (password required or failed)"
     fi
 }
 

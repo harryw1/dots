@@ -322,6 +322,20 @@ main() {
   download_config
   run_installation "$@"
 
+  # Check if zsh was installed and remind about shell change
+  if command -v zsh &>/dev/null; then
+    local current_shell="${SHELL:-$(getent passwd "$USER" 2>/dev/null | cut -d: -f7)}"
+    if ! echo "$current_shell" | grep -q "zsh$"; then
+      local zsh_path="$(which zsh 2>/dev/null || command -v zsh)"
+      if [ -n "$zsh_path" ]; then
+        echo ""
+        print_info "To set zsh as your default shell, run:"
+        print_info "  chsh -s $zsh_path"
+        print_info "The new shell will take effect after you log out and back in."
+      fi
+    fi
+  fi
+
   print_success "Bootstrap complete!"
 }
 
