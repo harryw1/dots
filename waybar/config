@@ -1,153 +1,265 @@
-{
+[
+    {
+    // MAIN BAR //
     "layer": "top",
     "position": "top",
-    "height": 30,
-    "spacing": 0,
-    "margin-top": 8,
-    "margin-left": 12,
-    "margin-right": 12,
+    "name": "main",
+    "height": 29,
+    "reload_style_on_change": true,
 
-    // Module layout
+    "margin-top": 24,
+    "margin-left": 24,
+    "margin-right": 24,
+
     "modules-left": [
-        "hyprland/workspaces",
-        "hyprland/window"
+      "tray",
+      "hyprland/workspaces",
+      "hyprland/submap",
+      "hyprland/window"
     ],
-    "modules-center": [
-        "clock"
-    ],
+
     "modules-right": [
-        "tray",
-        "bluetooth",
-        "pulseaudio",
-        "network",
-        "cpu",
-        "battery",
-        "custom/power"
+      "group/system",
+      "group/audio",
+      "group/connectivity",
+      "group/power-display",
+      "clock",
+      "custom/power"
     ],
 
-    // Module configurations
-    "hyprland/workspaces": {
-        "format": "{icon}",
-        "on-click": "activate",
-        "format-icons": {
-            "active": "●",
-            "urgent": "●",
-            "default": "●"
-        },
-        "persistent-workspaces": {
-            "*": 5
-        },
-        "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    "group/system": {
+      "orientation": "horizontal",
+      "drawer": {
+        "transition-duration": "500",
+        "transition-left-to-right": "true",
+        "children-class": "drawer-child"
+      },
+      "modules": ["cpu", "memory#ram"]
     },
 
-    "hyprland/window": {
-        "format": "{}",
-        "max-length": 50,
-        "separate-outputs": true,
-        "rewrite": {
-            "(.*) — Mozilla Firefox": "󰈹 $1",
-            "(.*) - Visual Studio Code": "󰨞 $1",
-            "kitty (.*)": " $1",
-            "nvim (.*)": " $1"
-        }
+    "group/audio": {
+      "orientation": "horizontal",
+      "drawer": {
+        "transition-duration": "500",
+        "transition-left-to-right": "true",
+        "children-class": "drawer-child"
+      },
+      "modules": ["pulseaudio#output", "pulseaudio#input"]
     },
 
-    "clock": {
-        "format": "{:%H:%M}",
-        "format-alt": "{:%A, %B %d, %Y (%R)}",
-        "tooltip-format": "<tt><small>{calendar}</small></tt>",
-        "calendar": {
-            "mode": "year",
-            "mode-mon-col": 3,
-            "weeks-pos": "right",
-            "on-scroll": 1,
-            "format": {
-                "months": "<span color='#eebebe'><b>{}</b></span>",
-                "days": "<span color='#c6d0f5'><b>{}</b></span>",
-                "weeks": "<span color='#99d1db'><b>W{}</b></span>",
-                "weekdays": "<span color='#f4b8e4'><b>{}</b></span>",
-                "today": "<span color='#ef9f76'><b><u>{}</u></b></span>"
-            }
-        },
-        "actions": {
-            "on-click-right": "mode",
-            "on-scroll-up": "shift_up",
-            "on-scroll-down": "shift_down"
-        }
+    "group/connectivity": {
+      "orientation": "horizontal",
+      "drawer": {
+        "transition-duration": "500",
+        "transition-left-to-right": "true",
+        "children-class": "drawer-child"
+      },
+      "modules": ["network#info", "bluetooth"]
     },
 
-    "tray": {
-        "icon-size": 18,
-        "spacing": 10
+    "group/power-display": {
+      "orientation": "horizontal",
+      "drawer": {
+        "transition-duration": "500",
+        "transition-left-to-right": "true",
+        "children-class": "drawer-child"
+      },
+      "modules": ["backlight", "battery"]
     },
 
-    "bluetooth": {
-        "format": "󰂯",
-        "format-disabled": "󰂲",
-        "format-off": "󰂲",
-        "format-connected": "󰂱 {device_alias}",
-        "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}%",
-        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
-        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
-        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-        "on-click": "kitty --class bluetuith -e bluetuith",
-    },
-
-    "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-muted": "󰖁 Muted",
-        "format-icons": {
-            "headphone": "󰋋",
-            "hands-free": "󱡏",
-            "headset": "󰋎",
-            "phone": "󰏲",
-            "portable": "󰄞",
-            "car": "",
-            "default": ["", "", ""]
-        },
-        "on-click": "pavucontrol",
-        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-        "scroll-step": 5,
-        "tooltip-format": "{desc} | {volume}%"
-    },
-
-    "network": {
-        "format-wifi": "󰤨 {essid}",
-        "format-ethernet": "󰈀 Connected",
-        "format-disconnected": "󰤭 Disconnected",
-        "tooltip-format": "{ifname} via {gwaddr} | {ipaddr}/{cidr}",
-        "tooltip-format-wifi": "󰤨 {essid} ({signalStrength}%) | {ipaddr}",
-        "tooltip-format-ethernet": "󰈀 {ifname} | {ipaddr}/{cidr}",
-        "tooltip-format-disconnected": "Disconnected",
-        "on-click": "kitty --class impala -e impala",
-        "on-click-right": "kitty --class iwctl -e iwctl"
-    },
-
-    "cpu": {
-        "interval": 5,
-        "format": "󰻠 {usage}%",
-        "tooltip": true,
-        "on-click": "kitty --class btop -e btop"
+    "backlight": {
+      "device": "intel_backlight",
+      "format": "{icon} {percent}%",
+      "format-icons": ["󱩎", "󱩑", "󱩓", "󱩕", "󰛨"],
+      "scroll-step": 2
     },
 
     "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": "󰂄 {capacity}%",
-        "format-plugged": "󰚥 {capacity}%",
-        "format-alt": "{icon} {time}",
-        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-        "tooltip-format": "{timeTo}, {capacity}%"
+      "interval": 30,
+      "states": {
+        "warning": 30,
+        "critical": 15
+      },
+      "format": "{icon} {capacity}%",
+      "format-charging": "󰂄 {capacity}%",
+      "format-plugged": "󰂄 {capacity}%",
+      "format-alt": "{icon} {time}",
+      "format-full": "󰁹 {capacity}%",
+      "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+    },
+
+    "clock": {
+      "interval": 1,
+      "format": " {:%H:%M:%S    %a %d.%m}",
+      "tooltip-format": "{calendar}",
+      "calendar": {
+        "weeks-pos": "right",
+        "mode": "month",
+        "format": {
+          "months": "<span color='#cba6f7'><b>{}</b></span>",
+          "days": "<span color='#cdd6f4'><b>{}</b></span>",
+          "weeks": "<span color='#94e2d5'> W{}</span>",
+          "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
+          "today": "<span color='#f5e0dc'><b><u>{}</u></b></span>"
+        }
+      },
+      "on-click": "cal -3"
+    },
+
+    "cpu": {
+      "interval": 4,
+      "format": " {usage}%",
+      "states": {
+        "warning": 80,
+        "critical": 95
+      },
+      "on-click": "kitty -e btop",
+      "tooltip": true
+    },
+
+    "memory#ram": {
+      "interval": 4,
+      "format": " {percentage}%",
+      "states": {
+        "warning": 80,
+        "critical": 95
+      },
+      "tooltip": "{}",
+      "tooltip-format": "{used}/{total} GiB",
+      "on-click": "kitty -e btop"
+    },
+
+    "network#info": {
+      "interval": 2,
+      "format": "󱘖  Offline",
+      "format-wifi": "{icon} {bandwidthDownBits}",
+      "format-ethernet": "󰈀 {bandwidthDownBits}",
+      "min-length": 11,
+      "tooltip": "{}",
+      "tooltip-format-wifi": "{ifname}\n{essid}\n{signalStrength}% \n{frequency} GHz\n󰇚 {bandwidthDownBits}\n󰕒 {bandwidthUpBits}",
+      "tooltip-format-ethernet": "{ifname}\n󰇚 {bandwidthDownBits} \n󰕒 {bandwidthUpBits}",
+      "on-click": "kitty -e impala",
+      "on-click-right": "kitty -e iwctl",
+      "format-icons": ["󰤫", "󰤟", "󰤢", "󰤥", "󰤨"],
+      "states": {
+        "normal": 25
+      }
+    },
+
+    "hyprland/submap": {
+      "always-on": true,
+      "default-submap": "",
+      "format": "{}",
+      "format-RESIZE": "{}lol",
+      "tooltip": false
+    },
+
+    "hyprland/window": {
+      "format": "{title}",
+      "max-length": 48,
+      "icon": true,
+      "icon-size": 18,
+      "tooltip": true
+    },
+
+    "hyprland/workspaces": {
+      "disable-scroll-wraparound": true,
+      "smooth-scrolling-threshold": 4,
+      "enable-bar-scroll": true,
+      "all-outputs": true,
+      "format": "{icon}",
+      "show-special": true,
+      "special-visible-only": false,
+      "persistent-workspaces": {
+        "*": [1, 2, 3, 4, 5]
+      },
+      "format-icons": {
+        "1": "•",
+        "2": "•",
+        "3": "•",
+        "4": "•",
+        "5": "•",
+        "6": "•",
+        "7": "•",
+        "8": "•",
+        "9": "•",
+        "10": "•",
+        "magic": "󰣇",
+        "lock": "󰌾",
+        "default": "•"
+      }
+    },
+
+    "pulseaudio#output": {
+      "format": "{icon} {volume}%",
+      "format-bluetooth": "{icon} {volume}%",
+      "format-source-muted": "{volume}",
+      "format-icons": {
+        "headphone": "",
+        "hands-free": "",
+        "headset": "",
+        "phone": "",
+        "portable": "",
+        "car": "",
+        "default": ["", ""]
+      },
+      "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+      "on-click-right": "kitty -e pulsemixer",
+      "on-click-middle": "pactl set-sink-volume @DEFAULT_SINK@ 50%",
+      "tooltip": true,
+      "scroll-step": 2
+    },
+
+    "pulseaudio#input": {
+      "format": " {format_source}%",
+      "format-source": "{volume}",
+      "format-source-muted": "{volume}",
+      "on-scroll-up": "sh -c 'vol=$(pactl get-source-volume @DEFAULT_SOURCE@ | grep -oP \"\\d+(?=%)\" | head -1); if [ \"$vol\" -lt 100 ]; then pactl set-source-volume @DEFAULT_SOURCE@ +2%; else pactl set-source-volume @DEFAULT_SOURCE@ 100%; fi'",
+      "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -2%",
+      "max-volume": "100",
+      "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+      "on-click-right": "kitty -e pulsemixer",
+      "tooltip-format": "{source_desc}"
+    },
+
+    "bluetooth": {
+      "format": "󰂯",
+      "format-disabled": "󰂲",
+      "format-off": "󰂲",
+      "format-on": "󰂯",
+      "format-connected": "󰂱 {num_connections}",
+      "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+      "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+      "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+      "on-click": "kitty -e bluetuith",
+      "on-click-right": "bluetoothctl power toggle"
+    },
+
+    "tray": {
+      "icon-size": 18,
+      "spacing": 8
     },
 
     "custom/power": {
-        "format": "󰐥",
-        "tooltip": false,
-        "on-click": "wlogout"
+      "format": "⏻",
+      "tooltip": false,
+      "on-click": "wlogout"
     }
-}
+  },
+
+  {
+    // INDICATOR BAR //
+    "layer": "top",
+    "position": "top",
+    "name": "indicator",
+    "passthrough": true,
+    "reload_style_on_change": true,
+
+    "height": 30,
+
+    "margin-top": -29,
+    "margin-right": 24,
+
+    "modules-right": []
+  }
+]
