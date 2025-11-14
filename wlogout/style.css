@@ -35,7 +35,6 @@ button:hover {
     color: #c6d0f5; /* brighter text on hover */
     border-color: #babbf1; /* lavender border */
     box-shadow: 0 0 15px rgba(186, 187, 241, 0.4); /* lavender glow */
-    transform: scale(1.05);
 }
 
 button:focus {
@@ -48,14 +47,12 @@ button:focus:hover {
     color: #c6d0f5;
     border-color: #babbf1;
     box-shadow: 0 0 15px rgba(186, 187, 241, 0.4); /* lavender glow */
-    transform: scale(1.05);
 }
 
 button:active {
     background-color: #626880; /* surface2 - only when actively clicking */
     border-color: #ca9ee6; /* mauve border */
     box-shadow: 0 0 20px rgba(202, 158, 230, 0.6); /* mauve glow */
-    transform: scale(0.98);
 }
 
 #lock {
