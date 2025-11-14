@@ -1,0 +1,58 @@
+# Development tools
+# Install with: pacman -S --needed - < packages/development.txt
+
+# Python development
+python
+python-pip
+python-virtualenv
+ipython
+uv                    # Extremely fast Python package and project manager (replaces poetry/pipenv)
+
+# C++ development
+gcc
+gdb
+cmake
+make
+clang
+lldb
+
+# Build tools
+base-devel
+github-cli
+
+# Text editors and tools
+neovim
+ripgrep
+fd
+lazygit
+tree-sitter
+tree-sitter-cli
+
+# Node.js (required for nvim-treesitter)
+nodejs
+npm
+yarn                  # Alternative package manager
+pnpm                  # Fast, disk-efficient package manager
+
+# Lua development (required for some Neovim plugins with native dependencies)
+lua
+luarocks              # Lua package manager (required for plugins like markdown-preview.nvim)
+
+# Image processing (required for image.nvim plugin)
+imagemagick           # Image processing library (required for image.nvim's magick Lua module)
+
+# Shell prompt
+starship
+
+# Spell checking (for nvim markdown/note-taking)
+aspell
+aspell-en
+hunspell
+hunspell-en_us
+
+# Markdown tools (for note-taking and documentation)
+marksman              # LSP server for markdown (wiki links, completion)
+glow                  # Terminal markdown renderer
+pandoc                # Universal document converter (moved from gui-productivity)
+
+# Note: Modern text processing tools (sd, choose) are in data-processing.txt

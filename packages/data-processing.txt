@@ -1,0 +1,20 @@
+# Data format processors and text manipulation
+# Essential tools for working with structured data formats
+# Install with: pacman -S --needed - < packages/data-processing.txt
+
+# JSON processor (already in core.txt, but listed here for reference)
+# jq             # JSON query and manipulation
+
+# YAML processor
+yq               # YAML processor (compatible with jq syntax)
+# go-yq            # Alternative YAML processor written in Go (conflicts with yq)
+
+# CSV/TSV processing
+miller           # Like awk/sed/cut/join/sort for CSV/TSV/JSON
+
+# XML processing (optional, install manually if needed)
+# xmlstarlet     # XML command line utilities
+
+# Modern text processing
+sd               # Modern sed replacement (simpler syntax)
+choose           # Modern cut replacement (simpler field selection)

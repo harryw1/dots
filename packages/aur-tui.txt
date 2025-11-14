@@ -1,0 +1,10 @@
+# AUR packages for TUI-only mode (headless-safe)
+# These packages work without a display server
+# Install with: yay -S --needed - < packages/aur-tui.txt
+
+# System utilities (TUI)
+pacseek          # TUI package manager
+bluetuith-bin    # TUI Bluetooth manager
+
+# Wallpaper management (CLI - works headless, downloads for future GUI use)
+quickwall        # CLI tool for downloading wallpapers from Unsplash

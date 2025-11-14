@@ -1,0 +1,38 @@
+# Core packages for TUI-first system (headless compatible)
+# Install with: pacman -S --needed - < packages/core.txt
+#
+# This file contains only packages that work in both GUI and headless environments
+# For Hyprland GUI, see packages/gui-essential.txt
+
+# Network management
+iwd         # Modern wireless daemon
+impala      # TUI for managing WiFi with iwd
+tailscale   # Mesh VPN for secure device connections
+
+# Bluetooth (works headless and GUI)
+bluez
+bluez-utils
+
+# Audio (PipeWire works in headless too)
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+
+# Version control
+git      # Version control system (essential for system management)
+
+# System utilities (TUI/CLI tools)
+fprintd  # Fingerprint authentication
+btop     # System monitor TUI
+jq       # JSON processor
+bc       # Calculator
+
+# Archive utilities (essential for file operations)
+unzip    # Extract ZIP archives
+zip      # Create ZIP archives
+
+# File utilities
+tree     # Directory tree visualization
+less     # File viewer (pager) - useful for logs, man pages, etc.

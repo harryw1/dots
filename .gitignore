@@ -27,6 +27,25 @@ Cursor/Backups/
 Cursor/code.lock
 Cursor/languagepacks.json
 
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# macOS Finder metadata
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux system files
+.directory
+.Trash-*
+
 # Backup files
 *.bak
 *.backup
@@ -35,10 +54,27 @@ Cursor/languagepacks.json
 *~
 *.swp
 *.swo
+*-backup-*
+.config-backup-*
 
 # Application caches and temporary files
 *.log
 *.cache
+
+# Debug output files
+debug-output.txt
+package-debug-output.txt
+system-check-output.txt
+waybar-output.txt
+install-debug.log
+
+# Screenshots (should be in docs/issues, not repo root)
+*.png
+*.jpg
+*.jpeg
+*.gif
+!hyprland/wallpapers/*.png
+!hyprland/wallpapers/*.jpg
 
 # Go telemetry
 go/telemetry/
@@ -56,7 +92,6 @@ mozilla/firefox/Crash Reports/
 *.lock
 
 # OS-specific
-.DS_Store
 Thumbs.db
 
 # IDE/Editor
@@ -68,3 +103,15 @@ Thumbs.db
 tmp/
 temp/
 
+# Testing/debug scripts (keep permanent ones)
+install-debug*.sh
+test-*.sh
+simple-test.sh
+
+# User-specific configuration
+.env
+.env.local
+
+# Auto-generated files
+waybar/scaling.css
+gh/

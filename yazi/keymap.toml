@@ -1,0 +1,72 @@
+# Yazi Keymap Configuration
+# https://yazi-rs.github.io/docs/configuration/keymap
+
+[manager]
+prepend_keymap = [
+    # Navigation (vim-style, already default)
+    { on = [ "h" ], run = "leave", desc = "Go back to parent directory" },
+    { on = [ "l" ], run = "enter", desc = "Enter directory" },
+    { on = [ "j" ], run = "arrow 1", desc = "Move cursor down" },
+    { on = [ "k" ], run = "arrow -1", desc = "Move cursor up" },
+
+    # Quick jumps
+    { on = [ "g", "h" ], run = "cd ~", desc = "Go to home directory" },
+    { on = [ "g", "c" ], run = "cd ~/.config", desc = "Go to config directory" },
+    { on = [ "g", "d" ], run = "cd ~/Downloads", desc = "Go to downloads" },
+    { on = [ "g", "D" ], run = "cd ~/Documents", desc = "Go to documents" },
+    { on = [ "g", "." ], run = "cd ~/dots", desc = "Go to dots repository" },
+
+    # File operations
+    { on = [ "y", "y" ], run = "yank", desc = "Copy selected files" },
+    { on = [ "d", "d" ], run = "remove", desc = "Delete selected files" },
+    { on = [ "p" ], run = "paste", desc = "Paste files" },
+    { on = [ "c", "c" ], run = "create", desc = "Create file or directory" },
+    { on = [ "r" ], run = "rename", desc = "Rename file" },
+
+    # Selection
+    { on = [ "<Space>" ], run = "toggle", desc = "Toggle selection" },
+    { on = [ "v" ], run = "visual_mode", desc = "Enter visual mode" },
+    { on = [ "V" ], run = "visual_mode --unset", desc = "Exit visual mode" },
+
+    # Search and find
+    { on = [ "/" ], run = "find", desc = "Find file" },
+    { on = [ "n" ], run = "find_arrow", desc = "Next match" },
+    { on = [ "N" ], run = "find_arrow --previous", desc = "Previous match" },
+
+    # Sorting
+    { on = [ "s", "m" ], run = "sort modified --dir-first", desc = "Sort by modified time" },
+    { on = [ "s", "n" ], run = "sort natural --dir-first", desc = "Sort by name" },
+    { on = [ "s", "s" ], run = "sort size --dir-first", desc = "Sort by size" },
+
+    # Other
+    { on = [ "." ], run = "hidden toggle", desc = "Toggle hidden files" },
+    { on = [ "z", "h" ], run = "hidden toggle", desc = "Toggle hidden files" },
+    { on = [ "R" ], run = "refresh", desc = "Refresh current directory" },
+]
+
+[tasks]
+prepend_keymap = [
+    { on = [ "j" ], run = "arrow 1", desc = "Move cursor down" },
+    { on = [ "k" ], run = "arrow -1", desc = "Move cursor up" },
+]
+
+[select]
+prepend_keymap = [
+    { on = [ "j" ], run = "arrow 1", desc = "Move cursor down" },
+    { on = [ "k" ], run = "arrow -1", desc = "Move cursor up" },
+]
+
+[input]
+prepend_keymap = []
+
+[completion]
+prepend_keymap = [
+    { on = [ "j" ], run = "arrow 1", desc = "Move cursor down" },
+    { on = [ "k" ], run = "arrow -1", desc = "Move cursor up" },
+]
+
+[help]
+prepend_keymap = [
+    { on = [ "j" ], run = "arrow 1", desc = "Move cursor down" },
+    { on = [ "k" ], run = "arrow -1", desc = "Move cursor up" },
+]

@@ -1,0 +1,73 @@
+/* Catppuccin Frappe Theme for wlogout */
+
+/* Color definitions matching hyprland/conf/theme.conf */
+* {
+    background-image: none;
+    box-shadow: none;
+}
+
+window {
+    font-family: "FiraCode Nerd Font", sans-serif;
+    font-size: 14pt;
+    color: #c6d0f5; /* text */
+    background-color: rgba(48, 52, 70, 0.9); /* base with transparency */
+}
+
+button {
+    background-color: #414559; /* surface0 */
+    color: #babbf1; /* lavender - more visible text */
+    outline-style: none;
+    border: none;
+    border-width: 0px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+    border-radius: 12px;
+    margin: 10px;
+    transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+button:hover {
+    background-color: #51576d; /* surface1 */
+    color: #c6d0f5; /* brighter text on hover */
+    box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
+}
+
+button:focus {
+    outline: none;
+}
+
+button:focus:hover {
+    background-color: #51576d; /* surface1 - ensure hover works on focused buttons */
+    color: #c6d0f5;
+    box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
+}
+
+button:active {
+    background-color: #626880; /* surface2 - only when actively clicking */
+    box-shadow: 0 0 15px rgba(186, 187, 241, 0.5); /* lavender glow */
+}
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"));
+}
+
+#hibernate {
+    background-image: image(url("/usr/share/wlogout/icons/hibernate.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"));
+}

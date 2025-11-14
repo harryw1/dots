@@ -1,0 +1,9 @@
+# Essential GUI AUR packages for Hyprland
+# Install with: yay -S --needed - < packages/gui-essential-aur.txt
+#
+# These are AUR packages required for the GUI experience
+# Install this when user opts for Hyprland GUI
+
+swayosd-git  # On-screen display for volume and brightness
+wlogout      # Wayland logout menu
+waypaper     # GUI wallpaper manager for Wayland (works with hyprpaper)

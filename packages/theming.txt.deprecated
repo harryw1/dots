@@ -1,0 +1,33 @@
+# Theming and appearance packages
+# Install with: pacman -S --needed - < packages/theming.txt
+
+# Icon themes
+papirus-icon-theme
+adwaita-icon-theme
+
+# Fonts
+# Nerd Fonts (programming with icons)
+ttf-jetbrains-mono-nerd
+ttf-firacode-nerd
+ttf-meslo-nerd
+
+# System fonts
+noto-fonts
+noto-fonts-emoji
+noto-fonts-cjk
+ttf-dejavu
+ttf-liberation
+
+# Icon fonts
+ttf-font-awesome
+ttf-nerd-fonts-symbols  # Additional Nerd Font symbols for Waybar and icons
+
+# Qt theming
+qt5ct
+qt6ct
+kvantum
+
+# Wallpaper tools (optional)
+# imagemagick  # For creating solid color backgrounds (manual install if needed)
+# Note: We use waypaper + Catppuccin wallpapers instead. To install manually:
+#   sudo pacman -S imagemagick

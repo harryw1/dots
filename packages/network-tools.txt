@@ -1,0 +1,15 @@
+# Network and transfer tools (essential for all developers)
+# These tools are critical for downloads, API testing, file transfers, and remote access
+# Install with: pacman -S --needed - < packages/network-tools.txt
+
+# Core transfer utilities
+curl             # HTTP client, API testing, downloads (ESSENTIAL)
+wget             # Non-interactive downloader
+rsync            # Fast incremental file transfer and sync
+
+# Remote access
+openssh          # SSH client and server
+mosh             # Mobile shell - better SSH for unstable connections
+
+# API testing and HTTP clients
+httpie           # User-friendly HTTP client (better than curl for testing)

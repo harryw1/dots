@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+# misc-configs.sh - Miscellaneous configuration deployment
+# Part of the modular dotfiles installation system
+# Deploys TUI and GUI configurations based on installation mode
+
+# This script is sourced by install.sh, not executed directly
+# Requires: lib/utils.sh, lib/tui.sh, lib/logging.sh, lib/state.sh
+
+deploy_tui_misc_configs() {
+    # Deploy TUI-safe configurations (always installed)
+    local phase_name="config/misc-tui"
+
+    log_phase_start "$phase_name"
+
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would deploy TUI configs"
+        log_phase_skip "$phase_name" "Dry run"
+        return 0
+    fi
+
+    # Ensure .config directory exists
+    mkdir -p "$CONFIG_DIR"
+
+    # Install btop configuration (system monitor - TUI)
+    if [ -d "$DOTFILES_DIR/btop" ]; then
+        create_symlink "$DOTFILES_DIR/btop" "$CONFIG_DIR/btop" "btop"
+    fi
+
+    # Install Git configuration (version control - TUI compatible)
+    if [ -f "$DOTFILES_DIR/git/.gitconfig" ]; then
+        create_symlink "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig" "Git config"
+    fi
+
+    if [ -f "$DOTFILES_DIR/git/.gitignore_global" ]; then
+        create_symlink "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global" "Git global ignore"
+    fi
+
+    # Install TUI application configs
+    if [ -d "$DOTFILES_DIR/bluetuith" ]; then
+        create_symlink "$DOTFILES_DIR/bluetuith" "$CONFIG_DIR/bluetuith" "Bluetuith"
+    fi
+
+    if [ -d "$DOTFILES_DIR/lazygit" ]; then
+        create_symlink "$DOTFILES_DIR/lazygit" "$CONFIG_DIR/lazygit" "Lazygit"
+    fi
+
+    if [ -d "$DOTFILES_DIR/yazi" ]; then
+        create_symlink "$DOTFILES_DIR/yazi" "$CONFIG_DIR/yazi" "Yazi"
+    fi
+
+    log_phase_end "$phase_name" "success"
+    return 0
+}
+
+deploy_gui_misc_configs() {
+    # Deploy GUI-only configurations (requires display server)
+    local phase_name="config/misc-gui"
+
+    log_phase_start "$phase_name"
+
+    if [ "$DRY_RUN" = true ]; then
+        print_info "[DRY RUN] Would deploy GUI configs"
+        log_phase_skip "$phase_name" "Dry run"
+        return 0
+    fi
+
+    # Ensure .config directory exists
+    mkdir -p "$CONFIG_DIR"
+
+    # Install Rofi configuration (application launcher - GUI)
+    if [ -d "$DOTFILES_DIR/rofi" ]; then
+        create_symlink "$DOTFILES_DIR/rofi" "$CONFIG_DIR/rofi" "Rofi"
+    fi
+
+    # Install Mako configuration (notification daemon - GUI)
+    if [ -d "$DOTFILES_DIR/mako" ]; then
+        create_symlink "$DOTFILES_DIR/mako" "$CONFIG_DIR/mako" "Mako"
+    fi
+
+    # Install Zathura configuration (PDF viewer - GUI)
+    if [ -d "$DOTFILES_DIR/zathura" ]; then
+        create_symlink "$DOTFILES_DIR/zathura" "$CONFIG_DIR/zathura" "Zathura"
+    fi
+
+    # Install wlogout configuration (logout menu - GUI)
+    if [ -d "$DOTFILES_DIR/wlogout" ]; then
+        create_symlink "$DOTFILES_DIR/wlogout" "$CONFIG_DIR/wlogout" "wlogout"
+    fi
+
+    # Install GTK 3.0 configuration (GUI theming)
+    if [ -d "$DOTFILES_DIR/gtk-3.0" ]; then
+        create_symlink "$DOTFILES_DIR/gtk-3.0" "$CONFIG_DIR/gtk-3.0" "GTK 3.0"
+    fi
+
+    # Install GTK 4.0 configuration (GUI theming)
+    if [ -d "$DOTFILES_DIR/gtk-4.0" ]; then
+        create_symlink "$DOTFILES_DIR/gtk-4.0" "$CONFIG_DIR/gtk-4.0" "GTK 4.0"
+    fi
+
+    # Install Waypaper configuration (wallpaper GUI)
+    if [ -d "$DOTFILES_DIR/waypaper" ]; then
+        create_symlink "$DOTFILES_DIR/waypaper" "$CONFIG_DIR/waypaper" "Waypaper"
+    fi
+
+    # Install SDDM configuration (login manager - GUI, requires sudo)
+    if [ -f "$DOTFILES_DIR/sddm/theme.conf" ]; then
+        print_info "Setting up SDDM theme configuration..."
+        if sudo mkdir -p /etc/sddm.conf.d 2>/dev/null; then
+            if sudo ln -sf "$DOTFILES_DIR/sddm/theme.conf" /etc/sddm.conf.d/theme.conf 2>/dev/null; then
+                print_success "Linked SDDM theme configuration"
+            else
+                print_warning "Failed to create SDDM config symlink (may need sudo)"
+            fi
+        fi
+    fi
+
+    log_phase_end "$phase_name" "success"
+    return 0
+}
+
+deploy_misc_configs() {
+    local phase_name="config/misc"
+
+    # Check if phase already completed
+    if state_phase_completed "$phase_name"; then
+        print_info "Miscellaneous configs already deployed"
+        return 0
+    fi
+
+    log_phase_start "$phase_name"
+    print_step 7 8 "Deploying miscellaneous configurations"
+
+    # Always deploy TUI configs
+    deploy_tui_misc_configs
+
+    # Deploy GUI configs only if GUI mode enabled
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        deploy_gui_misc_configs
+        print_success "TUI and GUI configurations deployed"
+    else
+        print_info "Skipping GUI configs (TUI-only mode)"
+        print_success "TUI configurations deployed"
+    fi
+
+    # Mark phase complete
+    state_mark_phase_complete "$phase_name"
+    log_phase_end "$phase_name" "success"
+
+    return 0
+}
+
+# Auto-execute if not in dry-run planning mode
+if [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+    # Being sourced, define function only
+    :
+else
+    # Being executed directly (shouldn't happen, but handle gracefully)
+    echo "This script should be sourced by install.sh, not executed directly"
+    exit 1
+fi

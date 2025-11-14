@@ -1,0 +1,223 @@
+# Dotfiles Installation Configuration
+# Copy this file to 'install.conf' and customize for your system
+#
+# Usage:
+#   cp install.conf.example install.conf
+#   # Edit install.conf with your preferences
+#   ./install.sh  # Automatically loads install.conf if it exists
+#
+# Or specify a custom config:
+#   ./install.sh --config ~/my-install.conf
+
+#############################################################################
+# INSTALLATION OPTIONS
+#############################################################################
+
+# Skip package installation
+# Set to true to only deploy configurations without installing packages
+# Default: false
+#SKIP_PACKAGES=false
+
+# Force installation without confirmation prompts
+# Set to true to skip all interactive prompts
+# Useful for automated/CI installations
+# Default: false
+#FORCE=false
+
+# Disable TUI welcome screen
+# Set to true to skip the fancy welcome screen
+# Default: false (show TUI)
+#SHOW_TUI=true
+
+# Dry run mode
+# Set to true to show what would be done without actually doing it
+# Useful for testing before actual installation
+# Default: false
+#DRY_RUN=false
+
+#############################################################################
+# MACHINE-SPECIFIC SETTINGS
+#############################################################################
+
+# Hostname
+# Used for machine-specific configurations (future feature)
+#HOSTNAME="framework-laptop"
+
+# Primary monitor
+# Used for display configuration (future feature)
+#PRIMARY_MONITOR="eDP-1"
+
+# Monitor scaling factor
+# Used for HiDPI displays (future feature)
+# Example: 1.5, 1.566667, 2.0
+#MONITOR_SCALE="1.566667"
+
+#############################################################################
+# FEATURE FLAGS
+#############################################################################
+
+# Enable fingerprint authentication
+# Configures fprintd and PAM for fingerprint login
+# Default: true (if fprintd is installed)
+#ENABLE_FINGERPRINT=true
+
+# Enable Tailscale VPN
+# Enables tailscaled service and installs tsui TUI
+# Default: true (if tailscale is installed)
+#ENABLE_TAILSCALE=true
+
+# Install LazyVim
+# Sets up LazyVim with Catppuccin Frappe theme
+# Default: true (if neovim is installed)
+#INSTALL_LAZYVIM=true
+
+# Download wallpaper collection
+# Clones Catppuccin Frappe wallpaper collection (~50-200 wallpapers)
+# Default: true
+#DOWNLOAD_WALLPAPERS=true
+
+#############################################################################
+# PACKAGE CATEGORIES
+#############################################################################
+# Control which package categories to install
+# Set to false to skip a category
+
+# Core Hyprland packages (essential)
+# Includes: hyprland, waybar, kitty, rofi, mako, etc.
+#INSTALL_CORE=true
+
+# Hypr ecosystem packages
+# Includes: hyprpaper, hypridle, hyprlock, hyprpicker
+#INSTALL_HYPR_ECOSYSTEM=true
+
+# Theming packages
+# Includes: Nerd Fonts, icons, cursors, GTK themes
+#INSTALL_THEMING=true
+
+# Development tools
+# Includes: neovim, python, nodejs, starship, build tools
+#INSTALL_DEVELOPMENT_TOOLS=true
+
+# Productivity applications
+# Includes: LibreOffice, PDF viewer, file manager, Discord
+#INSTALL_PRODUCTIVITY_APPS=true
+
+# AUR packages
+# Includes: waypaper, quickwall, SwayOSD, VS Code
+#INSTALL_AUR_PACKAGES=true
+
+#############################################################################
+# SERVICE MANAGEMENT
+#############################################################################
+
+# Enable iwd network management
+# Disables NetworkManager and enables iwd
+# Default: true (if iwd is installed)
+#ENABLE_IWD=true
+
+# Enable PipeWire audio
+# Modern audio system replacing PulseAudio
+# Default: true (handled by package conflicts)
+#ENABLE_PIPEWIRE=true
+
+# Disable NetworkManager
+# Automatically disabled when enabling iwd
+# Default: true (when ENABLE_IWD=true)
+#DISABLE_NETWORKMANAGER=true
+
+#############################################################################
+# PATHS
+#############################################################################
+# Customize installation paths (advanced users only)
+
+# Backup directory for existing configs
+# Default: ~/.config-backup-TIMESTAMP
+#BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
+
+# State directory for installation tracking
+# Default: ~/.local/state/dots
+#STATE_DIR="$HOME/.local/state/dots"
+
+# Log directory
+# Default: ~/.local/state/dots/logs
+#LOG_DIR="$HOME/.local/state/dots/logs"
+
+# Dotfiles directory (for development)
+# Default: script directory
+#DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Config directory
+# Default: ~/.config
+#CONFIG_DIR="$HOME/.config"
+
+# Packages directory
+# Default: ./packages
+#PACKAGES_DIR="$DOTFILES_DIR/packages"
+
+#############################################################################
+# ADVANCED OPTIONS
+#############################################################################
+
+# Verbose output
+# Show detailed information during installation
+# Default: false
+#VERBOSE=false
+
+# Skip confirmation prompts
+# Useful for automated installations
+# Default: false
+#SKIP_CONFIRMATION=false
+
+# Resume from last phase
+# Continue installation from where it left off
+# Default: false (set via --resume flag)
+#RESUME=false
+
+# Reset state
+# Clear state and start fresh installation
+# Default: false (set via --reset flag)
+#RESET=false
+
+#############################################################################
+# EXAMPLE CONFIGURATIONS
+#############################################################################
+
+# Example 1: Minimal installation (configs only, no packages)
+#SKIP_PACKAGES=true
+#DOWNLOAD_WALLPAPERS=false
+
+# Example 2: Development-focused installation
+#INSTALL_PRODUCTIVITY_APPS=false
+#INSTALL_DEVELOPMENT_TOOLS=true
+#INSTALL_LAZYVIM=true
+
+# Example 3: Automated/CI installation
+#FORCE=true
+#SHOW_TUI=false
+#SKIP_PACKAGES=true
+#DRY_RUN=false
+
+# Example 4: Testing before real installation
+#DRY_RUN=true
+#VERBOSE=true
+
+#############################################################################
+# NOTES
+#############################################################################
+
+# Configuration precedence (highest to lowest):
+#   1. Command-line flags (e.g., --dry-run, --skip-packages)
+#   2. Environment variables (e.g., export SKIP_PACKAGES=true)
+#   3. install.conf file (this file)
+#   4. Default values in install.sh
+
+# Boolean values: true, false (lowercase)
+# Paths: Use quotes if they contain spaces
+# Comments: Lines starting with # are ignored
+
+# For machine-specific configurations, create separate config files:
+#   install-laptop.conf
+#   install-desktop.conf
+#   install-server.conf
+#
+# Then use: ./install.sh --config install-laptop.conf

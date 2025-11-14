@@ -1,0 +1,8 @@
+# AUR packages for GUI theming (requires display server)
+# These packages are only needed when GUI environment is installed
+# Install with: yay -S --needed - < packages/aur-gui-themes.txt
+
+# Catppuccin Frappe themes
+catppuccin-gtk-theme-frappe   # GTK application theme
+catppuccin-cursors-frappe     # Mouse cursor theme
+catppuccin-sddm-theme-frappe  # SDDM login manager theme

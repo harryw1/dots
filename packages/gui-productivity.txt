@@ -1,0 +1,48 @@
+# Productivity and office applications (optional GUI)
+# Install with: pacman -S --needed - < packages/gui-productivity.txt
+#
+# TUI alternatives:
+# - LibreOffice → pandoc + nvim for markdown/LaTeX workflows
+# - Calculator → bc, qalc
+# - Email → mutt, neomutt, aerc
+# - Notes → nvim with markdown plugins
+#
+# Install this if you need traditional office software
+
+# Office suite
+libreoffice-fresh
+libreoffice-fresh-en-gb
+
+# Spell checking (for LibreOffice)
+hunspell
+hunspell-en_us
+hunspell-en_gb
+aspell
+aspell-en
+
+# PDF tools
+pdfarranger  # PDF manipulation GUI
+
+# Document conversion (used by LibreOffice and CLI workflows)
+pandoc
+texlive-core
+texlive-latexextra
+
+# Office fonts
+ttf-liberation
+ttf-dejavu
+ttf-carlito
+ttf-caladea
+
+# Calculator
+gnome-calculator
+
+# Note-taking
+obsidian
+
+# Email client
+thunderbird
+
+# Printing (optional - uncomment if needed)
+# cups
+# system-config-printer
