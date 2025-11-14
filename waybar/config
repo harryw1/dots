@@ -126,7 +126,8 @@
       },
       "tooltip": "{}",
       "tooltip-format": "{used}/{total} GiB",
-      "on-click": "kitty -e btop"
+      "on-click": "kitty -e btop",
+      "swap-icon-label": false
     },
 
     "network#info": {
@@ -170,9 +171,6 @@
       "format": "{icon}",
       "show-special": true,
       "special-visible-only": false,
-      "persistent-workspaces": {
-        "*": [1, 2, 3, 4, 5]
-      },
       "format-icons": {
         "1": "•",
         "2": "•",
@@ -237,7 +235,8 @@
 
     "tray": {
       "icon-size": 18,
-      "spacing": 8
+      "spacing": 8,
+      "hide-on-empty": true
     },
 
     "custom/power": {
