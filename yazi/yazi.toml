@@ -42,6 +42,10 @@ view-pdf = [
 extract = [
     { run = 'ouch decompress "$@"', desc = "Extract here" },
 ]
+# Default opener for all other files
+open = [
+    { run = 'xdg-open "$@"', orphan = true, for = "unix" },
+]
 
 [open]
 rules = [
@@ -57,6 +61,9 @@ rules = [
     { mime = "application/x-bzip2", use = "extract" },
     { mime = "application/x-7z-compressed", use = "extract" },
     { mime = "application/x-rar", use = "extract" },
+
+    # Default opener for all other files
+    { mime = "*", use = "open" },
 ]
 
 [tasks]
