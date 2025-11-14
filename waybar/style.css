@@ -56,10 +56,36 @@
 #waybar.main #disk,
 #waybar.main #bluetooth,
 #waybar.main #custom-power {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   background: transparent;
   color: @subtext1;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  min-height: 20px;
+}
+
+/* Hover effects for clickable modules */
+#waybar.main #custom-nvidia:hover,
+#waybar.main #custom-weather:hover,
+#waybar.main #custom-battery:hover,
+#waybar.main #network:hover,
+#waybar.main #battery:hover,
+#waybar.main #backlight:hover,
+#waybar.main #clock:hover,
+#waybar.main #cpu:hover,
+#waybar.main #language:hover,
+#waybar.main #memory.swap:hover,
+#waybar.main #memory.ram:hover,
+#waybar.main #pulseaudio:hover,
+#waybar.main #temperature:hover,
+#waybar.main #disk:hover,
+#waybar.main #bluetooth:hover,
+#waybar.main #custom-power:hover {
+  background: alpha(@surface0, 0.5);
+  color: @text;
 }
 
 /* Subtle separator styling */
@@ -152,7 +178,12 @@
 
 /* Submap - subtle indication */
 #waybar.main #submap {
-  color: alpha(@peach, 0.7);
+  color: alpha(@peach, 0.9);
+  font-weight: 600;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: alpha(@peach, 0.15);
+  border-radius: 6px;
 }
 
 /* Critical states - minimal animation only when necessary */
@@ -168,7 +199,16 @@
 #waybar.main #cpu.critical,
 #waybar.main #temperature.critical {
   color: @red;
+  background: alpha(@red, 0.1);
   animation: subtle-blink 2s ease-in-out infinite;
+}
+
+#waybar.main #custom-nvidia.warning,
+#waybar.main #memory.swap.warning,
+#waybar.main #memory.ram.warning,
+#waybar.main #cpu.warning,
+#waybar.main #temperature.warning {
+  color: @peach;
 }
 
 #waybar.main #workspaces button.urgent,
@@ -183,61 +223,77 @@
   color: alpha(@overlay0, 0.5);
 }
 
-/* Workspaces - glowing dot layout */
+/* Workspaces - improved layout with numbers */
 #waybar.main #workspaces {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
   background: transparent;
 }
 
 #waybar.main #workspaces button {
-  color: alpha(@overlay0, 0.3);
+  color: alpha(@overlay0, 0.5);
   background: transparent;
   border: none;
   border-radius: 0;
-  padding: 0;
+  padding: 0 4px;
   transition: all 0.2s ease;
-  margin: 0 4px;
+  margin: 0 1px;
   min-height: 0;
   font-size: 16pt;
-  text-shadow: 0 0 0px currentColor;
+  font-weight: 400;
+  text-shadow: none;
+  box-shadow: inset 0 -2px transparent;
 }
 
-/* Empty workspace - very subtle dot */
+/* Empty workspace - subtle */
 #waybar.main #workspaces button:not(.active):not(.visible) {
-  color: alpha(@overlay0, 0.25);
-  text-shadow: 0 0 0px currentColor;
+  color: alpha(@overlay0, 0.4);
+  background: transparent;
+  box-shadow: inset 0 -2px transparent;
 }
 
-/* Visible workspace - subtle glow */
+/* Visible workspace - subtle highlight */
 #waybar.main #workspaces button.visible {
-  color: alpha(@text, 0.5);
-  text-shadow: 0 0 4px currentColor;
-}
-
-/* Active workspace - glowing dot */
-#waybar.main #workspaces button.active {
-  color: @sky;
-  text-shadow: 0 0 8px @sky, 0 0 12px alpha(@sky, 0.5);
-  font-weight: 600;
-}
-
-/* Active and visible workspace - enhanced glow */
-#waybar.main #workspaces button.active.visible {
-  color: @sky;
-  text-shadow: 0 0 10px @sky, 0 0 15px alpha(@sky, 0.6);
-}
-
-/* Hover effect - subtle glow */
-#waybar.main #workspaces button:hover {
   color: alpha(@text, 0.7);
-  text-shadow: 0 0 6px currentColor;
+  background: transparent;
+  box-shadow: inset 0 -2px transparent;
 }
 
-/* Special workspace - lavender glow */
+/* Active workspace - underline highlight */
+#waybar.main #workspaces button.active {
+  color: @mauve;
+  background: transparent;
+  font-weight: 500;
+  box-shadow: inset 0 -2px @mauve;
+}
+
+/* Active and visible workspace */
+#waybar.main #workspaces button.active.visible {
+  color: @mauve;
+  background: transparent;
+  box-shadow: inset 0 -2px @mauve;
+}
+
+/* Hover effect - smooth transition */
+#waybar.main #workspaces button:hover {
+  color: alpha(@text, 0.8);
+  background: transparent;
+  box-shadow: inset 0 -2px alpha(@text, 0.3);
+}
+
+/* Urgent workspace - attention */
+#waybar.main #workspaces button.urgent {
+  color: @red;
+  background: transparent;
+  box-shadow: inset 0 -2px @red;
+  animation: subtle-blink 2s ease-in-out infinite;
+}
+
+/* Special workspace - subtle lavender highlight */
 #waybar.main #workspaces button.special.active {
   color: @lavender;
-  text-shadow: 0 0 8px @lavender, 0 0 12px alpha(@lavender, 0.5);
+  background: transparent;
+  box-shadow: inset 0 -2px @lavender;
 }
 
 /* Custom tray icon */
@@ -251,18 +307,30 @@
 /* Tray */
 #waybar.main #tray {
   background: transparent;
-  padding: 0 8px;
+  padding: 0 10px;
+}
+
+#waybar.main #tray > * {
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+#waybar.main #tray > *:hover {
+  background: alpha(@surface0, 0.5);
 }
 
 /* Tooltip - subtle and clean */
 tooltip {
-  background: alpha(@base, 0.95);
-  border: 1px solid alpha(@overlay0, 0.3);
-  border-radius: 6px;
+  background: alpha(@base, 0.98);
+  border: 1px solid alpha(@overlay0, 0.4);
+  border-radius: 8px;
   font-weight: 400;
   font-family: "JetBrains Mono Nerd Font", sans-serif;
+  font-size: 10pt;
   color: @text;
-  padding: 4px 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px alpha(@crust, 0.5);
 }
 
 #waybar.main #tray menu {

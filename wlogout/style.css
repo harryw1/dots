@@ -7,67 +7,113 @@
 }
 
 window {
-    font-family: "FiraCode Nerd Font", sans-serif;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 14pt;
     color: #c6d0f5; /* text */
-    background-color: rgba(48, 52, 70, 0.9); /* base with transparency */
+    background-color: rgba(48, 52, 70, 0.95); /* base with transparency */
 }
 
 button {
     background-color: #414559; /* surface0 */
     color: #babbf1; /* lavender - more visible text */
     outline-style: none;
-    border: none;
-    border-width: 0px;
+    border: 2px solid transparent;
+    border-width: 2px;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 25%;
-    border-radius: 12px;
-    margin: 10px;
-    transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-size: 30%;
+    border-radius: 14px;
+    margin: 12px;
+    padding: 20px;
+    transition: all 0.25s ease-in-out;
+    min-width: 120px;
+    min-height: 120px;
 }
 
 button:hover {
     background-color: #51576d; /* surface1 */
     color: #c6d0f5; /* brighter text on hover */
-    box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
+    border-color: #babbf1; /* lavender border */
+    box-shadow: 0 0 15px rgba(186, 187, 241, 0.4); /* lavender glow */
+    transform: scale(1.05);
 }
 
 button:focus {
     outline: none;
+    border-color: #ca9ee6; /* mauve border for focus */
 }
 
 button:focus:hover {
     background-color: #51576d; /* surface1 - ensure hover works on focused buttons */
     color: #c6d0f5;
-    box-shadow: 0 0 10px rgba(186, 187, 241, 0.3); /* lavender glow */
+    border-color: #babbf1;
+    box-shadow: 0 0 15px rgba(186, 187, 241, 0.4); /* lavender glow */
+    transform: scale(1.05);
 }
 
 button:active {
     background-color: #626880; /* surface2 - only when actively clicking */
-    box-shadow: 0 0 15px rgba(186, 187, 241, 0.5); /* lavender glow */
+    border-color: #ca9ee6; /* mauve border */
+    box-shadow: 0 0 20px rgba(202, 158, 230, 0.6); /* mauve glow */
+    transform: scale(0.98);
 }
 
 #lock {
     background-image: image(url("/usr/share/wlogout/icons/lock.png"));
+    border-color: #8caaee; /* blue */
+}
+
+#lock:hover {
+    border-color: #8caaee;
+    box-shadow: 0 0 15px rgba(140, 170, 238, 0.4);
 }
 
 #logout {
     background-image: image(url("/usr/share/wlogout/icons/logout.png"));
+    border-color: #ca9ee6; /* mauve */
+}
+
+#logout:hover {
+    border-color: #ca9ee6;
+    box-shadow: 0 0 15px rgba(202, 158, 230, 0.4);
 }
 
 #suspend {
     background-image: image(url("/usr/share/wlogout/icons/suspend.png"));
+    border-color: #81c8be; /* teal */
+}
+
+#suspend:hover {
+    border-color: #81c8be;
+    box-shadow: 0 0 15px rgba(129, 200, 190, 0.4);
 }
 
 #hibernate {
     background-image: image(url("/usr/share/wlogout/icons/hibernate.png"));
+    border-color: #99d1db; /* sky */
+}
+
+#hibernate:hover {
+    border-color: #99d1db;
+    box-shadow: 0 0 15px rgba(153, 209, 219, 0.4);
 }
 
 #shutdown {
     background-image: image(url("/usr/share/wlogout/icons/shutdown.png"));
+    border-color: #e78284; /* red */
+}
+
+#shutdown:hover {
+    border-color: #e78284;
+    box-shadow: 0 0 15px rgba(231, 130, 132, 0.4);
 }
 
 #reboot {
     background-image: image(url("/usr/share/wlogout/icons/reboot.png"));
+    border-color: #ef9f76; /* peach */
+}
+
+#reboot:hover {
+    border-color: #ef9f76;
+    box-shadow: 0 0 15px rgba(239, 159, 118, 0.4);
 }

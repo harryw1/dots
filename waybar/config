@@ -4,10 +4,10 @@
     "layer": "top",
     "position": "top",
     "name": "main",
-    "height": 29,
+    "height": 30,
     "reload_style_on_change": true,
 
-    "margin-top": 24,
+    "margin-top": 8,
     "margin-left": 24,
     "margin-right": 24,
 
@@ -34,7 +34,7 @@
         "transition-left-to-right": "true",
         "children-class": "drawer-child"
       },
-      "modules": ["cpu", "memory#ram"]
+      "modules": ["cpu", "memory#ram", "temperature"]
     },
 
     "group/audio": {
@@ -90,8 +90,9 @@
 
     "clock": {
       "interval": 1,
-      "format": " {:%H:%M:%S    %a %d.%m}",
-      "tooltip-format": "{calendar}",
+      "format": "{:%H:%M}",
+      "format-alt": "{:%a %d %b}",
+      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
       "calendar": {
         "weeks-pos": "right",
         "mode": "month",
@@ -103,7 +104,8 @@
           "today": "<span color='#f5e0dc'><b><u>{}</u></b></span>"
         }
       },
-      "on-click": "cal -3"
+      "on-click": "cal -3",
+      "on-click-right": "cal -y"
     },
 
     "cpu": {
@@ -126,8 +128,21 @@
       },
       "tooltip": "{}",
       "tooltip-format": "{used}/{total} GiB",
-      "on-click": "kitty -e btop",
-      "swap-icon-label": false
+      "on-click": "kitty -e btop"
+    },
+
+    "temperature": {
+      "thermal-zone": 0,
+      "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+      "critical-threshold": 80,
+      "format": "󰔏 {temperatureC}°C",
+      "format-critical": "󰔏 {temperatureC}°C",
+      "states": {
+        "warning": 70,
+        "critical": 80
+      },
+      "tooltip": true,
+      "on-click": "kitty -e btop"
     },
 
     "network#info": {
@@ -151,7 +166,7 @@
       "always-on": true,
       "default-submap": "",
       "format": "{}",
-      "format-RESIZE": "{}lol",
+      "format-RESIZE": "󰁌 RESIZE",
       "tooltip": false
     },
 
@@ -169,8 +184,6 @@
       "enable-bar-scroll": true,
       "all-outputs": true,
       "format": "{icon}",
-      "show-special": true,
-      "special-visible-only": false,
       "format-icons": {
         "1": "•",
         "2": "•",
@@ -185,7 +198,19 @@
         "magic": "󰣇",
         "lock": "󰌾",
         "default": "•"
-      }
+      },
+      "show-special": true,
+      "special-visible-only": false,
+      "persistent-workspaces": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": []
+      },
+      "on-click": "activate",
+      "on-scroll-up": "hyprctl dispatch workspace e-1",
+      "on-scroll-down": "hyprctl dispatch workspace e+1"
     },
 
     "pulseaudio#output": {
@@ -229,7 +254,7 @@
       "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
       "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
       "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
-      "on-click": "kitty -e bluetuith",
+      "on-click": "kitty --hold -e bash -c 'bluetuith || read -p \"Press Enter to close...\"'",
       "on-click-right": "bluetoothctl power toggle"
     },
 
