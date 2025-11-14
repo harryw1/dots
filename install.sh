@@ -42,6 +42,7 @@ source "$SCRIPT_DIR/install/config/kitty.sh"
 source "$SCRIPT_DIR/install/config/neovim.sh"
 source "$SCRIPT_DIR/install/config/starship.sh"
 source "$SCRIPT_DIR/install/config/bash.sh"
+source "$SCRIPT_DIR/install/config/zsh.sh"
 source "$SCRIPT_DIR/install/config/misc-configs.sh"
 
 # Source service modules
@@ -255,6 +256,7 @@ deploy_configurations() {
     deploy_neovim_config
     deploy_starship_config
     deploy_bash_config
+    deploy_zsh_config  # Zsh configuration with menu selection
     deploy_kitty_config  # Kitty is a terminal emulator, works in TUI mode
     deploy_misc_configs  # Handles TUI/GUI split internally
 

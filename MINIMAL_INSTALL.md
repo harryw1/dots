@@ -193,10 +193,28 @@ Ctrl-p ?          # Show help
 
 ### 4. Shell Configuration
 
-The installer automatically sets up:
+The installer automatically sets up both **bash** and **zsh** configurations:
+
+**Bash:**
 - **`.bash_profile`**: Created for login shells (TTY logins), sources `.bashrc` and handles kitty auto-launch
 - **`.bashrc`**: Enhanced with TTY optimizations, starship integration, and aliases
-- **Default shell**: Attempts to set bash as default (may require password in non-force mode)
+- **Completion**: bash-completion with colored completions
+
+**Zsh (Recommended):**
+- **`.zprofile`**: Created for login shells (TTY logins), sources `.zshrc` and handles kitty auto-launch
+- **`.zshrc`**: Enhanced with menu selection (scrollable completion lists!), starship integration, and aliases
+- **Completion**: Built-in zsh completion with menu selection (use arrow keys to scroll through completions)
+- **Default shell**: Can be set to zsh (in force mode) or manually with `chsh -s /usr/bin/zsh`
+
+**Key Feature - Zsh Menu Selection:**
+```zsh
+# Press Tab to see completions, then use arrow keys to scroll!
+git <TAB>
+> add          # ← cursor, use ↑↓ to scroll
+  branch
+  checkout
+  ...
+```
 
 **Manual Shell Enhancements** (optional):
 
@@ -237,13 +255,23 @@ source ~/.bashrc
 
 Initialize zoxide for smart directory jumping:
 
+**For bash:**
 ```bash
 echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
 source ~/.bashrc
+```
 
+**For zsh:**
+```zsh
+echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**Usage:**
+```bash
 # Now use 'z' instead of 'cd'
 z ~/dots          # Jump to frequently used directory
-z -             # Jump back
+z -               # Jump back
 ```
 
 ## Essential Keybindings

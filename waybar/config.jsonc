@@ -12,7 +12,6 @@
     "margin-right": 24,
 
     "modules-left": [
-      "tray",
       "hyprland/workspaces",
       "hyprland/submap",
       "hyprland/window"
@@ -64,7 +63,7 @@
         "transition-left-to-right": "true",
         "children-class": "drawer-child"
       },
-      "modules": ["backlight", "battery"]
+      "modules": ["battery" , "backlight"]
     },
 
     "backlight": {
@@ -256,12 +255,6 @@
       "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
       "on-click": "kitty --hold -e bash -c 'bluetuith || read -p \"Press Enter to close...\"'",
       "on-click-right": "bluetoothctl power toggle"
-    },
-
-    "tray": {
-      "icon-size": 18,
-      "spacing": 8,
-      "hide-on-empty": true
     },
 
     "custom/power": {

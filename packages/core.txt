@@ -23,6 +23,9 @@ wireplumber
 # Version control
 git      # Version control system (essential for system management)
 
+# Shell
+zsh      # Z shell with menu selection and enhanced completion
+
 # System utilities (TUI/CLI tools)
 fprintd  # Fingerprint authentication
 btop     # System monitor TUI

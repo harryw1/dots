@@ -67,6 +67,12 @@ deploy_bash_config() {
         log_info "Bash aliases file not found: $DOTFILES_DIR/bash/.bash_aliases"
     fi
 
+    # Deploy bash completion configuration
+    setup_bash_completion
+
+    # Deploy Catppuccin colors
+    setup_catppuccin_colors
+
     # Optimize TTY experience
     optimize_tty_config
 
@@ -170,6 +176,84 @@ BASHPROFILE_EOF
 
     print_success "Created .bash_profile for login shells"
     log_info "Created .bash_profile with kitty auto-launch logic"
+}
+
+# Setup bash completion
+setup_bash_completion() {
+    print_info "Setting up bash completion..."
+
+    local completion_file="$DOTFILES_DIR/bash/bash_completion.sh"
+    local target_file="$HOME/.config/bash/bash_completion.sh"
+
+    if [ -f "$completion_file" ]; then
+        # Ensure target directory exists
+        mkdir -p "$HOME/.config/bash"
+
+        # Copy or symlink the completion file
+        if [ -L "$target_file" ] || [ -f "$target_file" ]; then
+            print_info "Bash completion already configured"
+        else
+            cp "$completion_file" "$target_file"
+            chmod +x "$target_file"
+            print_success "Installed bash completion configuration"
+        fi
+
+        # Add source command to .bashrc if needed
+        if [ -f "$HOME/.bashrc" ]; then
+            if ! grep -q 'bash_completion.sh' "$HOME/.bashrc"; then
+                # Add after aliases if they exist, otherwise after starship
+                if grep -q '\.bash_aliases' "$HOME/.bashrc"; then
+                    sed -i '/\.bash_aliases/a\\n# Load enhanced bash completion\nif [ -f ~/.config/bash/bash_completion.sh ]; then\n    . ~/.config/bash/bash_completion.sh\nfi' "$HOME/.bashrc"
+                else
+                    sed -i '/starship init bash/a\\n# Load enhanced bash completion\nif [ -f ~/.config/bash/bash_completion.sh ]; then\n    . ~/.config/bash/bash_completion.sh\nfi' "$HOME/.bashrc"
+                fi
+                print_success "Added bash completion to .bashrc"
+            else
+                print_info "Bash completion already sourced in .bashrc"
+            fi
+        fi
+    else
+        print_info "Bash completion file not found, skipping"
+    fi
+}
+
+# Setup Catppuccin colors
+setup_catppuccin_colors() {
+    print_info "Setting up Catppuccin Frappe colors..."
+
+    local colors_file="$DOTFILES_DIR/bash/catppuccin_colors.sh"
+    local target_file="$HOME/.config/bash/catppuccin_colors.sh"
+
+    if [ -f "$colors_file" ]; then
+        # Ensure target directory exists
+        mkdir -p "$HOME/.config/bash"
+
+        # Copy or symlink the colors file
+        if [ -L "$target_file" ] || [ -f "$target_file" ]; then
+            print_info "Catppuccin colors already configured"
+        else
+            cp "$colors_file" "$target_file"
+            chmod +x "$target_file"
+            print_success "Installed Catppuccin Frappe colors"
+        fi
+
+        # Add source command to .bashrc if needed
+        if [ -f "$HOME/.bashrc" ]; then
+            if ! grep -q 'catppuccin_colors.sh' "$HOME/.bashrc"; then
+                # Add before aliases so colors are available for aliases
+                if grep -q '\.bash_aliases' "$HOME/.bashrc"; then
+                    sed -i '/\.bash_aliases/i\\n# Load Catppuccin Frappe colors for ls and terminal\nif [ -f ~/.config/bash/catppuccin_colors.sh ]; then\n    . ~/.config/bash/catppuccin_colors.sh\nfi' "$HOME/.bashrc"
+                else
+                    sed -i '/starship init bash/a\\n# Load Catppuccin Frappe colors for ls and terminal\nif [ -f ~/.config/bash/catppuccin_colors.sh ]; then\n    . ~/.config/bash/catppuccin_colors.sh\nfi' "$HOME/.bashrc"
+                fi
+                print_success "Added Catppuccin colors to .bashrc"
+            else
+                print_info "Catppuccin colors already sourced in .bashrc"
+            fi
+        fi
+    else
+        print_info "Catppuccin colors file not found, skipping"
+    fi
 }
 
 # Optimize TTY experience
