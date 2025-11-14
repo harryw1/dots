@@ -6,7 +6,7 @@
 use = ""
 
 # UI Elements
-[mgr]
+[manager]
 cwd = { fg = "#8caaee", bold = true }  # blue
 
 # Hovered

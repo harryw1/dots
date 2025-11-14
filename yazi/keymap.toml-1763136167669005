@@ -1,7 +1,7 @@
 # Yazi Keymap Configuration
 # https://yazi-rs.github.io/docs/configuration/keymap
 
-[mgr]
+[manager]
 prepend_keymap = [
     # Navigation (vim-style, already default)
     { on = [ "h" ], run = "leave", desc = "Go back to parent directory" },

@@ -2,9 +2,9 @@
 # Modern terminal file manager
 # https://yazi-rs.github.io/docs/configuration/yazi
 
-[mgr]
+[manager]
 ratio = [1, 4, 3]
-sort_by = "mtime"
+sort_by = "modified"
 sort_sensitive = false
 sort_reverse = true
 sort_dir_first = true
