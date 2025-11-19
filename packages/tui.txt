@@ -80,3 +80,4 @@ unarchiver        # Universal archive extractor
 
 # JSON/Data Tools (for yazi previews)
 jq                # JSON processor
+gum               # Charm's TUI tool
