@@ -27,7 +27,8 @@ run_migrations() {
     fi
 
     # Get list of migration files (sorted by timestamp in filename)
-    local migrations=($(find "$MIGRATIONS_SOURCE_DIR" -name "*.sh" -type f | sort))
+    local migrations
+    mapfile -t migrations < <(find "$MIGRATIONS_SOURCE_DIR" -name "*.sh" -type f | sort)
 
     if [ ${#migrations[@]} -eq 0 ]; then
         print_info "No migrations to run"
@@ -43,7 +44,8 @@ run_migrations() {
     local skipped_count=0
 
     for migration_file in "${migrations[@]}"; do
-        local migration_name=$(basename "$migration_file" .sh)
+        local migration_name
+        migration_name=$(basename "$migration_file" .sh)
 
         # Check if migration has already been applied
         if state_migration_applied "$migration_name"; then
@@ -56,6 +58,7 @@ run_migrations() {
         log_info "Executing migration: $migration_name"
 
         # Source and execute the migration
+        # shellcheck source=/dev/null
         if source "$migration_file"; then
             state_mark_migration_complete "$migration_name"
             print_success "Migration completed: $migration_name"

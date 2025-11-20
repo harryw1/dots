@@ -94,7 +94,8 @@ draw_box_line() {
     local color=${3:-$FRAPPE_TEXT}
 
     # Strip ANSI codes to get actual visible text length
-    local visible_text=$(strip_ansi "$text")
+    local visible_text
+    visible_text=$(strip_ansi "$text")
     local text_length=${#visible_text}
 
     # Calculate padding: width - text_length - 4 (for "║ " and " ║" = 4 chars total)

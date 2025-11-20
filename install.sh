@@ -472,9 +472,11 @@ done
 # This must happen BEFORE parsing other CLI flags so CLI flags can override config
 if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
     print_info "Loading configuration from: $CONFIG_FILE"
+    # shellcheck source=/dev/null
     source "$CONFIG_FILE"
 elif [ -f "$SCRIPT_DIR/install.conf" ]; then
     print_info "Loading configuration from: install.conf"
+    # shellcheck source=install.conf.example
     source "$SCRIPT_DIR/install.conf"
 fi
 
@@ -523,6 +525,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             DRY_RUN=true
+            export DRY_RUN  # Exporting so it's marked as used by ShellCheck
             shift
             ;;
         --resume)

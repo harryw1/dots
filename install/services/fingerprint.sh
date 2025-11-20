@@ -20,7 +20,8 @@ setup_fingerprint_service() {
 
     if [ "$DRY_RUN" = true ]; then
         print_info "[DRY RUN] Would setup fingerprint authentication"
-        log_phase_skip "$phase_name" "Dry run"
+        state_mark_phase_complete "$phase_name"
+        log_phase_end "$phase_name" "success (dry-run)"
         return 0
     fi
 
