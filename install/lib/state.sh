@@ -191,7 +191,8 @@ state_get_current_phase() {
     jq -r '.current_phase' "$STATE_FILE"
 }
 
-# Check if installation can be resumed
+# Check if installation can be resumed.
+state_can_resume() {
     local status
     status=$(state_get_status)
 }
