@@ -38,10 +38,14 @@ This directory contains package lists organized by category for easy installatio
   - Productivity (taskwarrior, newsboat)
   - Modern CLI replacements (bat, eza, zoxide, dust, procs)
 
-- **`aur.txt`** - Core AUR packages
-  - Catppuccin themes
-  - TUI tools (pacseek, bluetuith)
-  - CLI utilities (quickwall)
+- **`aur-tui.txt`** - TUI AUR packages
+  - System utilities (pacseek, bluetuith)
+  - Wallpaper CLI (quickwall)
+
+- **`aur-gui-themes.txt`** - GUI Themes (AUR)
+  - Catppuccin GTK themes
+  - Catppuccin SDDM themes
+  - Catppuccin cursors
 
 ### GUI Packages (Optional - Install with --gui or --full)
 
@@ -104,10 +108,10 @@ sudo pacman -S --needed - < packages/theming.txt
 # Install an AUR helper first (if you don't have one)
 git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
 
-# Then install AUR packages
-yay -S --needed - < packages/aur.txt
+# Then install AUR packages (TUI)
+yay -S --needed - < packages/aur-tui.txt
 # or with paru
-paru -S --needed - < packages/aur.txt
+paru -S --needed - < packages/aur-tui.txt
 ```
 
 ### Using pacseek for package management

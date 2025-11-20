@@ -36,7 +36,7 @@ sudo pacman -S papirus-icon-theme
 yay -S catppuccin-gtk-theme-frappe catppuccin-cursors-frappe
 ```
 
-These are included in the `packages/aur.txt` and installed automatically by the install script.
+These are included in the `packages/aur-gui-themes.txt` and installed automatically by the install script.
 
 ## Customization
 

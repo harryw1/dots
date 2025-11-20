@@ -241,6 +241,106 @@ if command_exists systemctl; then
 fi
 
 ################################################################################
+# PERFORMANCE AND AUTHENTICATION
+################################################################################
+
+print_header "PERFORMANCE AND AUTHENTICATION"
+print_info "Checking for performance bottlenecks and authentication issues..."
+
+{
+    echo ""
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo "PERFORMANCE DIAGNOSTICS"
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo ""
+
+    # 1. Fingerprint Authentication
+    echo "--- Fingerprint Authentication ---"
+    if systemctl is-active --quiet fprintd.service; then
+        echo "✓ fprintd service is running"
+    else
+        echo "⚠ fprintd service is not running (may cause delays if waiting for fingerprint)"
+    fi
+
+    if command_exists fprintd-list; then
+        ENROLLED=$(fprintd-list "$USER" 2>/dev/null | wc -l)
+        if [ "$ENROLLED" -gt 0 ]; then
+            echo "✓ Fingerprints enrolled: $ENROLLED"
+        else
+            echo "⚠ No fingerprints enrolled - authentication will always fall back to password"
+        fi
+    else
+        echo "⚠ fprintd-list not found"
+    fi
+
+    if [ -f /etc/pam.d/system-local-login ]; then
+        if grep -q "pam_fprintd.so" /etc/pam.d/system-local-login; then
+            echo "ℹ Fingerprint PAM module configured in system-local-login"
+            TIMEOUT=$(grep -oP "timeout=\K[0-9]+" /etc/pam.d/system-local-login || echo "default (30s)")
+            echo "  Timeout: ${TIMEOUT}s"
+        fi
+    fi
+
+    # 2. PAM Network Lookups
+    echo ""
+    echo "--- PAM Network Lookups ---"
+    if [ -f /etc/nsswitch.conf ]; then
+        if grep -qE "^(passwd|group|shadow):.*ldap|nis|winbind" /etc/nsswitch.conf; then
+            echo "⚠ Network-based user lookups configured (may cause delays)"
+        else
+            echo "✓ No network-based user lookups configured"
+        fi
+    fi
+
+    # 3. Autostart Analysis
+    echo ""
+    echo "--- Autostart Analysis ---"
+    AUTOSTART_FILE="$HOME/.config/hyprland/conf/autostart.conf"
+    if [ -f "$AUTOSTART_FILE" ]; then
+        EXEC_COUNT=$(grep -c "^exec-once" "$AUTOSTART_FILE" || echo "0")
+        echo "ℹ Autostart commands found: $EXEC_COUNT"
+
+        if grep -q "waypaper --restore" "$AUTOSTART_FILE"; then
+            echo "⚠ waypaper --restore may be slow (checking filesystem/network)"
+        fi
+
+        if grep -q "generate-waybar-css.sh" "$AUTOSTART_FILE"; then
+            SCRIPT_PATH=$(grep "generate-waybar-css.sh" "$AUTOSTART_FILE" | grep -oP "exec-once = \K[^ ]+")
+            if [ -f "$SCRIPT_PATH" ]; then
+                echo "✓ Waybar CSS generation script exists"
+            else
+                echo "✗ Waybar CSS generation script not found: $SCRIPT_PATH"
+            fi
+        fi
+
+        GSETTINGS_COUNT=$(grep -c "gsettings set" "$AUTOSTART_FILE" || echo "0")
+        if [ "$GSETTINGS_COUNT" -gt 5 ]; then
+            echo "⚠ Many gsettings commands ($GSETTINGS_COUNT) - consider batching"
+        fi
+    else
+        echo "✗ Autostart config not found: $AUTOSTART_FILE"
+    fi
+
+    # 4. Filesystem Mounts
+    echo ""
+    echo "--- Filesystem Mounts ---"
+    NETWORK_FS=$(mount | grep -E "type nfs|type cifs" || true)
+    FUSE_NETWORK=$(mount | grep -E "type fuse" | grep -vE "fusectl|portal|gvfsd" || true)
+    if [ -n "$NETWORK_FS" ] || [ -n "$FUSE_NETWORK" ]; then
+        echo "⚠ Network filesystems mounted - may cause delays"
+        [ -n "$NETWORK_FS" ] && echo "$NETWORK_FS"
+        [ -n "$FUSE_NETWORK" ] && echo "$FUSE_NETWORK"
+    else
+        echo "✓ No network filesystems detected (fusectl/portal are normal)"
+    fi
+
+} >> "$OUTPUT_FILE"
+
+if command_exists systemd-analyze; then
+    add_section "Systemd User Services Blame" "systemd-analyze --user blame 2>/dev/null | head -10 || echo 'Unable to analyze user services'"
+fi
+
+################################################################################
 # CONFIGURATION VALIDATION
 ################################################################################
 
@@ -344,6 +444,9 @@ if command_exists journalctl; then
     print_info "Collecting journal logs..."
     add_section "User Journal Errors (last 100)" "journalctl --user --priority=err -n 100 --no-pager || echo 'No errors found'"
     add_section "System Journal Errors (last 100)" "sudo journalctl --priority=err -n 100 --no-pager 2>/dev/null || echo 'Cannot access system journal'"
+
+    # Login-specific errors (from diagnose-login-delay.sh)
+    add_section "Recent Login/Session Issues (last 1 hour)" "journalctl --since '1 hour ago' -p err --no-pager 2>/dev/null | grep -iE 'sddm|login|session|pam' | tail -20 || echo 'No recent login-related errors'"
 fi
 
 # Waybar specific logs
