@@ -68,7 +68,7 @@ jobs:
       - name: Update system and install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq base-devel sudo
+          pacman -S --noconfirm git jq base-devel sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh bootstrap.sh
@@ -154,7 +154,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo reflector
+          pacman -S --noconfirm git jq sudo reflector gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -212,7 +212,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -256,7 +256,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -295,7 +295,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo curl
+          pacman -S --noconfirm git jq sudo curl gum
 
       - name: Test bootstrap help
         run: |
@@ -392,7 +392,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -483,7 +483,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -565,7 +565,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -640,7 +640,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh
@@ -712,7 +712,7 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git jq sudo
+          pacman -S --noconfirm git jq sudo gum
 
       - name: Make scripts executable
         run: chmod +x install.sh

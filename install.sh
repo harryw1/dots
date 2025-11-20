@@ -10,6 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source all library modules (must be done in order)
 source "$SCRIPT_DIR/install/lib/colors.sh"
+source "$SCRIPT_DIR/install/lib/gum_theme.sh"
 source "$SCRIPT_DIR/install/lib/tui.sh"
 source "$SCRIPT_DIR/install/lib/utils.sh"
 source "$SCRIPT_DIR/install/lib/logging.sh"
@@ -128,58 +129,40 @@ prompt_gui_selection() {
     print_step 1 2 "GUI Component Selection"
     echo ""
 
-    # Prompt 1: Install Hyprland GUI environment?
     print_info "This installer defaults to a TUI-only system (headless compatible)."
     print_info "GUI components (Hyprland, Waybar, etc.) are optional."
     echo ""
 
-    read -p "${FRAPPE_BLUE}Install Hyprland GUI environment?${NC} [Y/n] " -n 1 -r GUI_RESPONSE || true
-    echo ""
+    # Use gum choose for selection
+    local CHOICES
+    CHOICES=$(gum choose --no-limit --header "Select Components to Install" "Hyprland GUI (Waybar, etc)" "Web Browser (Firefox)" "Productivity Suite (LibreOffice)" "Communication Apps (Discord, Slack)")
 
-    if [[ ! $GUI_RESPONSE =~ ^[Nn]$ ]]; then
+    if [[ "$CHOICES" == *"Hyprland GUI"* ]]; then
         INSTALL_GUI_ESSENTIAL=true
         INSTALL_MODE="minimal-gui"
-        print_success "Will install essential GUI components"
-        echo ""
-
-        # Prompt 2: Web browser
-        read -p "${FRAPPE_BLUE}Install web browser (Firefox)?${NC} [y/N] " -n 1 -r BROWSER_RESPONSE || true
-        echo ""
-        if [[ $BROWSER_RESPONSE =~ ^[Yy]$ ]]; then
-            INSTALL_GUI_BROWSERS=true
-            print_success "Will install Firefox"
-        else
-            print_info "Skipping web browser (TUI alternatives: lynx, w3m)"
-        fi
-        echo ""
-
-        # Prompt 3: Productivity suite
-        read -p "${FRAPPE_BLUE}Install productivity suite (LibreOffice, Thunderbird)?${NC} [y/N] " -n 1 -r PRODUCTIVITY_RESPONSE || true
-        echo ""
-        if [[ $PRODUCTIVITY_RESPONSE =~ ^[Yy]$ ]]; then
-            INSTALL_GUI_PRODUCTIVITY=true
-            print_success "Will install productivity applications"
-        else
-            print_info "Skipping productivity suite (TUI alternatives available)"
-        fi
-        echo ""
-
-        # Prompt 4: Communication apps
-        read -p "${FRAPPE_BLUE}Install communication apps (Discord, Slack, Zoom)?${NC} [y/N] " -n 1 -r COMM_RESPONSE || true
-        echo ""
-        if [[ $COMM_RESPONSE =~ ^[Yy]$ ]]; then
-            INSTALL_GUI_COMMUNICATION=true
-            print_success "Will install communication applications"
-        else
-            print_info "Skipping communication apps"
-        fi
-        echo ""
-    else
-        INSTALL_MODE="tui-only"
-        print_info "Headless/TUI-only mode selected"
-        print_info "No GUI components will be installed"
-        echo ""
+        print_success "Selected: Essential GUI components"
     fi
+
+    if [[ "$CHOICES" == *"Web Browser"* ]]; then
+        INSTALL_GUI_BROWSERS=true
+        print_success "Selected: Web Browser"
+    fi
+
+    if [[ "$CHOICES" == *"Productivity Suite"* ]]; then
+        INSTALL_GUI_PRODUCTIVITY=true
+        print_success "Selected: Productivity Suite"
+    fi
+
+    if [[ "$CHOICES" == *"Communication Apps"* ]]; then
+        INSTALL_GUI_COMMUNICATION=true
+        print_success "Selected: Communication Apps"
+    fi
+
+    if [ "$INSTALL_GUI_ESSENTIAL" = false ] && [ "$INSTALL_GUI_BROWSERS" = false ] && [ "$INSTALL_GUI_PRODUCTIVITY" = false ] && [ "$INSTALL_GUI_COMMUNICATION" = false ]; then
+        INSTALL_MODE="tui-only"
+        print_info "No GUI components selected (TUI-only mode)"
+    fi
+    echo ""
 }
 
 #############################################################################
@@ -389,9 +372,7 @@ check_system() {
             if [ "$FORCE" = true ]; then
                 print_info "Continuing anyway (--force mode)"
             else
-                read -p "Continue anyway? (y/N) " -n 1 -r || true
-                echo
-                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                if ! gum confirm "hyprctl not found. Continue anyway?"; then
                     print_info "Installation cancelled"
                     exit 0
                 fi
@@ -565,8 +546,8 @@ logging_init
 # Show welcome screen
 if [ "$SHOW_TUI" = true ] && [ "$RESUME" = false ]; then
     show_welcome
-    echo -n "Press Enter to continue or Ctrl+C to cancel..."
-    read -r || true  # Don't fail if stdin closes (e.g., piped input)
+    # Gum style prompt
+    gum confirm "Ready to start installation?" || exit 0
     echo ""
 fi
 
