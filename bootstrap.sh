@@ -234,6 +234,42 @@ run_installation() {
   ./install.sh "$@"
 }
 
+# Install symlinks for convenience scripts
+install_symlinks() {
+  local target_dir="$HOME/.local/bin"
+  print_info "Installing convenience scripts to $target_dir..."
+
+  # Create target directory if it doesn't exist
+  if [ ! -d "$target_dir" ]; then
+    mkdir -p "$target_dir"
+    print_info "Created directory: $target_dir"
+  fi
+
+  # Define scripts to symlink and their new names
+  declare -A scripts=(
+    ["manage.sh"]="dots-manage"
+    ["install.sh"]="dots-install"
+    ["update.sh"]="dots-update"
+    ["uninstall.sh"]="dots-uninstall"
+  )
+
+  for script in "${!scripts[@]}"; do
+    local source_file="$INSTALL_DIR/$script"
+    local target_link="$target_dir/${scripts[$script]}"
+
+    if [ -f "$source_file" ]; then
+      # Make source executable
+      chmod +x "$source_file"
+
+      # Create or update symlink
+      ln -sf "$source_file" "$target_link"
+      print_success "Linked $target_link -> $source_file"
+    else
+      print_warning "Source script not found: $source_file"
+    fi
+  done
+}
+
 # Show usage information
 show_usage() {
   cat <<'EOF'
@@ -321,6 +357,7 @@ main() {
   clone_repository
   download_config
   run_installation "$@"
+  install_symlinks
 
   # Check if zsh was installed and remind about shell change
   if command -v zsh &>/dev/null; then
