@@ -35,8 +35,17 @@ deploy_neovim_config() {
         return 0
     fi
     
-    # Symlink the entire nvim directory
-    create_symlink "$nvim_config_src" "$nvim_config_dest" "Neovim/LazyVim"
+    print_info "Ensuring Neovim config directory exists at $nvim_config_dest"
+    mkdir -p "$nvim_config_dest" || log_error "Failed to create directory $nvim_config_dest"
+
+    print_info "Copying Neovim configuration from $nvim_config_src to $nvim_config_dest"
+    # Use rsync to intelligently copy and update files, excluding .git if it exists in src
+    # -a: archive mode (preserves permissions, timestamps, etc.)
+    # -v: verbose
+    # --delete: delete extraneous files from dest dirs (not from main dest, only subdirs)
+    # --exclude='.git': don't copy .git directories
+    rsync -av --delete --exclude='.git' "$nvim_config_src/" "$nvim_config_dest/" || \
+        log_error "Failed to copy Neovim configuration from $nvim_config_src to $nvim_config_dest"
 
     print_success "LazyVim setup complete"
     log_success "LazyVim setup complete"

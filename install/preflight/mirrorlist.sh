@@ -11,7 +11,8 @@ check_mirrorlist() {
     log_info "Checking mirrorlist configuration"
 
     # Count active mirrors
-    local mirror_count=$(grep -c "^Server" /etc/pacman.d/mirrorlist 2>/dev/null || echo "0")
+    local mirror_count
+    mirror_count=$(grep -c "^Server" /etc/pacman.d/mirrorlist 2>/dev/null || echo "0")
 
     if [ "$mirror_count" -lt 3 ]; then
         print_warning "Only $mirror_count mirrors found in mirrorlist"

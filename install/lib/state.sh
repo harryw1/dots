@@ -67,7 +67,8 @@ state_init() {
 }
 EOF
         # Set install date
-        local install_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        local install_date
+        install_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         jq ".install_date = \"$install_date\" | .last_update = \"$install_date\"" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
 }
@@ -112,7 +113,8 @@ state_save() {
 # Example:
 #   state_update_timestamp
 state_update_timestamp() {
-    local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    local timestamp
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     jq ".last_update = \"$timestamp\"" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
 }
 
@@ -134,7 +136,8 @@ state_mark_phase_complete() {
     local phase="$1"
 
     # Check if already in completed_phases
-    local already_complete=$(jq -r ".completed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
+    local already_complete
+    already_complete=$(jq -r ".completed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
     if [ -z "$already_complete" ]; then
         jq ".completed_phases += [\"$phase\"]" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
@@ -152,7 +155,8 @@ state_mark_phase_failed() {
     local phase="$1"
 
     # Add to failed_phases if not already there
-    local already_failed=$(jq -r ".failed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
+    local already_failed
+    already_failed=$(jq -r ".failed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
     if [ -z "$already_failed" ]; then
         jq ".failed_phases += [\"$phase\"]" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
@@ -172,7 +176,8 @@ state_set_current_phase() {
 # Check if a phase is completed
 state_phase_completed() {
     local phase="$1"
-    local is_complete=$(jq -r ".completed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
+    local is_complete
+    is_complete=$(jq -r ".completed_phases[] | select(. == \"$phase\")" "$STATE_FILE")
     [ -n "$is_complete" ]
 }
 
@@ -187,9 +192,8 @@ state_get_current_phase() {
 }
 
 # Check if installation can be resumed
-state_can_resume() {
-    local status=$(state_get_status)
-    [ "$status" = "failed" ] || [ "$status" = "in_progress" ]
+    local status
+    status=$(state_get_status)
 }
 
 # Get list of completed phases
@@ -227,7 +231,8 @@ state_mark_config_deployed() {
     local config="$1"
 
     # Add to configs_deployed if not already there
-    local already_deployed=$(jq -r ".configs_deployed[] | select(. == \"$config\")" "$STATE_FILE")
+    local already_deployed
+    already_deployed=$(jq -r ".configs_deployed[] | select(. == \"$config\")" "$STATE_FILE")
     if [ -z "$already_deployed" ]; then
         jq ".configs_deployed += [\"$config\"]" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
@@ -238,7 +243,8 @@ state_mark_service_enabled() {
     local service="$1"
 
     # Add to services_enabled if not already there
-    local already_enabled=$(jq -r ".services_enabled[] | select(. == \"$service\")" "$STATE_FILE")
+    local already_enabled
+    already_enabled=$(jq -r ".services_enabled[] | select(. == \"$service\")" "$STATE_FILE")
     if [ -z "$already_enabled" ]; then
         jq ".services_enabled += [\"$service\"]" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
@@ -270,7 +276,8 @@ state_mark_migration_complete() {
     local migration="$1"
 
     # Add to migrations_applied if not already there
-    local already_applied=$(jq -r ".migrations_applied[] | select(. == \"$migration\")" "$STATE_FILE")
+    local already_applied
+    already_applied=$(jq -r ".migrations_applied[] | select(. == \"$migration\")" "$STATE_FILE")
     if [ -z "$already_applied" ]; then
         jq ".migrations_applied += [\"$migration\"]" "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
     fi
@@ -284,7 +291,8 @@ state_migration_applied() {
     local migration="$1"
 
     # Check in state file
-    local applied=$(jq -r ".migrations_applied[] | select(. == \"$migration\")" "$STATE_FILE")
+    local applied
+    applied=$(jq -r ".migrations_applied[] | select(. == \"$migration\")" "$STATE_FILE")
     [ -n "$applied" ] || [ -f "$MIGRATIONS_DIR/$migration" ]
 }
 
@@ -294,8 +302,10 @@ state_print_summary() {
     print_info "Installation State Summary"
     echo ""
 
-    local status=$(state_get_status)
-    local current_phase=$(state_get_current_phase)
+    local status
+    status=$(state_get_status)
+    local current_phase
+    current_phase=$(state_get_current_phase)
 
     echo "  Status: $status"
     if [ -n "$current_phase" ]; then
@@ -304,7 +314,8 @@ state_print_summary() {
 
     echo ""
     echo "  Completed Phases:"
-    local completed=$(jq -r '.completed_phases[]' "$STATE_FILE" 2>/dev/null)
+    local completed
+    completed=$(jq -r '.completed_phases[]' "$STATE_FILE" 2>/dev/null)
     if [ -n "$completed" ]; then
         echo "$completed" | while read -r phase; do
             echo "    ✓ $phase"
@@ -314,7 +325,8 @@ state_print_summary() {
     fi
 
     echo ""
-    local failed=$(jq -r '.failed_phases[]' "$STATE_FILE" 2>/dev/null)
+    local failed
+    failed=$(jq -r '.failed_phases[]' "$STATE_FILE" 2>/dev/null)
     if [ -n "$failed" ]; then
         echo "  Failed Phases:"
         echo "$failed" | while read -r phase; do
