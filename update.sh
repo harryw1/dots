@@ -38,152 +38,28 @@ FRAPPE_BASE='\033[38;2;48;52;70m'
 # Terminal width for formatting
 TERM_WIDTH=$(tput cols 2>/dev/null || echo 80)
 
-# TUI Helper Functions
-# Function to strip ANSI codes for length calculation
-strip_ansi() {
-    echo -e "$1" | sed 's/\x1b\[[0-9;]*m//g'
-}
+# Source theme configuration if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh"
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh" ]; then
+    # Fallback for installed location
+    source "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh"
+fi
 
-draw_box() {
-    local title="$1"
-    local width=${2:-60}
-
-    # Top border
-    echo -en "${FRAPPE_LAVENDER}"
-    echo -n "╔"
-    printf '═%.0s' $(seq 1 $((width - 2)))
-    echo -e "╗${NC}"
-
-    # Title (if provided)
-    if [ -n "$title" ]; then
-        # Strip ANSI codes to calculate visible length
-        local visible_title=$(strip_ansi "$title")
-        local title_len=${#visible_title}
-        # Account for: ║ (1) + title + ║ (1) = title_len + 2
-        local padding=$(( (width - title_len - 2) / 2 ))
-        local right_padding=$(( width - title_len - padding - 2 ))
-
-        echo -en "${FRAPPE_LAVENDER}║${NC}"
-        printf ' %.0s' $(seq 1 $padding)
-        echo -en "${BOLD}${FRAPPE_MAUVE}${title}${NC}"
-        printf ' %.0s' $(seq 1 $right_padding)
-        echo -e "${FRAPPE_LAVENDER}║${NC}"
-
-        # Separator
-        echo -en "${FRAPPE_LAVENDER}"
-        echo -n "╠"
-        printf '═%.0s' $(seq 1 $((width - 2)))
-        echo -e "╣${NC}"
-    fi
-}
-
-draw_box_line() {
-    local text="$1"
-    local width=${2:-60}
-    local color=${3:-$FRAPPE_TEXT}
-
-    # Strip ANSI codes to get actual visible text length
-    local visible_text=$(strip_ansi "$text")
-    local text_length=${#visible_text}
-
-    # Calculate padding: width - text_length - 4 (for "║ " and " ║" = 4 chars total)
-    local padding=$((width - text_length - 4))
-
-    # Print the line
-    echo -en "${FRAPPE_LAVENDER}║${NC} "
-    echo -en "${text}"
-    if [ $padding -gt 0 ]; then
-        printf ' %.0s' $(seq 1 $padding)
-    fi
-    echo -e " ${FRAPPE_LAVENDER}║${NC}"
-}
-
-draw_box_bottom() {
-    local width=${1:-60}
-    echo -en "${FRAPPE_LAVENDER}"
-    echo -n "╚"
-    printf '═%.0s' $(seq 1 $((width - 2)))
-    echo -e "╝${NC}"
-}
-
-draw_progress_bar() {
-    local current=$1
-    local total=$2
-    local width=40
-    local percent=$((current * 100 / total))
-    local filled=$((current * width / total))
-    local empty=$((width - filled))
-
-    echo -en "${FRAPPE_LAVENDER}["
-    echo -en "${FRAPPE_GREEN}"
-    printf '█%.0s' $(seq 1 $filled)
-    echo -en "${FRAPPE_BASE}"
-    printf '░%.0s' $(seq 1 $empty)
-    echo -en "${FRAPPE_LAVENDER}]${NC} ${FRAPPE_YELLOW}${percent}%%${NC}"
-}
-
-print_step() {
-    local step_num=$1
-    local total_steps=$2
-    local description="$3"
-
-    echo ""
-    echo -e "${FRAPPE_SAPPHIRE}╭─${NC} ${BOLD}${FRAPPE_MAUVE}Step ${step_num}/${total_steps}${NC} ${FRAPPE_LAVENDER}─${NC}"
-    echo -e "${FRAPPE_SAPPHIRE}│${NC}  ${FRAPPE_TEXT}${description}${NC}"
-    echo -e "${FRAPPE_SAPPHIRE}╰─${NC}"
-    echo ""
-}
-
-show_welcome() {
-    clear
-
-    # Calculate box width based on ASCII art
-    local ascii_width=69
-    local box_width=$((ascii_width + 17))
-
-    echo ""
-    draw_box "System Update & Sync" $box_width
-    draw_box_line "" $box_width
-
-    # UPDATE ASCII art
-    draw_box_line "${FRAPPE_MAUVE}  ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗${NC}" $box_width
-    draw_box_line "${FRAPPE_MAUVE}  ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝${NC}" $box_width
-    draw_box_line "${FRAPPE_BLUE}  ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗${NC}" $box_width
-    draw_box_line "${FRAPPE_BLUE}  ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝${NC}" $box_width
-    draw_box_line "${FRAPPE_SAPPHIRE}  ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗${NC}" $box_width
-    draw_box_line "${FRAPPE_SAPPHIRE}   ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝${NC}" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "Catppuccin Frappe Theme • Keep Your System Fresh" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "${FRAPPE_PEACH}This updater will:${NC}" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Sync package databases" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Update official repository packages (pacman)" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Update AUR packages (yay/paru)" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Clean package cache (optional)" $box_width
-    draw_box_line "  ${FRAPPE_GREEN}✓${NC} Remove orphaned packages (optional)" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "${FRAPPE_YELLOW}⚠  ${FRAPPE_TEXT}Requires Arch Linux${NC}" $box_width
-    draw_box_line "" $box_width
-    draw_box_bottom $box_width
-    echo ""
-}
-
-# Print functions (updated with TUI colors)
-print_info() {
-    echo -e "${FRAPPE_BLUE}●${NC} $1"
-}
-
-print_success() {
-    echo -e "${FRAPPE_GREEN}✓${NC} $1"
-}
-
-print_warning() {
-    echo -e "${FRAPPE_YELLOW}⚠${NC} $1"
-}
-
-print_error() {
-    echo -e "${FRAPPE_RED}✗${NC} $1"
-}
+# Use the shared TUI functions if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/tui.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/tui.sh"
+else
+    # Basic Fallback if TUI lib not found (should not happen in repo)
+    print_info() { echo "● $1"; }
+    print_success() { echo "✓ $1"; }
+    print_warning() { echo "⚠ $1"; }
+    print_error() { echo "✗ $1"; }
+    print_step() { echo "Step $1/$2: $3"; }
+    draw_box() { gum style --border double --padding "1 2" "$1"; }
+    draw_box_line() { echo "$1"; }
+    draw_box_bottom() { echo ""; }
+fi
 
 # Set up error trap
 trap 'echo ""; print_error "Update failed at line $LINENO"; echo "Command: $BASH_COMMAND"; exit 1' ERR
@@ -203,12 +79,7 @@ update_mirrorlist() {
     fi
 
     echo ""
-    echo -e "${FRAPPE_TEXT}Would you like to update your mirrorlist for faster downloads?${NC}"
-    echo -e "${FRAPPE_SUBTEXT1}(This will fetch the fastest mirrors using reflector)${NC}"
-    read -p "Update mirrorlist? (y/N) " -n 1 -r
-    echo ""
-
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if ! gum confirm "Update mirrorlist for faster downloads?"; then
         print_info "Skipping mirrorlist update"
         return 0
     fi
@@ -265,14 +136,13 @@ check_updates() {
     local total_updates=$((official_updates + aur_updates))
 
     echo ""
-    draw_box "Update Summary" 50
-    draw_box_line "" 50
-    draw_box_line "  ${FRAPPE_TEXT}Official repository packages: ${FRAPPE_GREEN}${official_updates}${NC}" 50
-    draw_box_line "  ${FRAPPE_TEXT}AUR packages: ${FRAPPE_GREEN}${aur_updates}${NC}" 50
-    draw_box_line "" 50
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Total updates available: ${total_updates}${NC}" 50
-    draw_box_line "" 50
-    draw_box_bottom 50
+    gum style --border rounded --padding "1 2" --width 50 \
+        "Update Summary" \
+        "" \
+        "Official repository packages: $official_updates" \
+        "AUR packages: $aur_updates" \
+        "" \
+        "Total updates available: $total_updates"
     echo ""
 
     if [ "$total_updates" -eq 0 ]; then
@@ -327,12 +197,7 @@ clean_cache() {
     fi
 
     echo ""
-    echo -e "${FRAPPE_TEXT}Would you like to clean the package cache?${NC}"
-    echo -e "${FRAPPE_SUBTEXT1}(Removes old package versions to free up space)${NC}"
-    read -p "Clean package cache? (y/N) " -n 1 -r
-    echo ""
-
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if ! gum confirm "Clean the package cache? (Removes old versions)"; then
         print_info "Skipping cache cleanup"
         return 0
     fi
@@ -366,16 +231,11 @@ remove_orphans() {
     local orphan_count=$(echo "$orphans" | wc -l)
 
     echo ""
-    echo -e "${FRAPPE_TEXT}Found ${FRAPPE_YELLOW}${orphan_count}${NC} ${FRAPPE_TEXT}orphaned packages${NC}"
-    echo -e "${FRAPPE_SUBTEXT1}(Packages that were installed as dependencies but are no longer needed)${NC}"
-    echo ""
-    echo -e "${FRAPPE_SUBTEXT1}Orphaned packages:${NC}"
-    echo "$orphans" | sed "s/^/  ${FRAPPE_YELLOW}• ${NC}/"
-    echo ""
-    read -p "Remove orphaned packages? (y/N) " -n 1 -r
+    gum style --foreground "$COLOR_YELLOW" "Found $orphan_count orphaned packages"
+    echo "$orphans"
     echo ""
 
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if ! gum confirm "Remove orphaned packages?"; then
         print_info "Keeping orphaned packages"
         return 0
     fi
@@ -458,10 +318,23 @@ main() {
 
     # Show welcome screen
     if [ "$SHOW_TUI" = true ]; then
-        show_welcome
-        echo -n "Press Enter to start update or Ctrl+C to cancel..."
-        read -r
+        # Use Gum style welcome
+        clear
+        gum style \
+            --foreground "$COLOR_MAUVE" --border double --border-foreground "$COLOR_LAVENDER" --padding "1 2" \
+            "System Update & Sync" \
+            "Catppuccin Frappe Theme"
+
         echo ""
+        gum style --foreground "$COLOR_PEACH" "This updater will:"
+        gum style --foreground "$COLOR_GREEN" "  ✓ Sync package databases"
+        gum style --foreground "$COLOR_GREEN" "  ✓ Update official repository packages"
+        gum style --foreground "$COLOR_GREEN" "  ✓ Update AUR packages"
+        gum style --foreground "$COLOR_GREEN" "  ✓ Clean package cache (optional)"
+        gum style --foreground "$COLOR_GREEN" "  ✓ Remove orphaned packages (optional)"
+        echo ""
+
+        gum confirm "Start system update?" || exit 0
         echo ""
         print_info "Starting system update..."
         echo ""
@@ -492,10 +365,7 @@ main() {
         # No updates available
         echo ""
         if [ "$SKIP_CLEAN" = false ] || [ "$SKIP_ORPHANS" = false ]; then
-            print_info "Would you like to perform system maintenance anyway?"
-            read -p "Continue? (y/N) " -n 1 -r
-            echo ""
-            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            if ! gum confirm "System up to date. Perform maintenance anyway?"; then
                 print_info "Update complete - system already up to date"
                 exit 0
             fi

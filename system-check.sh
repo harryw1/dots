@@ -5,39 +5,71 @@
 
 set +e  # Don't exit on errors - we want to collect all diagnostics
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Source theme configuration if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh"
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh" ]; then
+    # Fallback for installed location
+    source "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh"
+fi
+
+# Colors (fallback if not sourced)
+COLOR_RED="${COLOR_RED:-#E78284}"
+COLOR_GREEN="${COLOR_GREEN:-#A6D189}"
+COLOR_YELLOW="${COLOR_YELLOW:-#E5C890}"
+COLOR_BLUE="${COLOR_BLUE:-#8CAAEE}"
+COLOR_MAUVE="${COLOR_MAUVE:-#CA9EE6}"
+COLOR_LAVENDER="${COLOR_LAVENDER:-#BABBF1}"
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_FILE="$SCRIPT_DIR/system-check-output.txt"
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
+# Use gum if available for terminal output, but keep simple echo for log file compatibility
 print_header() {
-    echo -e "${CYAN}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC}  $1"
-    echo -e "${CYAN}╚════════════════════════════════════════════════════════════════╝${NC}"
+    if command -v gum &> /dev/null; then
+        echo ""
+        gum style \
+            --foreground "$COLOR_MAUVE" --border-foreground "$COLOR_LAVENDER" --border double \
+            --align center --width 60 --padding "0 2" \
+            "$1"
+        echo ""
+    else
+        echo "== $1 =="
+    fi
 }
 
 print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_BLUE" "● $1"
+    else
+        echo "[INFO] $1"
+    fi
 }
 
 print_success() {
-    echo -e "${GREEN}[✓]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_GREEN" "✓ $1"
+    else
+        echo "[✓] $1"
+    fi
 }
 
 print_warning() {
-    echo -e "${YELLOW}[⚠]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_YELLOW" "⚠ $1"
+    else
+        echo "[⚠] $1"
+    fi
 }
 
 print_error() {
-    echo -e "${RED}[✗]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_RED" "✗ $1"
+    else
+        echo "[✗] $1"
+    fi
 }
 
 # Initialize output file
@@ -564,13 +596,13 @@ print_header "DIAGNOSTIC COMPLETE"
 print_success "Full diagnostic report saved to: $OUTPUT_FILE"
 echo ""
 print_info "Review the output:"
-echo "  ${CYAN}less $OUTPUT_FILE${NC}"
+echo "  less $OUTPUT_FILE"
 echo ""
 print_info "To share for troubleshooting:"
-echo "  ${CYAN}git add system-check-output.txt${NC}"
-echo "  ${CYAN}git commit -m 'Add system diagnostic output'${NC}"
-echo "  ${CYAN}git push origin main${NC}"
+echo "  git add system-check-output.txt"
+echo "  git commit -m 'Add system diagnostic output'"
+echo "  git push origin main"
 echo ""
 print_info "Or do it all at once:"
-echo "  ${CYAN}git add system-check-output.txt && git commit -m 'Add system diagnostic' && git push${NC}"
+echo "  git add system-check-output.txt && git commit -m 'Add system diagnostic' && git push"
 echo ""

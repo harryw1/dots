@@ -5,31 +5,26 @@
 
 set -e  # Exit on error
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Source theme configuration if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh"
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh" ]; then
+    # Fallback for installed location
+    source "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh"
+fi
+
+# Use the shared TUI functions if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/tui.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/tui.sh"
+else
+    # Basic Fallback if TUI lib not found (should not happen in repo)
+    print_info() { echo "● $1"; }
+    print_success() { echo "✓ $1"; }
+    print_warning() { echo "⚠ $1"; }
+    print_error() { echo "✗ $1"; }
+fi
 
 CONFIG_DIR="$HOME/.config"
-
-# Print functions
-print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
 
 # Remove symlink if it exists
 remove_symlink() {
@@ -56,9 +51,7 @@ main() {
 
     # Confirmation
     print_warning "This will remove symlinks created by install.sh"
-    read -p "Continue? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if ! gum confirm "Continue with uninstallation?"; then
         print_info "Uninstallation cancelled"
         exit 0
     fi
