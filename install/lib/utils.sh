@@ -7,9 +7,13 @@
 
 # Directory setup - these are globals used throughout the installation
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export DOTFILES_DIR
 CONFIG_DIR="$HOME/.config"
+export CONFIG_DIR
 BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
+export BACKUP_DIR
 PACKAGES_DIR="$DOTFILES_DIR/packages"
+export PACKAGES_DIR
 
 # Check if running Arch Linux
 is_arch_linux() {
@@ -41,7 +45,8 @@ create_symlink() {
     local name="$3"
 
     if [ -L "$target" ]; then
-        local current_source="$(readlink "$target")"
+        local current_source
+        current_source="$(readlink "$target")"
         if [ "$current_source" = "$source" ]; then
             print_info "$name already linked correctly"
             return 0

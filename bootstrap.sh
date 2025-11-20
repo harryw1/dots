@@ -64,7 +64,8 @@ check_prerequisites() {
   if [ ! -f /etc/arch-release ]; then
     print_error "This installer is designed for Arch Linux only"
     if [ -f /etc/os-release ]; then
-      local distro=$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
+      local distro
+      distro=$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
       print_info "Detected: $distro"
     fi
     exit 1
@@ -381,7 +382,8 @@ main() {
   if command -v zsh &>/dev/null; then
     local current_shell="${SHELL:-$(getent passwd "$USER" 2>/dev/null | cut -d: -f7)}"
     if ! echo "$current_shell" | grep -q "zsh$"; then
-      local zsh_path="$(which zsh 2>/dev/null || command -v zsh)"
+      local zsh_path
+      zsh_path="$(which zsh 2>/dev/null || command -v zsh)"
       if [ -n "$zsh_path" ]; then
         echo ""
         print_info "To set zsh as your default shell, run:"

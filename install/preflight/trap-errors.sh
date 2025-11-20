@@ -19,7 +19,8 @@ catch_errors() {
 
     # Save error state if state management is available
     if declare -f state_mark_phase_failed &>/dev/null; then
-        local current_phase=$(state_get_current_phase)
+        local current_phase
+        current_phase=$(state_get_current_phase)
         if [ -n "$current_phase" ]; then
             state_mark_phase_failed "$current_phase"
         fi
@@ -54,7 +55,8 @@ trap_interrupt() {
 
     # Save state
     if declare -f state_get_current_phase &>/dev/null; then
-        local current_phase=$(state_get_current_phase)
+        local current_phase
+        current_phase=$(state_get_current_phase)
         if [ -n "$current_phase" ]; then
             print_info "Progress saved. Resume with: ./install.sh --resume"
         fi

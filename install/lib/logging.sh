@@ -31,7 +31,8 @@ logging_init() {
     mkdir -p "$LOG_DIR"
 
     # Create timestamped log file
-    local timestamp=$(date +%Y%m%d-%H%M%S)
+    local timestamp
+    timestamp=$(date +%Y%m%d-%H%M%S)
     LOG_FILE="$LOG_DIR/install-$timestamp.log"
 
     # Create log file with header
@@ -60,7 +61,7 @@ EOF
         echo "  SHELL: ${SHELL:-unknown}"
         echo "  PWD: ${PWD:-unknown}"
         echo ""
-        echo "================================================================================\n"
+        printf "================================================================================\n"
     } >> "$LOG_FILE"
 }
 
@@ -82,7 +83,8 @@ EOF
 log_message() {
     local level="$1"
     local message="$2"
-    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
     if [ -n "$LOG_FILE" ]; then
         echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
@@ -187,11 +189,17 @@ logging_cleanup_old() {
 
     if [ -d "$LOG_DIR" ]; then
         # Count log files
-        local log_count=$(ls -1 "$LOG_DIR"/install-*.log 2>/dev/null | wc -l)
+        local log_count
+        log_count=$(find "$LOG_DIR" -name "install-*.log" | wc -l)
 
         if [ "$log_count" -gt "$keep_count" ]; then
             # Remove oldest logs, keep only $keep_count most recent
-            ls -1t "$LOG_DIR"/install-*.log | tail -n +$((keep_count + 1)) | xargs rm -f
+            # Using find to get files, sort by modification time, and delete
+            find "$LOG_DIR" -name "install-*.log" -printf "%T@ %p\n" | \
+                sort -nr | \
+                tail -n "+$((keep_count + 1))" | \
+                cut -d' ' -f2- | \
+                xargs rm -f
             log_info "Cleaned up old log files (kept $keep_count most recent)"
         fi
     fi

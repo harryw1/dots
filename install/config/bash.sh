@@ -20,7 +20,8 @@ deploy_bash_config() {
 
     if [ "$DRY_RUN" = true ]; then
         print_info "[DRY RUN] Would deploy bash config"
-        log_phase_skip "$phase_name" "Dry run"
+        state_mark_phase_complete "$phase_name"
+        log_phase_end "$phase_name" "success (dry-run)"
         return 0
     fi
 
