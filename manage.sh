@@ -5,25 +5,28 @@
 
 set -e
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Source theme configuration if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh"
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh" ]; then
+    # Fallback for installed location
+    source "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh"
+fi
+
+# Colors (fallback if not sourced)
+COLOR_RED="${COLOR_RED:-#E78284}"
+COLOR_GREEN="${COLOR_GREEN:-#A6D189}"
+COLOR_YELLOW="${COLOR_YELLOW:-#E5C890}"
+COLOR_BLUE="${COLOR_BLUE:-#8CAAEE}"
+COLOR_MAUVE="${COLOR_MAUVE:-#CA9EE6}"
+COLOR_LAVENDER="${COLOR_LAVENDER:-#BABBF1}"
 
 # Check for gum
 if ! command -v gum &> /dev/null; then
-    echo -e "${BLUE}::${NC} ${YELLOW}gum${NC} is required for this script."
-    read -p "Install gum? (y/N) " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        if ! sudo pacman -S gum --noconfirm; then
-            echo -e "${RED}Failed to install gum.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${RED}Aborting.${NC}"
+    echo "gum is required for this script."
+    echo "Installing gum..."
+    if ! sudo pacman -S gum --noconfirm; then
+        echo "Failed to install gum."
         exit 1
     fi
 fi
@@ -35,7 +38,7 @@ while true; do
 
     # Header
     gum style \
-        --foreground 212 --border-foreground 212 --border double \
+        --foreground "$COLOR_MAUVE" --border-foreground "$COLOR_LAVENDER" --border double \
         --align center --width 50 --margin "1 2" --padding "2 4" \
         "Dotfiles Management Utility" \
         "System Update & Maintenance"
@@ -43,7 +46,7 @@ while true; do
     echo ""
 
     CHOICE=$(gum choose \
-        --cursor.foreground 212 \
+        --cursor.foreground "$COLOR_MAUVE" \
         --header "Select an action" \
         "Update System (Pacman & AUR)" \
         "Update Dotfiles Repo" \
@@ -59,22 +62,22 @@ while true; do
                 gum spin --spinner dot --title "Syncing databases..." -- sudo pacman -Sy
 
                 # Official Packages
-                echo -e "${BLUE}::${NC} Updating official packages..."
-                if ! sudo pacman -Su; then
-                    echo -e "${RED}System update failed.${NC}"
+                gum style --foreground "$COLOR_BLUE" ":: Updating official packages..."
+                if ! sudo pacman -Su --noconfirm; then
+                    gum style --foreground "$COLOR_RED" "System update failed."
                     gum confirm "Press Enter to continue" || true
                 fi
 
                 # AUR
                 if command -v yay &> /dev/null; then
-                    echo -e "${BLUE}::${NC} Updating AUR packages (yay)..."
-                    yay -Su
+                    gum style --foreground "$COLOR_BLUE" ":: Updating AUR packages (yay)..."
+                    yay -Su --noconfirm
                 elif command -v paru &> /dev/null; then
-                    echo -e "${BLUE}::${NC} Updating AUR packages (paru)..."
-                    paru -Su
+                    gum style --foreground "$COLOR_BLUE" ":: Updating AUR packages (paru)..."
+                    paru -Su --noconfirm
                 fi
 
-                gum style --foreground 76 "System update complete!"
+                gum style --foreground "$COLOR_GREEN" "System update complete!"
                 sleep 2
             fi
             ;;
@@ -83,7 +86,7 @@ while true; do
             echo ""
             # Check status
             if [[ -n $(git status --porcelain) ]]; then
-                gum style --foreground 196 "WARNING: You have local changes in your dotfiles repository."
+                gum style --foreground "$COLOR_RED" "WARNING: You have local changes in your dotfiles repository."
                 git status --short
                 echo ""
 
@@ -95,9 +98,9 @@ while true; do
                         gum spin --title "Pulling updates..." -- git pull
                         if gum confirm "Restore stashed changes?"; then
                             if ! git stash pop; then
-                                gum style --foreground 196 "Conflict detected during stash pop! Please resolve manually."
+                                gum style --foreground "$COLOR_RED" "Conflict detected during stash pop! Please resolve manually."
                             else
-                                gum style --foreground 76 "Changes restored successfully."
+                                gum style --foreground "$COLOR_GREEN" "Changes restored successfully."
                             fi
                         fi
                         ;;
@@ -110,7 +113,7 @@ while true; do
                 esac
             else
                 gum spin --title "Pulling updates..." -- git pull
-                gum style --foreground 76 "Dotfiles repository updated."
+                gum style --foreground "$COLOR_GREEN" "Dotfiles repository updated."
             fi
             sleep 2
             ;;
@@ -127,7 +130,7 @@ while true; do
             if gum confirm "This will fetch the fastest mirrors. Continue?"; then
                 sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
                 gum spin --title "Finding fastest mirrors..." -- sudo reflector --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
-                gum style --foreground 76 "Mirrorlist updated."
+                gum style --foreground "$COLOR_GREEN" "Mirrorlist updated."
             fi
             sleep 1
             ;;
@@ -138,7 +141,7 @@ while true; do
                 du -sh /var/cache/pacman/pkg/
                 if gum confirm "Keep only last 3 versions?"; then
                     sudo paccache -rk 3
-                    gum style --foreground 76 "Cache cleaned."
+                    gum style --foreground "$COLOR_GREEN" "Cache cleaned."
                 fi
             else
                 echo "paccache (pacman-contrib) not found."
@@ -149,13 +152,13 @@ while true; do
         "Remove Orphaned Packages")
             ORPHANS=$(pacman -Qtdq || true)
             if [[ -z "$ORPHANS" ]]; then
-                gum style --foreground 76 "No orphaned packages found."
+                gum style --foreground "$COLOR_GREEN" "No orphaned packages found."
             else
                 echo "Orphaned packages:"
                 echo "$ORPHANS"
                 if gum confirm "Remove these packages?"; then
-                    sudo pacman -Rns $ORPHANS
-                    gum style --foreground 76 "Orphans removed."
+                    sudo pacman -Rns $ORPHANS --noconfirm
+                    gum style --foreground "$COLOR_GREEN" "Orphans removed."
                 fi
             fi
             sleep 1
