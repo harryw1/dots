@@ -759,6 +759,46 @@ jobs:
             echo "⚠ Error trap not found in trap-errors.sh"
           fi
 
+  test-real-install:
+    name: Real Installation Test (Arch Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Arch keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+      - name: Update system and install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git jq base-devel sudo
+
+      - name: Make scripts executable
+        run: |
+          chmod +x install.sh
+          chmod +x bootstrap.sh
+          chmod +x tests/verify-installation.sh
+
+      - name: Run full installation
+        run: |
+          echo "========================================="
+          echo "Running full installation"
+          echo "========================================="
+          ./install.sh --full --no-tui --force
+
+      - name: Verify installation
+        run: |
+          echo "========================================="
+          echo "Verifying installation"
+          echo "========================================="
+          ./tests/verify-installation.sh
+
   summary:
     name: Test Summary
     runs-on: ubuntu-latest
@@ -773,7 +813,8 @@ jobs:
       test-state-persistence,
       test-config-variations,
       test-migration-system,
-      test-error-handling
+      test-error-handling,
+      test-real-install
     ]
     if: always()
     steps:
