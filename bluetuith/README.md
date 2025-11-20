@@ -4,7 +4,7 @@ Bluetuith is a TUI-based Bluetooth manager for Linux, providing an alternative t
 
 ## Installation
 
-Bluetuith is installed via AUR (already in `packages/aur.txt`):
+Bluetuith is installed via AUR (already in `packages/aur-tui.txt`):
 
 ```bash
 yay -S bluetuith-bin

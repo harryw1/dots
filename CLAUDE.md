@@ -274,7 +274,7 @@ sudo pacman -S --needed - < packages/core.txt
 sudo pacman -S --needed - < packages/development.txt
 
 # Install AUR packages (requires yay or paru)
-yay -S --needed - < packages/aur.txt
+yay -S --needed - < packages/aur-tui.txt
 
 # Check installed package versions
 hyprctl version

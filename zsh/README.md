@@ -144,20 +144,84 @@ fzf-git-log         # Fuzzy search git commits
 - **Starship**: Works with both shells
 - **fzf**: Works with both shells
 
-## Migration from Bash
+## Testing & Verification
 
-If you're migrating from bash:
-1. Your aliases will work (they're compatible)
-2. Your functions will mostly work
-3. Your environment variables will work
-4. Only completion behavior changes (for the better!)
+### Automated Test
 
-See `ZSH_MIGRATION_PLAN.md` in the root directory for full migration details.
+Run the test script to verify your configuration:
 
-## Notes
+```bash
+bash ~/.config/zsh/test_zsh.sh
+```
 
-- **Menu selection** is the killer feature - scrollable completion lists!
-- **Colors** use your terminal's Catppuccin Frappe theme
-- **Completion** is faster and more intelligent than bash-completion
-- **Backward compatible** with bash aliases and functions
+This checks:
+- zsh installation
+- Configuration files existence and syntax
+- Function definitions
+- Color settings
+- Completion loading
 
+### Manual Verification Checklist
+
+#### ✅ 1. Basic Functionality
+```zsh
+# Check zsh version
+zsh --version
+
+# Check if configs loaded
+echo $LS_COLORS | head -c 50
+```
+
+#### ✅ 2. Menu Selection (The Main Feature)
+```zsh
+# Test command completion
+git <TAB>
+# Should show a list of git commands
+# Use ↑↓ arrow keys to scroll through the list
+# Press Enter to select
+```
+
+#### ✅ 3. fzf Integration
+```zsh
+# Test history search
+Ctrl+R
+```
+
+#### ✅ 4. Catppuccin Colors
+```zsh
+ls --color=auto
+# Files should be colored with Catppuccin Frappe colors
+```
+
+## Troubleshooting
+
+### Menu selection not working
+```zsh
+# Check if menu selection is enabled
+zstyle -L ':completion:*' menu
+# Should show: menu select
+
+# Reload completion
+autoload -Uz compinit
+compinit
+```
+
+### Colors not showing
+```zsh
+# Check LS_COLORS
+echo $LS_COLORS | head -c 100
+```
+
+### fzf not working
+```zsh
+# Check if fzf is installed
+command -v fzf
+```
+
+### Completion not working
+```zsh
+# Reinitialize completion
+rm ~/.zcompdump*  # Remove old cache
+autoload -Uz compinit
+compinit
+```
