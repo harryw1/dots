@@ -8,6 +8,8 @@
 
 deploy_neovim_config() {
     local phase_name="config/neovim"
+    local nvim_config_src="$DOTFILES_DIR/nvim"
+    local nvim_config_dest="$HOME/.config/nvim"
 
     # Check if phase already completed
     if state_phase_completed "$phase_name"; then
@@ -20,7 +22,7 @@ deploy_neovim_config() {
 
     # Check dry-run mode first
     if [ "$DRY_RUN" = true ]; then
-        print_info "[DRY RUN] Would install LazyVim"
+        print_info "[DRY RUN] Would deploy Neovim configuration"
         log_phase_skip "$phase_name" "Dry run"
         return 0
     fi
@@ -32,57 +34,9 @@ deploy_neovim_config() {
         state_mark_phase_complete "$phase_name"
         return 0
     fi
-
-    print_info "Setting up LazyVim..."
-    log_info "Setting up LazyVim"
-
-    local nvim_config="$HOME/.config/nvim"
-
-    # Backup existing config if present
-    if [ -d "$nvim_config" ]; then
-        backup_if_exists "$nvim_config" "Neovim configuration"
-    fi
-
-    # Clone LazyVim starter
-    print_info "Cloning LazyVim starter template..."
-    if ! git clone https://github.com/LazyVim/starter "$nvim_config"; then
-        print_error "Failed to clone LazyVim starter"
-        log_error "Failed to clone LazyVim starter"
-        log_phase_end "$phase_name" "failed"
-        return 1
-    fi
-
-    # Remove .git directory so it becomes part of your dotfiles
-    rm -rf "$nvim_config/.git"
-
-    # Symlink custom configuration files from dotfiles
-    print_info "Symlinking custom LazyVim configurations..."
-    local nvim_custom_dir="$DOTFILES_DIR/nvim/lua"
-    if [ -d "$nvim_custom_dir" ]; then
-        # Create necessary directories
-        mkdir -p "$nvim_config/lua/config"
-        mkdir -p "$nvim_config/lua/plugins"
-
-        # Symlink individual files from nvim/lua/config
-        if [ -d "$nvim_custom_dir/config" ]; then
-            for file in "$nvim_custom_dir/config"/*; do
-                if [ -f "$file" ]; then
-                    local filename=$(basename "$file")
-                    create_symlink "$file" "$nvim_config/lua/config/$filename" "Neovim config: $filename"
-                fi
-            done
-        fi
-
-        # Symlink individual files from nvim/lua/plugins
-        if [ -d "$nvim_custom_dir/plugins" ]; then
-            for file in "$nvim_custom_dir/plugins"/*; do
-                if [ -f "$file" ]; then
-                    local filename=$(basename "$file")
-                    create_symlink "$file" "$nvim_config/lua/plugins/$filename" "Neovim plugin: $filename"
-                fi
-            done
-        fi
-    fi
+    
+    # Symlink the entire nvim directory
+    create_symlink "$nvim_config_src" "$nvim_config_dest" "Neovim/LazyVim"
 
     print_success "LazyVim setup complete"
     log_success "LazyVim setup complete"

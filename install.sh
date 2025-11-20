@@ -530,13 +530,7 @@ done
 # Handle reset BEFORE initializing state
 # This ensures state_init creates a fresh state after reset
 if [ "$RESET" = true ]; then
-    print_info "Resetting installation state..."
-    if [ -f "$STATE_FILE" ]; then
-        rm -f "$STATE_FILE"
-        print_success "State reset complete"
-    else
-        print_info "No existing state to reset"
-    fi
+    state_reset
 fi
 
 # Initialize state and logging
