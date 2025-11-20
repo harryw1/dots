@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
-BOLD='\033[1m'
+ANSI_BOLD='\033[1m'
 DIM='\033[2m'
 NC='\033[0m' # No Color
 
@@ -278,10 +278,10 @@ show_help() {
     echo ""
     draw_box "System Update & Sync - Help" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Usage:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Usage:${NC}" $box_width
     draw_box_line "    ${FRAPPE_BLUE}./update.sh${NC} ${FRAPPE_TEXT}[OPTIONS]${NC}" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Options:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Options:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}              Show this help message" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-y, --yes${NC}               Skip all confirmation prompts" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}                Disable TUI welcome screen" $box_width
@@ -291,17 +291,17 @@ show_help() {
     draw_box_line "    ${FRAPPE_GREEN}--aur-only${NC}              Only update AUR packages" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--official-only${NC}         Only update official packages" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}What Gets Updated:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}What Gets Updated:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}•${NC} Official repository packages (pacman -Syu)" $box_width
     draw_box_line "    ${FRAPPE_GREEN}•${NC} AUR packages (yay/paru -Syu)" $box_width
     draw_box_line "    ${FRAPPE_GREEN}•${NC} Package databases (pacman -Syy)" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Optional Maintenance:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Optional Maintenance:${NC}" $box_width
     draw_box_line "    ${FRAPPE_YELLOW}•${NC} Update mirrorlist (for faster downloads)" $box_width
     draw_box_line "    ${FRAPPE_YELLOW}•${NC} Clean package cache (free up space)" $box_width
     draw_box_line "    ${FRAPPE_YELLOW}•${NC} Remove orphaned packages (cleanup)" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Examples:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Examples:${NC}" $box_width
     draw_box_line "    ${FRAPPE_BLUE}./update.sh${NC}                      # Full update with prompts" $box_width
     draw_box_line "    ${FRAPPE_BLUE}./update.sh -y${NC}                   # Auto-yes all prompts" $box_width
     draw_box_line "    ${FRAPPE_BLUE}./update.sh --aur-only${NC}           # Only AUR packages" $box_width

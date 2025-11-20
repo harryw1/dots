@@ -387,20 +387,20 @@ show_help() {
     echo ""
     draw_box "Hyprland Dotfiles Installer - Help" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Usage:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Usage:${NC}" $box_width
     draw_box_line "    ${FRAPPE_BLUE}./install.sh${NC} ${FRAPPE_TEXT}[OPTIONS]${NC}" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Options:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Options:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}              Show this help message" $box_width
     draw_box_line "    ${FRAPPE_GREEN}-f, --force${NC}             Skip confirmation prompts" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Installation Modes:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Installation Modes:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--gui${NC}                   Prompt for GUI components (interactive)" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--minimal${NC}               TUI-only install (no GUI, headless compatible)" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--full${NC}                  Install everything (all GUI components)" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--headless${NC}              Same as --minimal (alias)" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Other Options:${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Other Options:${NC}" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--skip-packages${NC}         Skip package installation" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}                Disable TUI welcome screen" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--dry-run${NC}               Show what would be done without doing it" $box_width
@@ -408,7 +408,7 @@ show_help() {
     draw_box_line "    ${FRAPPE_GREEN}--reset${NC}                 Reset state and start fresh" $box_width
     draw_box_line "    ${FRAPPE_GREEN}--config FILE${NC}           Use custom configuration file" $box_width
     draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${BOLD}Package Categories (TUI-first):${NC}" $box_width
+    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Package Categories (TUI-first):${NC}" $box_width
     draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}                Core system (headless compatible)" $box_width
     draw_box_line "    ${FRAPPE_PEACH}tui.txt${NC}                 TUI applications (yazi, lazygit, btop)" $box_width
     draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}         Development tools (Neovim, compilers)" $box_width
