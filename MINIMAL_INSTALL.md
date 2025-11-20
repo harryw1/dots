@@ -110,7 +110,7 @@ sudo pacman -S --needed - < packages/development.txt
 sudo pacman -S --needed - < packages/theming.txt
 
 # AUR packages
-yay -S --needed - < packages/aur.txt
+yay -S --needed - < packages/aur-tui.txt
 
 # Then deploy configs
 ./install.sh --skip-packages

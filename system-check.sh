@@ -5,39 +5,71 @@
 
 set +e  # Don't exit on errors - we want to collect all diagnostics
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Source theme configuration if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh" ]; then
+    source "$(dirname "${BASH_SOURCE[0]}")/install/lib/gum_theme.sh"
+elif [ -f "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh" ]; then
+    # Fallback for installed location
+    source "$(dirname "${BASH_SOURCE[0]}")/../lib/gum_theme.sh"
+fi
+
+# Colors (fallback if not sourced)
+COLOR_RED="${COLOR_RED:-#E78284}"
+COLOR_GREEN="${COLOR_GREEN:-#A6D189}"
+COLOR_YELLOW="${COLOR_YELLOW:-#E5C890}"
+COLOR_BLUE="${COLOR_BLUE:-#8CAAEE}"
+COLOR_MAUVE="${COLOR_MAUVE:-#CA9EE6}"
+COLOR_LAVENDER="${COLOR_LAVENDER:-#BABBF1}"
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_FILE="$SCRIPT_DIR/system-check-output.txt"
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
+# Use gum if available for terminal output, but keep simple echo for log file compatibility
 print_header() {
-    echo -e "${CYAN}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC}  $1"
-    echo -e "${CYAN}╚════════════════════════════════════════════════════════════════╝${NC}"
+    if command -v gum &> /dev/null; then
+        echo ""
+        gum style \
+            --foreground "$COLOR_MAUVE" --border-foreground "$COLOR_LAVENDER" --border double \
+            --align center --width 60 --padding "0 2" \
+            "$1"
+        echo ""
+    else
+        echo "== $1 =="
+    fi
 }
 
 print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_BLUE" "● $1"
+    else
+        echo "[INFO] $1"
+    fi
 }
 
 print_success() {
-    echo -e "${GREEN}[✓]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_GREEN" "✓ $1"
+    else
+        echo "[✓] $1"
+    fi
 }
 
 print_warning() {
-    echo -e "${YELLOW}[⚠]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_YELLOW" "⚠ $1"
+    else
+        echo "[⚠] $1"
+    fi
 }
 
 print_error() {
-    echo -e "${RED}[✗]${NC} $1"
+    if command -v gum &> /dev/null; then
+        gum style --foreground "$COLOR_RED" "✗ $1"
+    else
+        echo "[✗] $1"
+    fi
 }
 
 # Initialize output file
@@ -241,6 +273,106 @@ if command_exists systemctl; then
 fi
 
 ################################################################################
+# PERFORMANCE AND AUTHENTICATION
+################################################################################
+
+print_header "PERFORMANCE AND AUTHENTICATION"
+print_info "Checking for performance bottlenecks and authentication issues..."
+
+{
+    echo ""
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo "PERFORMANCE DIAGNOSTICS"
+    echo "═══════════════════════════════════════════════════════════════════════════════"
+    echo ""
+
+    # 1. Fingerprint Authentication
+    echo "--- Fingerprint Authentication ---"
+    if systemctl is-active --quiet fprintd.service; then
+        echo "✓ fprintd service is running"
+    else
+        echo "⚠ fprintd service is not running (may cause delays if waiting for fingerprint)"
+    fi
+
+    if command_exists fprintd-list; then
+        ENROLLED=$(fprintd-list "$USER" 2>/dev/null | wc -l)
+        if [ "$ENROLLED" -gt 0 ]; then
+            echo "✓ Fingerprints enrolled: $ENROLLED"
+        else
+            echo "⚠ No fingerprints enrolled - authentication will always fall back to password"
+        fi
+    else
+        echo "⚠ fprintd-list not found"
+    fi
+
+    if [ -f /etc/pam.d/system-local-login ]; then
+        if grep -q "pam_fprintd.so" /etc/pam.d/system-local-login; then
+            echo "ℹ Fingerprint PAM module configured in system-local-login"
+            TIMEOUT=$(grep -oP "timeout=\K[0-9]+" /etc/pam.d/system-local-login || echo "default (30s)")
+            echo "  Timeout: ${TIMEOUT}s"
+        fi
+    fi
+
+    # 2. PAM Network Lookups
+    echo ""
+    echo "--- PAM Network Lookups ---"
+    if [ -f /etc/nsswitch.conf ]; then
+        if grep -qE "^(passwd|group|shadow):.*ldap|nis|winbind" /etc/nsswitch.conf; then
+            echo "⚠ Network-based user lookups configured (may cause delays)"
+        else
+            echo "✓ No network-based user lookups configured"
+        fi
+    fi
+
+    # 3. Autostart Analysis
+    echo ""
+    echo "--- Autostart Analysis ---"
+    AUTOSTART_FILE="$HOME/.config/hyprland/conf/autostart.conf"
+    if [ -f "$AUTOSTART_FILE" ]; then
+        EXEC_COUNT=$(grep -c "^exec-once" "$AUTOSTART_FILE" || echo "0")
+        echo "ℹ Autostart commands found: $EXEC_COUNT"
+
+        if grep -q "waypaper --restore" "$AUTOSTART_FILE"; then
+            echo "⚠ waypaper --restore may be slow (checking filesystem/network)"
+        fi
+
+        if grep -q "generate-waybar-css.sh" "$AUTOSTART_FILE"; then
+            SCRIPT_PATH=$(grep "generate-waybar-css.sh" "$AUTOSTART_FILE" | grep -oP "exec-once = \K[^ ]+")
+            if [ -f "$SCRIPT_PATH" ]; then
+                echo "✓ Waybar CSS generation script exists"
+            else
+                echo "✗ Waybar CSS generation script not found: $SCRIPT_PATH"
+            fi
+        fi
+
+        GSETTINGS_COUNT=$(grep -c "gsettings set" "$AUTOSTART_FILE" || echo "0")
+        if [ "$GSETTINGS_COUNT" -gt 5 ]; then
+            echo "⚠ Many gsettings commands ($GSETTINGS_COUNT) - consider batching"
+        fi
+    else
+        echo "✗ Autostart config not found: $AUTOSTART_FILE"
+    fi
+
+    # 4. Filesystem Mounts
+    echo ""
+    echo "--- Filesystem Mounts ---"
+    NETWORK_FS=$(mount | grep -E "type nfs|type cifs" || true)
+    FUSE_NETWORK=$(mount | grep -E "type fuse" | grep -vE "fusectl|portal|gvfsd" || true)
+    if [ -n "$NETWORK_FS" ] || [ -n "$FUSE_NETWORK" ]; then
+        echo "⚠ Network filesystems mounted - may cause delays"
+        [ -n "$NETWORK_FS" ] && echo "$NETWORK_FS"
+        [ -n "$FUSE_NETWORK" ] && echo "$FUSE_NETWORK"
+    else
+        echo "✓ No network filesystems detected (fusectl/portal are normal)"
+    fi
+
+} >> "$OUTPUT_FILE"
+
+if command_exists systemd-analyze; then
+    add_section "Systemd User Services Blame" "systemd-analyze --user blame 2>/dev/null | head -10 || echo 'Unable to analyze user services'"
+fi
+
+################################################################################
 # CONFIGURATION VALIDATION
 ################################################################################
 
@@ -344,6 +476,9 @@ if command_exists journalctl; then
     print_info "Collecting journal logs..."
     add_section "User Journal Errors (last 100)" "journalctl --user --priority=err -n 100 --no-pager || echo 'No errors found'"
     add_section "System Journal Errors (last 100)" "sudo journalctl --priority=err -n 100 --no-pager 2>/dev/null || echo 'Cannot access system journal'"
+
+    # Login-specific errors (from diagnose-login-delay.sh)
+    add_section "Recent Login/Session Issues (last 1 hour)" "journalctl --since '1 hour ago' -p err --no-pager 2>/dev/null | grep -iE 'sddm|login|session|pam' | tail -20 || echo 'No recent login-related errors'"
 fi
 
 # Waybar specific logs
@@ -461,13 +596,13 @@ print_header "DIAGNOSTIC COMPLETE"
 print_success "Full diagnostic report saved to: $OUTPUT_FILE"
 echo ""
 print_info "Review the output:"
-echo "  ${CYAN}less $OUTPUT_FILE${NC}"
+echo "  less $OUTPUT_FILE"
 echo ""
 print_info "To share for troubleshooting:"
-echo "  ${CYAN}git add system-check-output.txt${NC}"
-echo "  ${CYAN}git commit -m 'Add system diagnostic output'${NC}"
-echo "  ${CYAN}git push origin main${NC}"
+echo "  git add system-check-output.txt"
+echo "  git commit -m 'Add system diagnostic output'"
+echo "  git push origin main"
 echo ""
 print_info "Or do it all at once:"
-echo "  ${CYAN}git add system-check-output.txt && git commit -m 'Add system diagnostic' && git push${NC}"
+echo "  git add system-check-output.txt && git commit -m 'Add system diagnostic' && git push"
 echo ""

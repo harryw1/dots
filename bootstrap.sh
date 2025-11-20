@@ -98,6 +98,26 @@ check_prerequisites() {
     print_success "jq is available"
   fi
 
+  # Check for gum (needed for TUI)
+  if ! command -v gum &>/dev/null; then
+    print_warning "gum not found - installing for interactive TUI"
+    if ! sudo pacman -S --noconfirm gum; then
+      print_error "Failed to install gum"
+      print_info "Install manually with: sudo pacman -S gum"
+      exit 1
+    fi
+    print_success "Installed gum"
+  else
+    print_success "gum is available"
+  fi
+
+  # Configure gum with Catppuccin Frappe
+  export GUM_CONFIRM_PROMPT_FOREGROUND="#CA9EE6"
+  export GUM_CONFIRM_SELECTED_BACKGROUND="#BABBF1"
+  export GUM_CONFIRM_SELECTED_FOREGROUND="#303446"
+  export GUM_CONFIRM_UNSELECTED_BACKGROUND="#303446"
+  export GUM_CONFIRM_UNSELECTED_FOREGROUND="#C6D0F5"
+
   print_success "Prerequisites met"
 }
 
@@ -178,9 +198,7 @@ clone_repository() {
       fi
     else
       # Interactive mode - ask user
-      read -p "Remove and re-clone? (y/N) " -n 1 -r || true
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
+      if gum confirm "Directory exists. Remove and re-clone?"; then
         rm -rf "$INSTALL_DIR"
         print_info "Removed existing installation"
       else
@@ -233,6 +251,42 @@ run_installation() {
   # Run installation with any passed arguments
   print_info "Running install.sh with arguments: $*"
   ./install.sh "$@"
+}
+
+# Install symlinks for convenience scripts
+install_symlinks() {
+  local target_dir="$HOME/.local/bin"
+  print_info "Installing convenience scripts to $target_dir..."
+
+  # Create target directory if it doesn't exist
+  if [ ! -d "$target_dir" ]; then
+    mkdir -p "$target_dir"
+    print_info "Created directory: $target_dir"
+  fi
+
+  # Define scripts to symlink and their new names
+  declare -A scripts=(
+    ["manage.sh"]="dots-manage"
+    ["install.sh"]="dots-install"
+    ["update.sh"]="dots-update"
+    ["uninstall.sh"]="dots-uninstall"
+  )
+
+  for script in "${!scripts[@]}"; do
+    local source_file="$INSTALL_DIR/$script"
+    local target_link="$target_dir/${scripts[$script]}"
+
+    if [ -f "$source_file" ]; then
+      # Make source executable
+      chmod +x "$source_file"
+
+      # Create or update symlink
+      ln -sf "$source_file" "$target_link"
+      print_success "Linked $target_link -> $source_file"
+    else
+      print_warning "Source script not found: $source_file"
+    fi
+  done
 }
 
 # Show usage information
@@ -322,6 +376,7 @@ main() {
   clone_repository
   download_config
   run_installation "$@"
+  install_symlinks
 
   # Check if zsh was installed and remind about shell change
   if command -v zsh &>/dev/null; then
