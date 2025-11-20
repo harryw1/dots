@@ -774,10 +774,14 @@ jobs:
           pacman-key --init
           pacman-key --populate archlinux
 
-      - name: Update system and install dependencies
+      - name: Create non-root user
         run: |
           pacman -Syu --noconfirm
           pacman -S --noconfirm git jq base-devel sudo
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          mkdir -p /home/builder/.config
+          chown -R builder:builder /home/builder
 
       - name: Make scripts executable
         run: |
@@ -790,14 +794,14 @@ jobs:
           echo "========================================="
           echo "Running full installation"
           echo "========================================="
-          ./install.sh --full --no-tui --force
+          sudo -u builder /bin/bash -c "cd $(pwd) && ./install.sh --full --no-tui --force"
 
       - name: Verify installation
         run: |
           echo "========================================="
           echo "Verifying installation"
           echo "========================================="
-          ./tests/verify-installation.sh
+          sudo -u builder /bin/bash -c "cd $(pwd) && ./tests/verify-installation.sh"
 
   summary:
     name: Test Summary
