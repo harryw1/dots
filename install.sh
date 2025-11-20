@@ -135,7 +135,20 @@ prompt_gui_selection() {
 
     # Use gum choose for selection
     local CHOICES
-    CHOICES=$(gum choose --no-limit --header "Select Components to Install" "Hyprland GUI (Waybar, etc)" "Web Browser (Firefox)" "Productivity Suite (LibreOffice)" "Communication Apps (Discord, Slack)")
+    if ! CHOICES=$(gum choose --no-limit --header "Select Components to Install" "Hyprland GUI (Waybar, etc)" "Web Browser (Firefox)" "Productivity Suite (LibreOffice)" "Communication Apps (Discord, Slack)" 2>/dev/null); then
+        # User cancelled or error occurred
+        print_warning "Component selection cancelled or failed"
+        print_info "Defaulting to TUI-only installation"
+        INSTALL_MODE="tui-only"
+        return 0
+    fi
+
+    # Handle empty selection (user selected nothing)
+    if [ -z "$CHOICES" ]; then
+        print_info "No components selected (TUI-only mode)"
+        INSTALL_MODE="tui-only"
+        return 0
+    fi
 
     if [[ "$CHOICES" == *"Hyprland GUI"* ]]; then
         INSTALL_GUI_ESSENTIAL=true
@@ -173,11 +186,34 @@ prompt_gui_selection() {
 run_preflight() {
     log_phase_start "Preflight"
 
+    if has_gum; then
+        draw_visual_progress 1 6 50 "Preflight Progress"
+    fi
     run_system_checks
+
+    if has_gum; then
+        draw_visual_progress 2 6 50 "Preflight Progress"
+    fi
     check_repositories
+
+    if has_gum; then
+        draw_visual_progress 3 6 50 "Preflight Progress"
+    fi
     check_mirrorlist
+
+    if has_gum; then
+        draw_visual_progress 4 6 50 "Preflight Progress"
+    fi
     sync_package_database
+
+    if has_gum; then
+        draw_visual_progress 5 6 50 "Preflight Progress"
+    fi
     resolve_conflicts
+
+    if has_gum; then
+        draw_visual_progress 6 6 50 "Preflight Progress"
+    fi
     run_migrations
 
     log_phase_end "Preflight" "success"
@@ -185,47 +221,164 @@ run_preflight() {
     echo ""
 }
 
+# Track package installation counts
+PACKAGE_COUNTS=""
+
 # Install all packages
 install_all_packages() {
     log_phase_start "Package Installation"
 
     print_step 7 15 "Installing packages"
 
+    local package_step=1
+    local total_package_steps=6  # core, theming, development, tui, aur, gui (variable)
+
+    # Count GUI steps
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        total_package_steps=$((total_package_steps + 2))  # gui-essential + gui-essential-aur
+    fi
+    if [ "$INSTALL_GUI_BROWSERS" = true ]; then
+        total_package_steps=$((total_package_steps + 1))
+    fi
+    if [ "$INSTALL_GUI_PRODUCTIVITY" = true ]; then
+        total_package_steps=$((total_package_steps + 1))
+    fi
+    if [ "$INSTALL_GUI_COMMUNICATION" = true ]; then
+        total_package_steps=$((total_package_steps + 1))
+    fi
+
     # Install core packages (always - TUI tools, audio, network)
+    if has_gum; then
+        draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+    fi
     install_core_packages
+    package_step=$((package_step + 1))
 
     # Install theming packages (needed for consistent appearance)
+    if has_gum; then
+        draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+    fi
     install_theming_packages
+    package_step=$((package_step + 1))
 
     # Install development tools (always - Neovim, compilers, etc.)
+    if has_gum; then
+        draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+    fi
     install_development_packages
+    package_step=$((package_step + 1))
 
     # Install TUI applications (always - yazi, lazygit, btop, etc.)
+    if has_gum; then
+        draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+    fi
     install_tui_packages
+    package_step=$((package_step + 1))
 
     # Install GUI packages conditionally
     if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        if has_gum; then
+            draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+        fi
         install_gui_essential_packages
+        package_step=$((package_step + 1))
+        
+        if has_gum; then
+            draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+        fi
         install_gui_essential_aur_packages
+        package_step=$((package_step + 1))
     fi
 
     if [ "$INSTALL_GUI_BROWSERS" = true ]; then
+        if has_gum; then
+            draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+        fi
         install_gui_browsers_packages
+        package_step=$((package_step + 1))
     fi
 
     if [ "$INSTALL_GUI_PRODUCTIVITY" = true ]; then
+        if has_gum; then
+            draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+        fi
         install_gui_productivity_packages
+        package_step=$((package_step + 1))
     fi
 
     if [ "$INSTALL_GUI_COMMUNICATION" = true ]; then
+        if has_gum; then
+            draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+        fi
         install_gui_communication_packages
+        package_step=$((package_step + 1))
     fi
 
     # Install base AUR packages (always - themes, TUI tools)
+    if has_gum; then
+        draw_visual_progress $package_step $total_package_steps 50 "Package Installation"
+    fi
     install_aur_packages
 
     log_phase_end "Package Installation" "success"
     print_success "Package installation complete"
+    echo ""
+    
+    # Show package summary table
+    show_package_summary
+}
+
+# Show package installation summary table
+show_package_summary() {
+    if ! has_gum; then
+        return 0
+    fi
+
+    echo ""
+    local table_data="Category|Status
+Core Packages|✓ Installed
+Theming|✓ Installed
+Development Tools|✓ Installed
+TUI Applications|✓ Installed"
+
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        table_data="${table_data}
+GUI Essential|✓ Installed
+GUI Essential (AUR)|✓ Installed"
+    else
+        table_data="${table_data}
+GUI Essential|⊘ Skipped
+GUI Essential (AUR)|⊘ Skipped"
+    fi
+
+    if [ "$INSTALL_GUI_BROWSERS" = true ]; then
+        table_data="${table_data}
+Web Browsers|✓ Installed"
+    else
+        table_data="${table_data}
+Web Browsers|⊘ Skipped"
+    fi
+
+    if [ "$INSTALL_GUI_PRODUCTIVITY" = true ]; then
+        table_data="${table_data}
+Productivity|✓ Installed"
+    else
+        table_data="${table_data}
+Productivity|⊘ Skipped"
+    fi
+
+    if [ "$INSTALL_GUI_COMMUNICATION" = true ]; then
+        table_data="${table_data}
+Communication|✓ Installed"
+    else
+        table_data="${table_data}
+Communication|⊘ Skipped"
+    fi
+
+    table_data="${table_data}
+AUR Packages|✓ Installed"
+
+    show_table "$table_data" "" "Package Installation Summary"
     echo ""
 }
 
@@ -235,22 +388,67 @@ deploy_configurations() {
 
     print_step 8 15 "Deploying configuration files"
 
+    local config_step=1
+    local total_config_steps=6  # neovim, starship, bash, zsh, kitty, misc
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        total_config_steps=$((total_config_steps + 2))  # hyprland, waybar
+    fi
+
     # Always deploy TUI-safe configs (including Kitty - it's a terminal, not a GUI app)
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_neovim_config
+    config_step=$((config_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_starship_config
+    config_step=$((config_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_bash_config
+    config_step=$((config_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_zsh_config  # Zsh configuration with menu selection
+    config_step=$((config_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_kitty_config  # Kitty is a terminal emulator, works in TUI mode
+    config_step=$((config_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+    fi
     deploy_misc_configs  # Handles TUI/GUI split internally
+    config_step=$((config_step + 1))
 
     # Deploy GUI configs only if GUI mode enabled
     if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
+        if has_gum; then
+            draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+        fi
         deploy_hyprland_config
+        config_step=$((config_step + 1))
+
+        if has_gum; then
+            draw_visual_progress $config_step $total_config_steps 50 "Configuration Deployment"
+        fi
         deploy_waybar_config
-        log_phase_end "Configuration Deployment" "success"
+    fi
+
+    log_phase_end "Configuration Deployment" "success"
+    if [ "$INSTALL_GUI_ESSENTIAL" = true ]; then
         print_success "Configuration deployment complete (TUI + GUI)"
     else
-        log_phase_end "Configuration Deployment" "success"
         print_success "Configuration deployment complete (TUI-only)"
     fi
 
@@ -263,9 +461,24 @@ setup_services() {
 
     print_step 9 15 "Configuring system services"
 
-    # Call modular service setup functions
+    local service_step=1
+    local total_service_steps=3
+
+    if has_gum; then
+        draw_visual_progress $service_step $total_service_steps 50 "Service Configuration"
+    fi
     setup_network_service
+    service_step=$((service_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $service_step $total_service_steps 50 "Service Configuration"
+    fi
     setup_fingerprint_service
+    service_step=$((service_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $service_step $total_service_steps 50 "Service Configuration"
+    fi
     setup_tailscale_service
 
     log_phase_end "Service Configuration" "success"
@@ -279,8 +492,18 @@ post_install_tasks() {
 
     print_step 10 15 "Running post-installation tasks"
 
-    # Call modular post-install functions
+    local post_step=1
+    local total_post_steps=2
+
+    if has_gum; then
+        draw_visual_progress $post_step $total_post_steps 50 "Post-Installation"
+    fi
     setup_wallpapers
+    post_step=$((post_step + 1))
+
+    if has_gum; then
+        draw_visual_progress $post_step $total_post_steps 50 "Post-Installation"
+    fi
     finalize_installation
 
     # NOTE: LazyVim setup is now handled during config deployment
@@ -372,9 +595,13 @@ check_system() {
             if [ "$FORCE" = true ]; then
                 print_info "Continuing anyway (--force mode)"
             else
-                if ! gum confirm "hyprctl not found. Continue anyway?"; then
-                    print_info "Installation cancelled"
-                    exit 0
+                if has_gum; then
+                    if ! gum confirm "hyprctl not found. Continue anyway?"; then
+                        print_info "Installation cancelled"
+                        exit 0
+                    fi
+                else
+                    print_warning "gum not available, continuing automatically"
                 fi
             fi
         fi
@@ -383,47 +610,106 @@ check_system() {
 
 # Show help
 show_help() {
-    local box_width=80
-    echo ""
-    draw_box "Hyprland Dotfiles Installer - Help" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Usage:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_BLUE}./install.sh${NC} ${FRAPPE_TEXT}[OPTIONS]${NC}" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Options:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}              Show this help message" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}-f, --force${NC}             Skip confirmation prompts" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Installation Modes:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--gui${NC}                   Prompt for GUI components (interactive)" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--minimal${NC}               TUI-only install (no GUI, headless compatible)" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--full${NC}                  Install everything (all GUI components)" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--headless${NC}              Same as --minimal (alias)" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Other Options:${NC}" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--skip-packages${NC}         Skip package installation" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}                Disable TUI welcome screen" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--dry-run${NC}               Show what would be done without doing it" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--resume${NC}                Resume from last failed phase" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--reset${NC}                 Reset state and start fresh" $box_width
-    draw_box_line "    ${FRAPPE_GREEN}--config FILE${NC}           Use custom configuration file" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Package Categories (TUI-first):${NC}" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}                Core system (headless compatible)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}tui.txt${NC}                 TUI applications (yazi, lazygit, btop)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}         Development tools (Neovim, compilers)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}theming.txt${NC}             Fonts, icons, cursors" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}gui-essential.txt${NC}       Essential GUI (Hyprland, Waybar)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}gui-browsers.txt${NC}        Web browsers (Firefox)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}gui-productivity.txt${NC}    Office suite (LibreOffice)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}gui-communication.txt${NC}   Chat apps (Discord, Slack)" $box_width
-    draw_box_line "    ${FRAPPE_PEACH}aur.txt${NC}                 Core AUR packages (themes, TUI tools)" $box_width
-    draw_box_line "" $box_width
-    draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  Logs: ~/.local/state/dots/logs/" $box_width
-    draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  State: ~/.local/state/dots/install-state.json" $box_width
-    draw_box_line "" $box_width
-    draw_box_bottom $box_width
-    echo ""
+    local help_text="Hyprland Dotfiles Installer - Help
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Usage:
+  ./install.sh [OPTIONS]
+
+Options:
+  -h, --help              Show this help message
+  -f, --force             Skip confirmation prompts
+
+Installation Modes:
+  --gui                   Prompt for GUI components (interactive)
+  --minimal               TUI-only install (no GUI, headless compatible)
+  --full                  Install everything (all GUI components)
+  --headless              Same as --minimal (alias)
+
+Other Options:
+  --skip-packages         Skip package installation
+  --no-tui                Disable TUI welcome screen
+  --dry-run               Show what would be done without doing it
+  --resume                Resume from last failed phase
+  --reset                 Reset state and start fresh
+  --config FILE           Use custom configuration file
+
+Package Categories (TUI-first):
+  core.txt                Core system (headless compatible)
+  tui.txt                 TUI applications (yazi, lazygit, btop)
+  development.txt         Development tools (Neovim, compilers)
+  theming.txt             Fonts, icons, cursors
+  gui-essential.txt       Essential GUI (Hyprland, Waybar)
+  gui-browsers.txt        Web browsers (Firefox)
+  gui-productivity.txt    Office suite (LibreOffice)
+  gui-communication.txt   Chat apps (Discord, Slack)
+  aur.txt                 Core AUR packages (themes, TUI tools)
+
+Notes:
+  ⚠  Logs: ~/.local/state/dots/logs/
+  ⚠  State: ~/.local/state/dots/install-state.json
+
+Examples:
+  # Minimal TUI-only installation
+  ./install.sh --minimal
+
+  # Interactive GUI selection
+  ./install.sh --gui
+
+  # Full installation with all GUI components
+  ./install.sh --full
+
+  # Skip package installation (config only)
+  ./install.sh --skip-packages
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    if has_gum; then
+        show_pager "$help_text" "Hyprland Dotfiles Installer - Help"
+    else
+        local box_width=80
+        echo ""
+        draw_box "Hyprland Dotfiles Installer - Help" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Usage:${NC}" $box_width
+        draw_box_line "    ${FRAPPE_BLUE}./install.sh${NC} ${FRAPPE_TEXT}[OPTIONS]${NC}" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Options:${NC}" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}-h, --help${NC}              Show this help message" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}-f, --force${NC}             Skip confirmation prompts" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Installation Modes:${NC}" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--gui${NC}                   Prompt for GUI components (interactive)" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--minimal${NC}               TUI-only install (no GUI, headless compatible)" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--full${NC}                  Install everything (all GUI components)" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--headless${NC}              Same as --minimal (alias)" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Other Options:${NC}" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--skip-packages${NC}         Skip package installation" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--no-tui${NC}                Disable TUI welcome screen" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--dry-run${NC}               Show what would be done without doing it" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--resume${NC}                Resume from last failed phase" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--reset${NC}                 Reset state and start fresh" $box_width
+        draw_box_line "    ${FRAPPE_GREEN}--config FILE${NC}           Use custom configuration file" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_MAUVE}${ANSI_BOLD}Package Categories (TUI-first):${NC}" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}core.txt${NC}                Core system (headless compatible)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}tui.txt${NC}                 TUI applications (yazi, lazygit, btop)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}development.txt${NC}         Development tools (Neovim, compilers)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}theming.txt${NC}             Fonts, icons, cursors" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}gui-essential.txt${NC}       Essential GUI (Hyprland, Waybar)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}gui-browsers.txt${NC}        Web browsers (Firefox)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}gui-productivity.txt${NC}    Office suite (LibreOffice)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}gui-communication.txt${NC}   Chat apps (Discord, Slack)" $box_width
+        draw_box_line "    ${FRAPPE_PEACH}aur.txt${NC}                 Core AUR packages (themes, TUI tools)" $box_width
+        draw_box_line "" $box_width
+        draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  Logs: ~/.local/state/dots/logs/" $box_width
+        draw_box_line "  ${FRAPPE_YELLOW}⚠${NC}  State: ~/.local/state/dots/install-state.json" $box_width
+        draw_box_line "" $box_width
+        draw_box_bottom $box_width
+        echo ""
+    fi
 }
 
 #############################################################################
@@ -540,8 +826,16 @@ logging_init
 # Show welcome screen
 if [ "$SHOW_TUI" = true ] && [ "$RESUME" = false ]; then
     show_welcome
-    # Gum style prompt
-    gum confirm "Ready to start installation?" || exit 0
+    # Gum style prompt with proper error handling
+    if has_gum; then
+        if ! gum confirm "Ready to start installation?"; then
+            print_info "Installation cancelled by user"
+            exit 0
+        fi
+    else
+        # Fallback for non-interactive or when gum is unavailable
+        print_warning "gum not available, proceeding automatically"
+    fi
     echo ""
 fi
 
@@ -565,8 +859,21 @@ fi
 print_info "Starting installation..."
 echo ""
 
+# Show overall progress indicator
+if has_gum; then
+    echo ""
+    draw_visual_progress 1 5 60 "Overall Installation Progress"
+    echo ""
+fi
+
 # Run preflight
 run_preflight
+
+# Show overall progress
+if has_gum; then
+    draw_visual_progress 2 5 60 "Overall Installation Progress"
+    echo ""
+fi
 
 # Prompt for GUI selection if in interactive mode
 if [ "$INSTALL_MODE" = "interactive" ] && [ "$SKIP_PACKAGES" = false ]; then
@@ -584,14 +891,32 @@ else
     print_info "Skipping package installation (--skip-packages flag used)"
 fi
 
+# Show overall progress
+if has_gum; then
+    draw_visual_progress 3 5 60 "Overall Installation Progress"
+    echo ""
+fi
+
 # Deploy configurations
 deploy_configurations
+
+# Show overall progress
+if has_gum; then
+    draw_visual_progress 4 5 60 "Overall Installation Progress"
+    echo ""
+fi
 
 # Setup services
 setup_services
 
 # Post-installation
 post_install_tasks
+
+# Show overall progress complete
+if has_gum; then
+    draw_visual_progress 5 5 60 "Overall Installation Progress"
+    echo ""
+fi
 
 # Mark installation as complete
 state_mark_complete

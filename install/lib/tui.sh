@@ -89,6 +89,81 @@ draw_progress_bar() {
     fi
 }
 
+# Draw a visual progress bar using gum
+draw_visual_progress() {
+    local current=$1
+    local total=$2
+    local width=${3:-50}
+    local label="${4:-Progress}"
+
+    if has_gum; then
+        local percent=$((current * 100 / total))
+        local filled=$((current * width / total))
+        local empty=$((width - filled))
+        
+        # Create progress bar string
+        local bar=""
+        local i
+        for ((i=0; i<filled; i++)); do
+            bar="${bar}█"
+        done
+        for ((i=0; i<empty; i++)); do
+            bar="${bar}░"
+        done
+        
+        # Display with gum style
+        gum style \
+            --foreground "$COLOR_MAUVE" \
+            "$label: [$bar] $percent% ($current/$total)"
+    else
+        local percent=$((current * 100 / total))
+        echo "$label: $percent% ($current/$total)"
+    fi
+}
+
+# Show a table using gum table
+show_table() {
+    local headers="$1"
+    local data="$2"
+    local title="${3:-}"
+
+    if has_gum; then
+        if [ -n "$title" ]; then
+            gum style --foreground "$COLOR_MAUVE" --bold "$title"
+            echo ""
+        fi
+        echo -e "$headers\n$data" | gum table \
+            --separator "|" \
+            --selected.foreground "$COLOR_LAVENDER" \
+            --selected.background "$COLOR_BASE" \
+            --cell.foreground "$COLOR_TEXT" \
+            --header.foreground "$COLOR_MAUVE" \
+            --border-foreground "$COLOR_LAVENDER"
+    else
+        if [ -n "$title" ]; then
+            echo "$title"
+            echo ""
+        fi
+        echo -e "$headers\n$data" | column -t -s "|"
+    fi
+}
+
+# Show help text using gum pager
+show_pager() {
+    local content="$1"
+    local title="${2:-Help}"
+
+    if has_gum; then
+        echo "$content" | gum pager \
+            --foreground "$COLOR_TEXT" \
+            --border-foreground "$COLOR_LAVENDER" \
+            --border double \
+            --soft-wrap
+    else
+        echo "$content" | less -R
+    fi
+}
+
 #############################################################################
 # OUTPUT FUNCTIONS (GUM ENHANCED)
 #############################################################################

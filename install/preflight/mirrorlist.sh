@@ -37,13 +37,24 @@ check_mirrorlist() {
         # Generate new mirrorlist
         print_info "Generating optimized mirrorlist (this may take a minute)..."
         log_info "Running reflector to generate optimized mirrorlist"
-        if sudo reflector --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist; then
-            print_success "Generated fresh mirrorlist with fast mirrors"
-            log_success "Successfully generated optimized mirrorlist"
+        if has_gum; then
+            if gum spin --spinner dot --title "Finding fastest mirrors..." -- sudo reflector --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist; then
+                print_success "Generated fresh mirrorlist with fast mirrors"
+                log_success "Successfully generated optimized mirrorlist"
+            else
+                print_warning "Failed to generate mirrorlist, restoring backup"
+                log_error "Reflector failed, restoring backup mirrorlist"
+                sudo mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+            fi
         else
-            print_warning "Failed to generate mirrorlist, restoring backup"
-            log_error "Reflector failed, restoring backup mirrorlist"
-            sudo mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+            if sudo reflector --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist; then
+                print_success "Generated fresh mirrorlist with fast mirrors"
+                log_success "Successfully generated optimized mirrorlist"
+            else
+                print_warning "Failed to generate mirrorlist, restoring backup"
+                log_error "Reflector failed, restoring backup mirrorlist"
+                sudo mv /etc/pacman.d/mirrorlist.backup /etc/pacman.d/mirrorlist
+            fi
         fi
     else
         print_success "Mirrorlist has $mirror_count active mirrors"
@@ -70,10 +81,18 @@ sync_package_database() {
     log_info "Syncing package databases"
 
     # Force refresh all package databases
-    if ! sudo pacman -Syy --noconfirm; then
-        print_error "Failed to sync package database"
-        log_error "Failed to sync package database"
-        return 1
+    if has_gum; then
+        if ! gum spin --spinner dot --title "Syncing package databases..." -- sudo pacman -Syy --noconfirm; then
+            print_error "Failed to sync package database"
+            log_error "Failed to sync package database"
+            return 1
+        fi
+    else
+        if ! sudo pacman -Syy --noconfirm; then
+            print_error "Failed to sync package database"
+            log_error "Failed to sync package database"
+            return 1
+        fi
     fi
 
     print_success "Package database synced - will install latest versions"

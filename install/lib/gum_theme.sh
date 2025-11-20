@@ -24,8 +24,8 @@ export COLOR_MANTLE="#292C3C"
 export COLOR_CRUST="#232634"
 
 # Gum Configuration
-# General
-export GUM_OPTS="--cursor.foreground=$COLOR_ROSEWATER"
+# Note: GUM_OPTS is not a valid environment variable in gum
+# Cursor colors are set per-command using --cursor.foreground flag
 
 # Input
 export GUM_INPUT_CURSOR_FOREGROUND="$COLOR_ROSEWATER"
@@ -62,5 +62,5 @@ export GUM_FILTER_MATCH_FOREGROUND="$COLOR_YELLOW"
 export GUM_FILTER_PROMPT_FOREGROUND="$COLOR_MAUVE"
 export GUM_FILTER_TEXT_FOREGROUND="$COLOR_TEXT"
 
-# Format (Markdown)
-export GUM_FORMAT_THEME="catppuccin-frappe"
+# Note: GUM_FORMAT_THEME is not a standard gum environment variable
+# Format command uses --theme flag directly if needed

@@ -31,17 +31,50 @@ REPO_BRANCH="${REPO_BRANCH:-main}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/share/dots}"
 CONFIG_URL="${CONFIG_URL:-}" # Optional remote config file
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+# Check if gum is available for enhanced output
+has_gum() {
+    command -v gum &> /dev/null
+}
 
-print_info() { echo -e "${BLUE}●${NC} $1"; }
-print_success() { echo -e "${GREEN}✓${NC} $1"; }
-print_error() { echo -e "${RED}✗${NC} $1"; }
-print_warning() { echo -e "${YELLOW}⚠${NC} $1"; }
+# Load gum theme if available (will be set after gum is installed)
+load_gum_theme() {
+    if [ -f "$INSTALL_DIR/install/lib/gum_theme.sh" ]; then
+        source "$INSTALL_DIR/install/lib/gum_theme.sh"
+    fi
+}
+
+# Enhanced print functions that use gum when available
+print_info() {
+    if has_gum && [ -n "${COLOR_BLUE:-}" ]; then
+        gum style --foreground "$COLOR_BLUE" "● $1"
+    else
+        echo -e "\033[0;34m●\033[0m $1"
+    fi
+}
+
+print_success() {
+    if has_gum && [ -n "${COLOR_GREEN:-}" ]; then
+        gum style --foreground "$COLOR_GREEN" "✓ $1"
+    else
+        echo -e "\033[0;32m✓\033[0m $1"
+    fi
+}
+
+print_error() {
+    if has_gum && [ -n "${COLOR_RED:-}" ]; then
+        gum style --foreground "$COLOR_RED" "✗ $1"
+    else
+        echo -e "\033[0;31m✗\033[0m $1"
+    fi
+}
+
+print_warning() {
+    if has_gum && [ -n "${COLOR_YELLOW:-}" ]; then
+        gum style --foreground "$COLOR_YELLOW" "⚠ $1"
+    else
+        echo -e "\033[1;33m⚠\033[0m $1"
+    fi
+}
 
 # Banner
 show_banner() {
@@ -99,7 +132,7 @@ check_prerequisites() {
   fi
 
   # Check for gum (needed for TUI)
-  if ! command -v gum &>/dev/null; then
+  if ! has_gum; then
     print_warning "gum not found - installing for interactive TUI"
     if ! sudo pacman -S --noconfirm gum; then
       print_error "Failed to install gum"
@@ -111,12 +144,28 @@ check_prerequisites() {
     print_success "gum is available"
   fi
 
-  # Configure gum with Catppuccin Frappe
-  export GUM_CONFIRM_PROMPT_FOREGROUND="#CA9EE6"
-  export GUM_CONFIRM_SELECTED_BACKGROUND="#BABBF1"
-  export GUM_CONFIRM_SELECTED_FOREGROUND="#303446"
-  export GUM_CONFIRM_UNSELECTED_BACKGROUND="#303446"
-  export GUM_CONFIRM_UNSELECTED_FOREGROUND="#C6D0F5"
+  # Load gum theme if repository is already cloned, otherwise use basic theme
+  # Full theme will be loaded by install.sh after cloning
+  if [ -f "$INSTALL_DIR/install/lib/gum_theme.sh" ]; then
+    load_gum_theme
+  else
+    # Basic Catppuccin Frappe colors for bootstrap (before repo is cloned)
+    export COLOR_MAUVE="#CA9EE6"
+    export COLOR_LAVENDER="#BABBF1"
+    export COLOR_BASE="#303446"
+    export COLOR_TEXT="#C6D0F5"
+    export COLOR_GREEN="#A6D189"
+    export COLOR_RED="#E78284"
+    export COLOR_YELLOW="#E5C890"
+    export COLOR_BLUE="#8CAAEE"
+    
+    # Set basic gum confirm colors
+    export GUM_CONFIRM_PROMPT_FOREGROUND="$COLOR_MAUVE"
+    export GUM_CONFIRM_SELECTED_BACKGROUND="$COLOR_LAVENDER"
+    export GUM_CONFIRM_SELECTED_FOREGROUND="$COLOR_BASE"
+    export GUM_CONFIRM_UNSELECTED_BACKGROUND="$COLOR_BASE"
+    export GUM_CONFIRM_UNSELECTED_FOREGROUND="$COLOR_TEXT"
+  fi
 
   print_success "Prerequisites met"
 }
@@ -169,24 +218,43 @@ clone_repository() {
         cd "$INSTALL_DIR"
 
         # Fetch latest changes
-        print_info "Fetching latest changes..."
-        if ! git fetch origin "$REPO_BRANCH" 2>/dev/null; then
-          print_warning "Failed to fetch updates, using existing files"
-          return 0
+        if has_gum; then
+          if ! gum spin --spinner dot --title "Fetching latest changes..." -- git fetch origin "$REPO_BRANCH" 2>/dev/null; then
+            print_warning "Failed to fetch updates, using existing files"
+            return 0
+          fi
+        else
+          print_info "Fetching latest changes..."
+          if ! git fetch origin "$REPO_BRANCH" 2>/dev/null; then
+            print_warning "Failed to fetch updates, using existing files"
+            return 0
+          fi
         fi
 
         # Check if there are local changes
         if ! git diff-index --quiet HEAD -- 2>/dev/null; then
           print_warning "Local changes detected, stashing before update..."
-          git stash save "bootstrap auto-stash $(date +%Y%m%d-%H%M%S)" 2>/dev/null || true
+          if has_gum; then
+            gum spin --spinner dot --title "Stashing local changes..." -- git stash save "bootstrap auto-stash $(date +%Y%m%d-%H%M%S)" 2>/dev/null || true
+          else
+            git stash save "bootstrap auto-stash $(date +%Y%m%d-%H%M%S)" 2>/dev/null || true
+          fi
         fi
 
         # Pull latest changes
-        print_info "Pulling latest changes..."
-        if git pull origin "$REPO_BRANCH" 2>/dev/null; then
-          print_success "Repository updated successfully"
+        if has_gum; then
+          if gum spin --spinner dot --title "Pulling latest changes..." -- git pull origin "$REPO_BRANCH" 2>/dev/null; then
+            print_success "Repository updated successfully"
+          else
+            print_warning "Failed to pull updates, using existing files"
+          fi
         else
-          print_warning "Failed to pull updates, using existing files"
+          print_info "Pulling latest changes..."
+          if git pull origin "$REPO_BRANCH" 2>/dev/null; then
+            print_success "Repository updated successfully"
+          else
+            print_warning "Failed to pull updates, using existing files"
+          fi
         fi
 
         cd - > /dev/null
@@ -198,23 +266,40 @@ clone_repository() {
       fi
     else
       # Interactive mode - ask user
-      if gum confirm "Directory exists. Remove and re-clone?"; then
-        rm -rf "$INSTALL_DIR"
-        print_info "Removed existing installation"
+      if has_gum; then
+        if gum confirm "Directory exists. Remove and re-clone?"; then
+          rm -rf "$INSTALL_DIR"
+          print_info "Removed existing installation"
+        else
+          print_info "Using existing installation directory"
+          return 0
+        fi
       else
-        print_info "Using existing installation directory"
-        return 0
+        # Fallback if gum is not available (shouldn't happen, but safety check)
+        print_warning "Directory exists: $INSTALL_DIR"
+        print_info "Please remove it manually or run: rm -rf $INSTALL_DIR"
+        exit 1
       fi
     fi
   fi
 
   # Clone the repository
-  if ! git clone --branch "$REPO_BRANCH" "$REPO_URL" "$INSTALL_DIR"; then
-    print_error "Failed to clone repository"
-    print_info "Check that the repository URL and branch are correct:"
-    print_info "  URL: $REPO_URL"
-    print_info "  Branch: $REPO_BRANCH"
-    exit 1
+  if has_gum; then
+    if ! gum spin --spinner dot --title "Cloning repository..." -- git clone --branch "$REPO_BRANCH" "$REPO_URL" "$INSTALL_DIR"; then
+      print_error "Failed to clone repository"
+      print_info "Check that the repository URL and branch are correct:"
+      print_info "  URL: $REPO_URL"
+      print_info "  Branch: $REPO_BRANCH"
+      exit 1
+    fi
+  else
+    if ! git clone --branch "$REPO_BRANCH" "$REPO_URL" "$INSTALL_DIR"; then
+      print_error "Failed to clone repository"
+      print_info "Check that the repository URL and branch are correct:"
+      print_info "  URL: $REPO_URL"
+      print_info "  Branch: $REPO_BRANCH"
+      exit 1
+    fi
   fi
 
   print_success "Repository cloned successfully"
@@ -291,18 +376,19 @@ install_symlinks() {
 
 # Show usage information
 show_usage() {
-  cat <<'EOF'
-Bootstrap Script Usage:
+  local usage_text="Bootstrap Script Usage
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Basic installation:
   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 
 With environment variables:
-  REPO_BRANCH=feature/test CONFIG_URL=https://example.com/config.conf \
+  REPO_BRANCH=feature/test CONFIG_URL=https://example.com/config.conf \\
     curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 
 With installation flags:
-  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\
     bash -s -- --skip-packages --dry-run
 
 Environment Variables:
@@ -328,20 +414,40 @@ Behavior:
 
 Examples:
   # Install from feature branch with dry-run
-  REPO_BRANCH=feature/modular-installer \
-    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  REPO_BRANCH=feature/modular-installer \\
+    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\
     bash -s -- --dry-run
 
   # Install with custom config and skip packages
-  CONFIG_URL=https://gist.githubusercontent.com/user/abc/raw/install.conf \
-    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \
+  CONFIG_URL=https://gist.githubusercontent.com/user/abc/raw/install.conf \\
+    curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | \\
     bash -s -- --skip-packages
 
   # Force fresh installation (remove existing directory first)
   rm -rf ~/.local/share/dots
   curl -sL https://raw.githubusercontent.com/harryw1/dots/main/bootstrap.sh | bash
 
-EOF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+  # Use gum pager if available, otherwise just echo
+  if has_gum; then
+    # Check if we can source tui.sh (might not be available before repo is cloned)
+    if [ -f "$INSTALL_DIR/install/lib/tui.sh" ]; then
+      source "$INSTALL_DIR/install/lib/tui.sh"
+      if command -v show_pager &>/dev/null; then
+        show_pager "$usage_text" "Bootstrap Script Usage"
+        return 0
+      fi
+    fi
+    # Fallback: use gum pager directly
+    echo "$usage_text" | gum pager \
+      --foreground "${COLOR_TEXT:-#C6D0F5}" \
+      --border-foreground "${COLOR_LAVENDER:-#BABBF1}" \
+      --border double \
+      --soft-wrap
+  else
+    echo "$usage_text"
+  fi
 }
 
 # Main execution
