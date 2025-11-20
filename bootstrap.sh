@@ -97,6 +97,26 @@ check_prerequisites() {
     print_success "jq is available"
   fi
 
+  # Check for gum (needed for TUI)
+  if ! command -v gum &>/dev/null; then
+    print_warning "gum not found - installing for interactive TUI"
+    if ! sudo pacman -S --noconfirm gum; then
+      print_error "Failed to install gum"
+      print_info "Install manually with: sudo pacman -S gum"
+      exit 1
+    fi
+    print_success "Installed gum"
+  else
+    print_success "gum is available"
+  fi
+
+  # Configure gum with Catppuccin Frappe
+  export GUM_CONFIRM_PROMPT_FOREGROUND="#CA9EE6"
+  export GUM_CONFIRM_SELECTED_BACKGROUND="#BABBF1"
+  export GUM_CONFIRM_SELECTED_FOREGROUND="#303446"
+  export GUM_CONFIRM_UNSELECTED_BACKGROUND="#303446"
+  export GUM_CONFIRM_UNSELECTED_FOREGROUND="#C6D0F5"
+
   print_success "Prerequisites met"
 }
 
@@ -177,9 +197,7 @@ clone_repository() {
       fi
     else
       # Interactive mode - ask user
-      read -p "Remove and re-clone? (y/N) " -n 1 -r || true
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
+      if gum confirm "Directory exists. Remove and re-clone?"; then
         rm -rf "$INSTALL_DIR"
         print_info "Removed existing installation"
       else
