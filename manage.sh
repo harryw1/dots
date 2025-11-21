@@ -45,8 +45,8 @@ while true; do
 
     echo ""
 
+    # Note: cursor colors are set via GUM_CHOOSE_CURSOR_FOREGROUND environment variable
     CHOICE=$(gum choose \
-        --cursor.foreground "$COLOR_MAUVE" \
         --header "Select an action" \
         "Update System (Pacman & AUR)" \
         "Update Dotfiles Repo" \

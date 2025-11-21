@@ -122,29 +122,26 @@ draw_visual_progress() {
 }
 
 # Show a table using gum table
+# Accepts full table data (including headers) as first parameter, title as second
 show_table() {
-    local headers="$1"
-    local data="$2"
-    local title="${3:-}"
+    local table_data="$1"
+    local title="${2:-}"
 
     if has_gum; then
         if [ -n "$title" ]; then
-            gum style --foreground "$COLOR_MAUVE" --bold "$title"
+            # gum style doesn't support --bold, use foreground color for emphasis
+            gum style --foreground "$COLOR_MAUVE" "$title"
             echo ""
         fi
-        echo -e "$headers\n$data" | gum table \
-            --separator "|" \
-            --selected.foreground "$COLOR_LAVENDER" \
-            --selected.background "$COLOR_BASE" \
-            --cell.foreground "$COLOR_TEXT" \
-            --header.foreground "$COLOR_MAUVE" \
-            --border-foreground "$COLOR_LAVENDER"
+        # gum table expects TSV by default, but we can use --separator for pipe-separated
+        # Note: gum table styling is controlled via environment variables, not command-line flags
+        echo -e "$table_data" | gum table --separator "|"
     else
         if [ -n "$title" ]; then
             echo "$title"
             echo ""
         fi
-        echo -e "$headers\n$data" | column -t -s "|"
+        echo -e "$table_data" | column -t -s "|"
     fi
 }
 
@@ -154,11 +151,14 @@ show_pager() {
     local title="${2:-Help}"
 
     if has_gum; then
-        echo "$content" | gum pager \
-            --foreground "$COLOR_TEXT" \
-            --border-foreground "$COLOR_LAVENDER" \
-            --border double \
-            --soft-wrap
+        # gum pager doesn't support --foreground, --border-foreground, --border, or --soft-wrap flags
+        # These are controlled via environment variables or not available
+        # We can use gum style to add a title if needed
+        if [ -n "$title" ] && [ "$title" != "Help" ]; then
+            gum style --foreground "$COLOR_MAUVE" --bold "$title"
+            echo ""
+        fi
+        echo "$content" | gum pager
     else
         echo "$content" | less -R
     fi

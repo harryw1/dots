@@ -378,7 +378,7 @@ Communication|⊘ Skipped"
     table_data="${table_data}
 AUR Packages|✓ Installed"
 
-    show_table "$table_data" "" "Package Installation Summary"
+    show_table "$table_data" "Package Installation Summary"
     echo ""
 }
 

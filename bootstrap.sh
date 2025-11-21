@@ -440,11 +440,8 @@ Examples:
       fi
     fi
     # Fallback: use gum pager directly
-    echo "$usage_text" | gum pager \
-      --foreground "${COLOR_TEXT:-#C6D0F5}" \
-      --border-foreground "${COLOR_LAVENDER:-#BABBF1}" \
-      --border double \
-      --soft-wrap
+    # Note: gum pager doesn't support styling flags, only environment variables
+    echo "$usage_text" | gum pager
   else
     echo "$usage_text"
   fi
