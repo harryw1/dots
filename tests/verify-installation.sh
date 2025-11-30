@@ -30,8 +30,14 @@ verify_symlinks() {
     exit 1
   fi
 
-  if [[ ! -L "$HOME/.config/nvim" || "$(readlink "$HOME/.config/nvim")" != "$dotfiles_dir/nvim" ]]; then
-    echo "Neovim symlink is incorrect."
+  # Neovim config is copied (not symlinked) to avoid path resolution issues with LazyVim
+  if [[ ! -d "$HOME/.config/nvim" ]]; then
+    echo "Neovim config directory not found."
+    exit 1
+  fi
+  # Verify key files exist (they should be regular files, not symlinks)
+  if [[ ! -f "$HOME/.config/nvim/init.lua" ]]; then
+    echo "Neovim init.lua not found."
     exit 1
   fi
   log "All symlinks verified."

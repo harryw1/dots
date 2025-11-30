@@ -1,1 +1,10 @@
-/home/harryweiss/.local/share/dots/nvim/lua/plugins/spelling.lua
+return {
+  {
+    "lewis6991/spellsitter.nvim",
+    event = "BufRead",
+    config = function()
+      require("spellsitter").setup()
+    end,
+  },
+}
+
