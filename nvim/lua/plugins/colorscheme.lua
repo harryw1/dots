@@ -7,6 +7,7 @@ return {
       flavour = "frappe", -- latte, frappe, macchiato, mocha
       transparent_background = false,
       integrations = {
+        auto_integrations = true,
         cmp = true,
         gitsigns = true,
         nvimtree = true,
@@ -26,4 +27,3 @@ return {
     },
   },
 }
-
